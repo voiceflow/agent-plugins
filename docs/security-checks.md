@@ -80,11 +80,13 @@ to make CI green. Rerun the full scan after remediation.
 
 ## GitHub protections
 
-CI starts after a push; it cannot block the initial upload of a secret. GitHub
-secret scanning, push protection, and private vulnerability reporting are enabled.
+CI starts after a push; it cannot block the initial upload of a secret. Require
+GitHub secret scanning, push protection, and private vulnerability reporting.
 The default branch requires a pull request, the security and three-platform
 checks, and resolved review threads; force pushes and deletion are blocked.
 The owner's sole-maintainer policy does not require an independent approval.
-All outside contributors' workflows require approval before running.
+Require approval before running all outside contributors' workflows.
 See [release policy](releasing.md). These settings are separate from this code
-and are not enforced by a policy file or CODEOWNERS alone.
+and are not enforced by a policy file or CODEOWNERS alone. After a transfer,
+an administrator must confirm any settings hidden from write-access maintainers;
+see the [transfer verification](../evals/reports/2026-10-17-transfer.md).

@@ -2,10 +2,12 @@
 
 ## Ownership and maintenance
 
+The repository is owned by the [Voiceflow organization](https://github.com/voiceflow/agent-plugins).
 The package is MIT-licensed, copyright Voiceflow, Inc. Braden Ream
-([@Bradenream](https://github.com/Bradenream)) currently maintains this repository;
-`.github/CODEOWNERS` routes reviews to that account until transfer. The GitHub
-location does not change the package's copyright holder.
+([@Bradenream](https://github.com/Bradenream)) remains a maintainer with write
+access; `.github/CODEOWNERS` routes reviews to that account. Changes to team
+access, administrator permissions, and repository security settings belong to
+the organization's administrators.
 
 This is beta software. Fixes target the newest tagged release; older releases
 and edited forks have no guaranteed backports. Before the first release, the
@@ -68,12 +70,14 @@ Confirm the rules in GitHub after enabling them. Written policy or a CODEOWNERS
 file alone is not enforcement. Publication, transfer, and changing a paid plan
 are separate owner decisions.
 
-GitHub Actions policy now permits GitHub-owned actions and repository-local
+The required GitHub Actions policy permits GitHub-owned actions and repository-local
 workflows, requires full commit-SHA action pins, keeps default tokens read-only,
 and disallows workflow approval of pull requests. Expand the allowed publishers
 only after reviewing a concrete dependency. Approval for all outside-contributor
 workflows, native secret scanning/push protection, and private vulnerability
-reporting are enabled. These settings do not create a paid subscription.
+reporting must remain enabled. An organization administrator must verify settings
+that are not visible to write-access maintainers after a transfer; a successful
+CI run does not prove those settings. These settings do not create a paid subscription.
 
 ## Prepare a release
 
@@ -145,10 +149,11 @@ references after repository publication, transfer, or URL changes. Keep experime
 only expand claims after actual host acceptance. Use the
 [website publishing contract](website-publishing.md) for the separate site rollout.
 
-Transfer to Voiceflow when approved. Update repository/issue links, reviewer
+After any future transfer or rename, update repository/issue links, reviewer
 ownership, and GitHub metadata, then verify redirects and fresh installs. Keep
 plugin name `voiceflow`, marketplace name `voiceflow-plugins`, and skill names
-stable. Marketplace submission is independent of repository publication.
+stable. Do not recreate the repository at its previous location: that removes
+GitHub's redirect. Marketplace submission is independent of repository publication.
 
 Docs requests use the existing Knowledge MCP logging, as explained in
 [measurement](measurement.md); releases do not add a separate analytics service.

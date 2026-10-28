@@ -5,6 +5,7 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
 
 ## 0.4.2 — Unreleased
 
+- Update package and support links for the transfer to `voiceflow/agent-plugins`.
 - Attribute the MIT license and package authorship to Voiceflow, Inc.
 - Include the license in every standalone skill, native package, and website bundle.
 - Add public support, security reporting, contribution, and conduct guidance.

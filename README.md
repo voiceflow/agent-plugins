@@ -7,9 +7,9 @@ build, customize, test, and improve Voiceflow agents. Setup chooses the connecti
 that works in your current app, reuses existing access, and asks you to complete
 browser sign-in only when needed.
 
-**Status: beta.** Use the default branch for the development preview.
-The repository remains under Bradenream while it is prepared for transfer to
-Voiceflow. There is no published marketplace listing or website setup URL yet.
+**Status: beta.** Maintained in the [Voiceflow organization](https://github.com/voiceflow/agent-plugins).
+Use the default branch for the development preview. There is no published
+marketplace listing or website setup URL yet.
 See [compatibility](docs/compatibility.md) for tested and experimental paths.
 
 ## Get started

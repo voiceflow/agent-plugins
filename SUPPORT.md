@@ -2,7 +2,7 @@
 
 | What you need | Where to go |
 | --- | --- |
-| Setup, skills, installers, or a broken guide in this package | [Open a repository issue](https://github.com/Bradenream/agent-plugins/issues/new/choose) |
+| Setup, skills, installers, or a broken guide in this package | [Open a repository issue](https://github.com/voiceflow/agent-plugins/issues/new/choose) |
 | A Voiceflow how-to or troubleshooting answer | Ask your assistant to consult the Voiceflow Knowledge MCP, or read the [docs](https://www.voiceflow.com/docs) |
 | Account, billing, access, or a Voiceflow product problem | [support@voiceflow.com](mailto:support@voiceflow.com), the contact listed in the [Voiceflow docs](https://www.voiceflow.com/docs/documentation/introduction) |
 | A possible vulnerability | Follow [SECURITY.md](SECURITY.md); report it privately |
@@ -14,7 +14,7 @@ Voiceflow product support arrangements. If access to the repository is restricte
 use the support contact above and include its URL.
 
 Before reporting a package problem, check [compatibility](docs/compatibility.md)
-and [existing issues](https://github.com/Bradenream/agent-plugins/issues).
+and [existing issues](https://github.com/voiceflow/agent-plugins/issues).
 Include the package version, client and OS, what you expected, what happened,
 and the smallest synthetic reproduction. Remove credentials, authorization URLs,
 workspace/project IDs, transcripts, and private source from attachments.

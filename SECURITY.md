@@ -8,7 +8,7 @@ repository's URL, affected package version or commit, a synthetic reproduction,
 impact, and a way to contact you. Do not put exploit details in a public issue.
 Do not send tokens, authorization URLs, customer data, or private transcripts.
 
-You can also [report a vulnerability privately on GitHub](https://github.com/Bradenream/agent-plugins/security/advisories/new).
+You can also [report a vulnerability privately on GitHub](https://github.com/voiceflow/agent-plugins/security/advisories/new).
 The email route works independently of that repository setting. Follow Voiceflow's
 published disclosure policy. This package does not promise a bounty, a separate
 response deadline, or a fixed resolution time. For non-sensitive follow-up,
