@@ -25,6 +25,7 @@ python3 scripts/build.py
 | `voiceflow/skills/` | Customer instructions, linked references, and installers |
 | `voiceflow/skills/voiceflow-setup/references/setup.md` | Canonical setup guide; edit this before generating website content |
 | `scripts/` and `tests/` | Package validation, build, release preparation, and offline tests |
+| `tests/fixtures/voiceflow-surface.json` | MCP and CLI names the skill checks accept; not packaged |
 | `evals/` | Behavioral cases, protocols, and sanitized evidence |
 | `docs/` | Compatibility, release, provenance, and measurement guidance |
 | `dist/` | Generated output; do not commit it |
@@ -46,6 +47,37 @@ Keep the Voiceflow, Inc. MIT notice in every distributed skill and package.
 When adding a packaged file, review it and add its exact path to
 `package-files.txt`. Unexpected local files must fail packaging, even if ignored
 by Git. Do not regenerate this inventory just to bypass that failure.
+
+## Check skill references
+
+`python3 scripts/validate.py` also checks that skill text names only things that
+exist. It prints one `file:line: reason` line per problem and fails when a skill:
+
+- names an MCP tool or operation that does not exist;
+- names an MCP operation that the MCP always refuses, where the skill must
+  give the `vf` command instead;
+- names a `vf` command that the pinned CLI does not have;
+- links to a missing file or heading, or names a missing `voiceflow-*` skill
+  or `references/*.md` file;
+- uses an internal tool or product name that is not public.
+
+Write an MCP operation as `` `voiceflow_<tool>.<operation>` `` and a CLI command
+as `` `vf <command> --flag` ``. In CI, `scripts/verify_cli.py` also runs
+`--help` for every `vf` command the skills name and checks each flag they use.
+
+The accepted names live in `tests/fixtures/voiceflow-surface.json`. MCP tools
+come from the latest voiceflow/cli release, because that release tracks the
+hosted MCP. CLI commands come from the pinned CLI version. Refresh the file
+when either changes, then review the diff:
+
+```sh
+python3 scripts/refresh_surface.py
+```
+
+The script downloads public release files from GitHub and uses `GITHUB_TOKEN`
+when it is set. Pass `--mcp-ref` or `--cli-ref` to choose other release tags, or
+`--mcp-spec` and `--cli-spec` to read a downloaded spec. A refresh with no
+upstream change leaves the file unchanged.
 
 ## Verify the right things
 

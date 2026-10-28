@@ -2,6 +2,9 @@
 import json
 from pathlib import Path
 import re
+import sys
+
+from skill_references import check_references
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_NAMES = {
@@ -12,6 +15,12 @@ SKILL_NAMES = {
     "voiceflow-evaluations", "voiceflow-environments", "voiceflow-widget",
 }
 LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
+
+
+class ReferenceProblems(AssertionError):
+    def __init__(self, problems):
+        super().__init__("\n".join(problems))
+        self.problems = problems
 
 
 def markdown_links(text):
@@ -66,15 +75,6 @@ def validate(root=ROOT):
         assert len(text.splitlines()) < 160, f"Skill too large: {path}"
     for path in plugin.rglob("*"):
         assert not path.is_symlink(), f"Symlink in package: {path}"
-        if path.suffix == ".md":
-            text = path.read_text(encoding="utf-8")
-            assert not re.search(r"\b(vf_[a-z]+_|describe_operations|audit_wiring|propose_test|request_secret)\b", text), path
-            for link in markdown_links(text):
-                if "://" in link or link.startswith(("#", "mailto:")):
-                    continue
-                target = (path.parent / link.split("#")[0]).resolve()
-                assert target.is_relative_to(plugin.resolve()), f"Reference leaves plugin: {path}: {link}"
-                assert target.is_file(), f"Missing reference: {path}: {link}"
     scripts = skills / "voiceflow-setup/scripts"
     version = (scripts / "cli-version.txt").read_text(encoding="utf-8").strip()
     assert version == "0.287.0", "Update CLI contract fixtures when changing baseline"
@@ -90,8 +90,16 @@ def validate(root=ROOT):
     for case in cases:
         assert case["required"] and case["forbidden"] and case["fixture"] and case["prompt"]
         assert case["category"] in ("setup", "product")
+    problems = check_references(root)
+    if problems:
+        raise ReferenceProblems(problems)
     return len(SKILL_NAMES)
 
 
 if __name__ == "__main__":
-    print(f"Validated {validate()} skills, manifests, checksums, and local references.")
+    try:
+        count = validate()
+    except ReferenceProblems as error:
+        print("\n".join(error.problems), file=sys.stderr)
+        sys.exit(1)
+    print(f"Validated {count} skills, manifests, checksums, local references, and MCP and CLI names.")

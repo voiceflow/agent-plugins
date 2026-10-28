@@ -21,11 +21,11 @@ def load(name, path):
     return module
 
 
+sys.path.insert(0, str(ROOT / "scripts"))
 installer = load("installer", SETUP / "install_skills.py")
 connection = load("connection", SETUP / "check_connection.py")
 builder = load("builder", ROOT / "scripts/build.py")
 validator = load("validator", ROOT / "scripts/validate.py")
-sys.path.insert(0, str(ROOT / "scripts"))
 release = load("release", ROOT / "scripts/prepare_release.py")
 
 

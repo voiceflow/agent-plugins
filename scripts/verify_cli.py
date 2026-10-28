@@ -4,12 +4,57 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import importlib.util
 import json
 from pathlib import Path
+import re
 import subprocess
 import threading
 import time
 from urllib.parse import parse_qs, urlsplit
 
+from skill_references import cli_uses, load_surface
+
 ROOT = Path(__file__).resolve().parents[1]
+LONG_FLAG = re.compile(r"(?<![\w-])--[a-z0-9][a-z0-9-]*")
+SHORT_FLAG = re.compile(r"(?<![\w-])-[A-Za-z](?=[\s,\"]|$)", re.M)
+
+
+def help_text(vf, words, option):
+    return subprocess.run([*vf, *words, option], capture_output=True, text=True, encoding="utf-8",
+                          timeout=10, stdin=subprocess.DEVNULL)
+
+
+def documented_flags(text):
+    return set(LONG_FLAG.findall(text)) | set(SHORT_FLAG.findall(text))
+
+
+def check_skill_commands(vf, root=ROOT):
+    """Every `vf` command the skills name must exist, and each flag it uses must be documented."""
+    uses = {}
+    for location, command, flags in cli_uses(root):
+        uses.setdefault(command, []).append((location, flags))
+    generated = {command for command, operation in load_surface(root)["cli"]["commands"].items() if operation}
+    root_help = help_text(vf, [], "--help")
+    assert root_help.returncode == 0, root_help.stderr
+    global_flags = documented_flags(root_help.stdout)
+    problems = []
+    for command in sorted(uses):
+        words = command.split()
+        result = help_text(vf, words, "--help")
+        # The CLI prints the parent's help, with exit 0, for an unknown subcommand.
+        if result.returncode != 0 or not re.search(
+                rf"^\s+{re.escape(' '.join(['vf', *words]))}(?:\s|$)", result.stdout, re.M):
+            problems.extend(f"{location}: `vf {command} --help` does not describe that command"
+                            for location, _ in uses[command])
+            continue
+        known = global_flags | documented_flags(result.stdout)
+        # Only generated commands print a usage schema; hand-written ones would run instead.
+        if command in generated:
+            usage = help_text(vf, words, "--usage")
+            if usage.returncode == 0:
+                known |= documented_flags(usage.stdout)
+        problems.extend(f"{location}: `vf {command}` has no {flag} flag"
+                        for location, flags in uses[command] for flag in flags if flag not in known)
+    assert not problems, "\n".join(problems)
+    return len(uses)
 
 
 def main():
@@ -28,6 +73,7 @@ def main():
         result = subprocess.run([args.vf, *command], capture_output=True, text=True, encoding="utf-8", timeout=10, check=True)
         if command[:2] == ["auth", "login"]:
             assert all(flag in result.stdout for flag in ("--no-browser", "--login-timeout"))
+    skill_commands = check_skill_commands([args.vf])
     requested = []
     scenario = {"status": 200, "body": {"workspaces": []}}
 
@@ -118,7 +164,9 @@ def main():
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
-    print("CLI help, five connection scenarios, three malformed responses, and four widget contracts passed against localhost; no Voiceflow account was contacted.")
+    print(f"CLI help, {skill_commands} skill command paths and their flags, five connection scenarios, "
+          "three malformed responses, and four widget contracts passed against localhost; "
+          "no Voiceflow account was contacted.")
 
 
 if __name__ == "__main__":
