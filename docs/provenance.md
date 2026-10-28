@@ -54,6 +54,15 @@ repository checks. The [widget acceptance protocol](../evals/widget-protocol.md)
 records the next behavioral and live-platform checks; they are not claimed as
 passed by the unit suite.
 
+## Creator skill sync
+
+Later changes to the Creator skill library are adapted by a scheduled sync.
+Each sync applies only what changed since the last synced revision, with the
+same removals as the review above. Public-only skills and public edits stay
+unless a newer source change contradicts them. The last sync covered revision
+`da3aa8b2a244987908dfbac77182f5c19a0ba2a3` from 2026-10-28;
+[creator-sync.json](creator-sync.json) holds the sync state.
+
 ## Packaging references
 
 - [Agent Plugins specification](https://agent-plugins.org/)

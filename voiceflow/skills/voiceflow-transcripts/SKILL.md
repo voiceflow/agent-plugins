@@ -29,6 +29,17 @@ Distinguish counts over the whole requested population from observations in a
 sample. Do not generalize a few hand-picked failures into a measured failure rate.
 Paginate intentionally and state coverage when limits prevent a complete review.
 
+When you need certain log entries rather than a whole conversation, use
+`voiceflow_transcript.query_logs`: what went wrong
+(`levels: ["fatal", "error", "warn"]`), one turn (`turns: [3]`), tool calls or
+variable changes (`debugKinds: ["tool"]` or `["variables"]`), or plain text
+(`search`, ignoring case, with `|` between alternatives). Page with `offset`.
+Every result also counts the whole log's entries and reports its token use per
+model. Every input starts a turn, the launch included, so the user's first
+message is usually turn 2: find the turn the user means with `kinds: ["user"]`
+or `search` before reading it with `turns`. CLI 0.287.0 has no command for this;
+use `vf transcript get` there.
+
 For debugging, inspect the smallest relevant tool request/result and associated
 state changes. Do not assume a current draft matches the version that generated
 an older transcript. Use [debug](../voiceflow-debug/SKILL.md) for fixes and

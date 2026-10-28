@@ -40,8 +40,43 @@ bindings; changing one does not configure every playbook using the same tool.
 Order dependent tool calls. Do not assume two calls in one parallel batch see
 each other's captured writes. Re-read after UI edits if captures appear lost.
 
+An attachment update changes only the fields you send. `inputVariables`,
+`captureResponse` and `captureInputVariables` merge by key: send only the
+entries you change, and `null` for an entry to remove it. Any other field you
+send replaces the stored one. To drop a phantom input keyed by a name, send
+that key as `null`; leaving it out keeps it. A `required: false` input also
+needs a `defaultValue`, or the run fails with a missing input value.
+
+## Progress and counters
+
+A playbook cannot set a variable. Only a tool's captured response, a
+`captureInputVariables` entry, or a workflow Set step writes one, so an
+instruction such as "add the answer to {evidence}" does nothing. To track
+progress, use one function per event:
+
+- The model sends only the new event as one `required: true` input, never the
+  running totals.
+- Each stored value comes in as its own `required: false` input with a default
+  such as `{attempts}`, so the model never sees or retypes it.
+- The code returns the new value, such as a count plus one or a JSON list with
+  the new item, as a string or number, and `captureResponse` writes it back to
+  the same variable.
+- A gate, such as a routing rule or exit condition, reads the stored value,
+  for example `attempts` at 3 or more, never a flag the model sets.
+
+Treat `""`, `"0"`, and invalid JSON as empty, because an unset variable arrives
+as `0`. Call the function once per turn: two calls in one batch both read the
+value from the start of the turn, so one update is lost. A tool that takes the
+whole stored list from the model loses everything on one blank argument.
+
+## Check the wiring
+
 Prefer the smallest relevant inspection over sweeping the whole project. Verify
 UUIDs, WHAT + WHEN descriptions, references, captures, and route coverage before
-running anything.
+running anything. For a full check, list each agent's and playbook's tools,
+read their attachments, and list the project variables. Compare input defaults
+and captures with the declared variables, and check `unresolvedReferences` in
+write results. Proven designs are in [patterns](references/patterns.md); common
+mistakes and their fixes are in [anti-patterns](references/anti-patterns.md).
 
 Source: [References](https://www.voiceflow.com/docs/documentation/build/editor/references).

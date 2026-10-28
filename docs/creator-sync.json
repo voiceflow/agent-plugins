@@ -1,0 +1,11 @@
+{
+  "creator_revision": "da3aa8b2a244987908dfbac77182f5c19a0ba2a3",
+  "creator_revision_date": "2026-10-28",
+  "creator_skills_tree": "28a4a4357895db3ce23953cfdd6a00094107991d",
+  "schema": 1,
+  "surface": {
+    "cli": "0.287.0",
+    "mcp": "voiceflow/cli v0.303.0 .speakeasy/out.openapi.yaml"
+  },
+  "synced_at": "2026-10-28"
+}

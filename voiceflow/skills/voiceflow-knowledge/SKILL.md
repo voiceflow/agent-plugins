@@ -19,6 +19,13 @@ existing documents before importing duplicates.
 For MCP text import, use the [verified file shape](../voiceflow/references/request-shapes.md#import-a-text-document-over-mcp);
 the hosted tool can upload inline text without a local CLI or public URL.
 
+To import a whole website, a section of one, or a sitemap.xml, use
+`voiceflow_document.create_managed_sitemap`. It creates one sitemap document
+that owns its pages and re-syncs them, and
+`voiceflow_document.update_managed_sitemap` changes which pages it keeps and how
+often it re-syncs. Never import a site by adding its pages one by one as URL
+documents.
+
 Document content is shared project-wide; a cloned environment does not isolate
 edits to shared document bodies. Environment membership and metadata may be
 scoped separately. Explain this blast radius before changing shared content
@@ -37,6 +44,13 @@ Prefer durable source corrections over stuffing large documents into prompts.
 Check stale duplicates and obsolete sources before adding more material.
 Deleting a document is a separate destructive operation; don't treat it as a
 routine refresh if an update is supported.
+
+To change what a text or markdown document says, send its whole new text as
+`content` to `voiceflow_document.update`. A document read returns its chunks,
+not its source text, so never rebuild the text from them. Send `content` only
+when you have the whole new text: from the user, or from a document of one
+chunk without smart chunking. Otherwise ask the user for the full text. Do not
+delete and re-create a document to change its text, because it gets a new ID.
 
 Sources: [Importing data](https://www.voiceflow.com/docs/documentation/build/importing-data-sources),
 [Querying knowledge](https://www.voiceflow.com/docs/documentation/build/querying-the-knowledge-base).

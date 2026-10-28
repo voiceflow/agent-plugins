@@ -43,6 +43,55 @@ Messages and prompts are separate resources in relevant step schemas. Create
 or reuse them through their supported operations; don't insert a guessed text
 field into a step payload.
 
+## Reading
+
+`voiceflow_workflow.get` and `voiceflow_workflow.get_step` answer most
+questions. `voiceflow_workflow.get_raw` returns the stored canvas nodes with
+their coordinates; it is long and unprocessed. Use it only when the other reads
+cannot answer, such as where blocks sit, send `blockIDs` for the blocks you
+need, and never plan an edit from it. To find where a word, phrase, or ID is
+used across the project, see [messages](../voiceflow-messages/SKILL.md#find-text-and-owners).
+
+## Editing
+
+- To say something and end, use a Message step with its own message, then an
+  End step. Never give a new End step a message.
+- When the user wants a Message step's words gone, delete the step; do not
+  keep it silent. A speaking End step is the exception, because deleting it
+  leaves the path with no ending: keep it and send
+  `"content": {"messageID": null, "responseEnabled": false}` with
+  `voiceflow_workflow.update_step`. An update keeps every field you leave out.
+- `voiceflow_workflow.add_blocks` adds up to 20 blocks with their steps, links
+  between them, and `from` ports that link existing ports to them. Create their
+  messages first, in one batch. `voiceflow_workflow.link_many` sets up to 50
+  links in one write.
+- To change an exit action's kind, use `voiceflow_workflow.replace_action`. It
+  keeps the action's place in one write. Deleting and re-adding leaves the path
+  running without the action in between.
+- Arrange blocks with `voiceflow_workflow.arrange_blocks` only when the user asks
+  to tidy the canvas. Pass `blockIDs` when they mean some blocks; without them
+  every block moves, including ones the user placed by hand.
+- `voiceflow_workflow.duplicate` copies a workflow with its own messages,
+  prompts, and playbooks, and maps each original ID to the copy's. Edit the copy
+  through those IDs. To route to the copy, send every workflow already in the
+  agent's `workflows` list plus the copy; the copy alone replaces the list.
+
+CLI 0.287.0 has no commands for the raw read, adding several blocks, several
+links, replacing an action, arranging, or duplicating; use the single-item
+commands there.
+
+## Workflow tools
+
+When the user asks for a workflow tool rather than a routing entry, attach it
+with `voiceflow_tool.create`, type `workflow`, `target: {"global": true}`, the
+`workflowID`, and a `description` that says when to run it. The main agent and
+every playbook can then call it, so add no routing rule. Never send a
+`playbookID`: playbooks do not take a workflow tool of their own. Without a
+description the tool falls back to the workflow's own, which rarely says when.
+Do not name the workflow in instructions either: a workflow name there resolves
+only for workflows in the agent's `workflows` list. To undo it, delete the tool
+with the ID the create returned.
+
 Verification starts with read-back topology and reference checks. A runtime
 test can invoke real integrations; scope it with [evaluations](../voiceflow-evaluations/SKILL.md)
 only when the user requested testing.
