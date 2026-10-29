@@ -5,7 +5,8 @@
   "schema": 1,
   "surface": {
     "cli": "0.287.0",
-    "mcp": "voiceflow/cli v0.303.0 .speakeasy/out.openapi.yaml"
+    "mcp": "voiceflow/cli v0.303.0 .speakeasy/out.openapi.yaml",
+    "sha256": "33091c5019bb0cae378b345181daa49c21b989dbb22c6fcab263854ee7c1b934"
   },
   "synced_at": "2026-10-28"
 }

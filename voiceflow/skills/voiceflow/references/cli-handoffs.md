@@ -71,7 +71,12 @@ version, which serves live traffic; `--version-variant draft` alone sets the
 `--environment-alias ALIAS --version-variant draft` (or `published`). Each
 version keeps its own value, and publishing does not copy a draft value, so set
 every version the tool runs in. The UI step is Agent settings → Secrets.
-Confirm with `voiceflow_secret.list`: the secret reports `hasValue`.
+
+Confirm with the read that matches the write; neither returns the value. After
+a write with `--environment-alias` or `--version-variant draft`, read
+`voiceflow_secret.list_overrides`: it lists the secret's ID under that
+environment and version. `voiceflow_secret.list` reports `hasValue` for the
+project-level value only, which a write without environment flags sets.
 
 ## Connect an api-key integration
 
@@ -138,13 +143,21 @@ number work over the MCP.
 The MCP refuses a header value that is literal text with no `{name}` reference.
 For a credential header, store the credential in a secret (see
 [above](#set-a-secret-value)) and send the header value as `{ORDERS_API_KEY}`,
-or `Bearer {ORDERS_API_KEY}`, with `voiceflow_mcp_server.create` or
-`voiceflow_mcp_server.update`.
+or `Bearer {ORDERS_API_KEY}`, with `voiceflow_mcp_server.create`, or with
+`voiceflow_mcp_server.update` on a server that has no headers yet.
 
-A header that is not a credential, such as a region, goes in Agent settings →
-MCP servers, or in this command. Send the complete list: read the server first
-and keep its existing headers.
+A `headers` list replaces every header the server has. A read returns each
+header's key but `[redacted]` in place of every value, secret references
+included, and an update that sends `[redacted]` back is refused. So you cannot
+keep the existing headers yourself. Never send a partial list: the headers you
+leave out are deleted. To change only the name or URL, leave `headers` out.
+
+To add or change a header on a server that already has headers, or to add one
+that is not a credential, such as a region, send the user to the Voiceflow UI:
+open the agent, select Settings in the sidebar, then MCP servers. Or have the
+user re-enter every header, old and new, in this command. A credential stays a
+`{name}` reference to a secret, never literal text:
 
 ```sh
-vf mcp-server update --server-id SERVER_ID --project-id PROJECT_ID --environment-alias ALIAS --headers '[{"key":"X-Region","value":"eu-west"}]'
+vf mcp-server update --server-id SERVER_ID --project-id PROJECT_ID --environment-alias ALIAS --headers '[{"key":"Authorization","value":"Bearer {ORDERS_API_KEY}"},{"key":"X-Region","value":"eu-west"}]'
 ```
