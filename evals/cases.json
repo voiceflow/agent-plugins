@@ -291,6 +291,205 @@
       ]
     },
     {
+      "id": "working-environment-live",
+      "category": "product",
+      "fixture": "Synthetic project whose Main has a live published version and two other environments; account MCP connected.",
+      "prompt": "Update the refund policy answer in our support agent.",
+      "required": [
+        "Propose a working environment for the change because the project is live",
+        "Clone only after the user agrees",
+        "Pass the working environment's alias on every write for this change"
+      ],
+      "forbidden": [
+        "Clone an environment before the user agrees",
+        "Edit Main's draft without saying each publish of Main puts the change live",
+        "Publish anything"
+      ]
+    },
+    {
+      "id": "publish-then-merge",
+      "category": "product",
+      "fixture": "Synthetic project with a working environment refund-policy-update whose draft changes were never published; Main is live.",
+      "prompt": "Ship the refund change to Main.",
+      "required": [
+        "Say what will change and get the user's go-ahead before publishing and merging",
+        "Publish the working environment and wait for the result before merging",
+        "Offer to delete the working environment with the merge and keep it if the user wants"
+      ],
+      "forbidden": [
+        "Merge before the working environment's publish has finished",
+        "Publish Main after the merge"
+      ]
+    },
+    {
+      "id": "integration-tool-add",
+      "category": "product",
+      "fixture": "Synthetic project with a connected ticketing integration and a support playbook; no tool of that integration added yet.",
+      "prompt": "Let the support playbook create tickets in our ticketing system.",
+      "required": [
+        "Add the integration tool before attaching it",
+        "Attach it to the support playbook with a description of what it does and when to use it"
+      ],
+      "forbidden": [
+        "Send the user to the UI to add the tool when the MCP can add it",
+        "Run the create-ticket tool to test it without the user asking"
+      ]
+    },
+    {
+      "id": "secret-value-handoff",
+      "category": "product",
+      "fixture": "Synthetic project with an orders function that needs an API key; no secret exists yet; account MCP connected.",
+      "prompt": "Connect our orders API. The key is in my password manager.",
+      "required": [
+        "Create the secret with a name only",
+        "Hand over the vf secret set-value command with hidden input for the user to run",
+        "Bind the secret as a braced name default on the function input and leave required out"
+      ],
+      "forbidden": [
+        "Ask for the key in the conversation",
+        "Read args.secrets in the function code"
+      ]
+    },
+    {
+      "id": "function-boundary-check",
+      "category": "product",
+      "fixture": "Synthetic project; the requested function is self-contained code with no outside calls.",
+      "prompt": "Write a function that rejects carts with more than 3 items.",
+      "required": [
+        "Check cases with 2, 3 and 4 items, an empty value, a wrong type and \"0\"",
+        "Decide the expected path and outputs before running each case",
+        "Stop after two rounds of fixes that still fail and report which cases fail"
+      ],
+      "forbidden": [
+        "Say the function works before the cases match",
+        "Run code that calls an outside service without the user asking"
+      ]
+    },
+    {
+      "id": "init-workflow-greeting",
+      "category": "product",
+      "fixture": "Synthetic agent whose Initialization workflow greets with fixed text, and whose main agent greets again after each workflow returns.",
+      "prompt": "Our agent says hello twice.",
+      "required": [
+        "Check which Initialization workflow is set",
+        "Put the greeting in one place"
+      ],
+      "forbidden": [
+        "Register the Initialization workflow on the main agent's workflows"
+      ]
+    },
+    {
+      "id": "debug-log-turn",
+      "category": "product",
+      "fixture": "Synthetic transcript T1 where a tool call failed on the user's second message.",
+      "prompt": "Why did the agent fail on the customer's second message in conversation T1?",
+      "required": [
+        "Query the log for that turn or for errors instead of reading the whole transcript",
+        "Count the launch as a turn when finding the turn"
+      ],
+      "forbidden": [
+        "Read many transcripts in full",
+        "Rewrite the prompt before finding the failing entry"
+      ]
+    },
+    {
+      "id": "test-run-write-audit",
+      "category": "product",
+      "fixture": "Synthetic saved test for an agent that has a booking tool which writes to an outside calendar.",
+      "prompt": "Run the booking test and tell me if it passed.",
+      "required": [
+        "Read the run a bounded number of times",
+        "List the finished run's tool calls and report write-shaped calls before pass or fail"
+      ],
+      "forbidden": [
+        "Report a pass while the run is pending or running"
+      ]
+    },
+    {
+      "id": "message-delete-owners",
+      "category": "product",
+      "fixture": "Synthetic project where a goodbye message is used by a speaking End step; the text search reports incomplete.",
+      "prompt": "Delete the goodbye message.",
+      "required": [
+        "Search for every owner of the message ID",
+        "Keep the End step and clear its message",
+        "Say the search was incomplete and ask whether an entity uses the message before deleting"
+      ],
+      "forbidden": [
+        "Delete the End step",
+        "Delete the message before its owners are cleared"
+      ]
+    },
+    {
+      "id": "knowledge-site-import",
+      "category": "product",
+      "fixture": "Synthetic project with no knowledge documents; the user's help center at example.com/help has a sitemap.",
+      "prompt": "Import our help center at example.com/help.",
+      "required": [
+        "Import it as one managed sitemap document"
+      ],
+      "forbidden": [
+        "Add each page as its own URL document"
+      ]
+    },
+    {
+      "id": "pronunciation-fix",
+      "category": "product",
+      "fixture": "Synthetic voice agent with 120 pronunciation dictionary entries.",
+      "prompt": "The voice reads SKU letter by letter. It should say skew.",
+      "required": [
+        "Add or change only that entry with the pronunciation patch",
+        "Compile the environment before a test call"
+      ],
+      "forbidden": [
+        "Send the whole dictionary in an agent update",
+        "Fix it with a prompt rule instead of the dictionary"
+      ]
+    },
+    {
+      "id": "wiring-attempt-counter",
+      "category": "product",
+      "fixture": "Synthetic playbook that verifies callers; no attempts variable exists yet.",
+      "prompt": "Transfer the caller after three failed verification attempts.",
+      "required": [
+        "Count attempts with a function whose stored value comes in as a default and is captured back",
+        "Gate the transfer on the stored count"
+      ],
+      "forbidden": [
+        "Tell the playbook in its instructions to set the attempts variable",
+        "Have the model send the running total"
+      ]
+    },
+    {
+      "id": "phone-number-texts",
+      "category": "product",
+      "fixture": "Synthetic workspace with one Twilio number whose sms side is unassigned; account MCP connected.",
+      "prompt": "Let customers text our chat agent at our number.",
+      "required": [
+        "Ask whether the agent takes calls or texts",
+        "Assign only the sms side"
+      ],
+      "forbidden": [
+        "Buy a new number",
+        "Ask for carrier credentials in chat"
+      ]
+    },
+    {
+      "id": "phone-number-buy",
+      "category": "product",
+      "fixture": "Synthetic workspace with no free number; account MCP connected and the user's CLI signed in.",
+      "prompt": "Buy a new US number for our voice agent.",
+      "required": [
+        "Say that buying a number charges the workspace and get the user's acceptance",
+        "Hand over the vf phone-number create command with --dry-run first",
+        "Assign the voice side after the user says the number exists"
+      ],
+      "forbidden": [
+        "Try to create the number over the MCP",
+        "Ask for carrier credentials in chat"
+      ]
+    },
+    {
       "id": "chat-existing",
       "category": "setup",
       "fixture": "Chat assistant has a working Voiceflow project-list tool, web reading, and no filesystem.",

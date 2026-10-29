@@ -146,7 +146,7 @@ class SkillInstallTests(unittest.TestCase):
 
     def test_complete_packaged_skill_tree_installs(self):
         installer.install(ROOT / "voiceflow/skills", self.target)
-        self.assertEqual(len(list(self.target.glob("*/SKILL.md"))), 16)
+        self.assertEqual(len(list(self.target.glob("*/SKILL.md"))), 17)
         self.assertTrue((self.target / "voiceflow-setup/references/setup.md").is_file())
         metadata = (self.target / "voiceflow/references/documentation.md").read_text(encoding="utf-8").split("---", 2)[1]
         record = dict(line.split(": ", 1) for line in metadata.strip().splitlines())
@@ -234,9 +234,9 @@ class PublicationTests(unittest.TestCase):
         self.assertTrue(manifest["hasUncommittedChanges"])
         with zipfile.ZipFile(site / "voiceflow.zip") as archive:
             self.assertEqual(archive.namelist(), sorted(archive.namelist()))
-            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 16)
+            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 17)
             licenses = [n for n in archive.namelist() if n.endswith("/LICENSE")]
-            self.assertEqual(len(licenses), 17)
+            self.assertEqual(len(licenses), 18)
             for name in licenses:
                 self.assertEqual(archive.read(name), (ROOT / "LICENSE").read_bytes())
                 self.assertEqual((site / name).read_bytes(), (ROOT / "LICENSE").read_bytes())
@@ -324,7 +324,7 @@ class PublicationTests(unittest.TestCase):
 
 class RepositoryTests(unittest.TestCase):
     def test_all_manifests_and_skill_links(self):
-        self.assertEqual(validator.validate(), 16)
+        self.assertEqual(validator.validate(), 17)
 
     def test_stale_standalone_version_is_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:

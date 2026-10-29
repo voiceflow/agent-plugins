@@ -2,7 +2,7 @@
 
 Connect Voiceflow. Tell your assistant what you want to build.
 
-A shared setup guide and sixteen skills help coding agents and chat assistants
+A shared setup guide and seventeen skills help coding agents and chat assistants
 build, customize, test, and improve Voiceflow agents. Setup chooses the connection
 that works in your current app, reuses existing access, and asks you to complete
 browser sign-in only when needed.
@@ -66,7 +66,8 @@ remain experimental.
 
 The [skill index](voiceflow/skills/voiceflow/SKILL.md) covers setup, building,
 prompts, workflows, functions, integrations, knowledge, messages, voice,
-widgets, debugging, transcripts, evaluations, environments, and wiring.
+widgets, debugging, transcripts, evaluations, environments, phone numbers, and
+wiring.
 
 The [widget guide](voiceflow/skills/voiceflow-widget/SKILL.md) covers Webflow,
 Framer, WordPress, Shopify, Wix, Squarespace, HTML/Astro, and React/Next.js.

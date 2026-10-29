@@ -20,6 +20,17 @@ Read the [operation contract](../voiceflow/references/operations.md). Inspect
 available integrations and their schemas before writing a custom API/function.
 A connection is not an attached agent tool: verify both.
 
+Attaching an integration tool takes two steps. First add it with
+`voiceflow_integration.add_tool`, using a `toolName` that
+`voiceflow_integration.get_schema` lists. It returns the tool's
+`integrationToolID`; for a tool already added it returns the existing ID and
+changes nothing. It refuses an integration the workspace does not have enabled;
+say so and choose another kind of tool. Then attach it with
+`voiceflow_tool.create`, type `integration`, and wire its inputs and outputs.
+CLI 0.287.0 has no command for the first step; the user adds the tool in the
+agent's Tools in the Voiceflow UI. The tool works only once the integration is
+connected, so connect it first.
+
 Use an existing integration when it supports the task; an API tool for a plain
 request; a function for logic; an MCP tool for a supported remote capability.
 Do not confuse the coding agent's Voiceflow MCP connection with an MCP server
@@ -29,6 +40,12 @@ The user completes third-party OAuth or enters secret values in the secure
 Voiceflow interface. Never request credentials in conversation. If the public
 API cannot establish a connection, give the precise remaining UI step, then
 resume inspection after it exists. Don't invent a private connection helper.
+The MCP refuses to carry credentials. Hand a secret value or an api-key
+connection to the user as a `vf` command they run in their own terminal, and
+send OAuth and app integrations to the Voiceflow UI, as the
+[CLI handoffs](../voiceflow/references/cli-handoffs.md) describe. The same file
+covers MCP server headers. A handed-over command is not a connection: confirm
+it with a read afterwards.
 
 API-tool fields reference the tool's declared input variables. Bind project
 variables or secrets through defaults on each attachment, not by assuming a

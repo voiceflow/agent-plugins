@@ -31,6 +31,7 @@ only the specialist relevant to the task:
 | Import and query documents | [Knowledge](../voiceflow-knowledge/SKILL.md) |
 | Edit reusable messages and prompts | [Messages](../voiceflow-messages/SKILL.md) |
 | Configure spoken conversations | [Voice](../voiceflow-voice/SKILL.md) |
+| Give an agent a phone number for calls or texts | [Phone numbers](../voiceflow-phone-numbers/SKILL.md) |
 | Install, customize, or troubleshoot a website widget | [Widget](../voiceflow-widget/SKILL.md) |
 | Diagnose behavior | [Debug](../voiceflow-debug/SKILL.md) |
 | Review customer conversations | [Transcripts](../voiceflow-transcripts/SKILL.md) |
