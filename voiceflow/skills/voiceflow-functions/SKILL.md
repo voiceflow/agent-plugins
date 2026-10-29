@@ -40,7 +40,7 @@ and paths, then create the attachment with a WHAT + WHEN description. Read
 
 Secrets arrive through declared inputs bound to secret references on the
 attachment; never read `args.secrets`. For the binding and its failure modes,
-read [secrets](references/secrets.md). Tests may call real services, so use
+read [secrets](references/sensitive-inputs.md). Tests may call real services, so use
 fixtures first and only execute an integration with task authorization.
 
 ## Check a function

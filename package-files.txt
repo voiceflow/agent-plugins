@@ -18,7 +18,7 @@ voiceflow/skills/voiceflow-evaluations/SKILL.md
 voiceflow/skills/voiceflow-functions/LICENSE
 voiceflow/skills/voiceflow-functions/SKILL.md
 voiceflow/skills/voiceflow-functions/references/custom-traces.md
-voiceflow/skills/voiceflow-functions/references/secrets.md
+voiceflow/skills/voiceflow-functions/references/sensitive-inputs.md
 voiceflow/skills/voiceflow-integrations/LICENSE
 voiceflow/skills/voiceflow-integrations/SKILL.md
 voiceflow/skills/voiceflow-knowledge/LICENSE
