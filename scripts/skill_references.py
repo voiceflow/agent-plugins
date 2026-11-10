@@ -1,8 +1,12 @@
-"""Check that packaged Markdown names only real MCP operations, CLI commands, skills, and files.
+"""Check that packaged Markdown names only real MCP tools, CLI commands, skills, and files.
 
-The surface snapshot comes from scripts/refresh_surface.py. Every problem is reported as
-`path:line: reason`, so one run lists everything to fix.
+The surface snapshot comes from scripts/refresh_surface.py. The account MCP serves v3
+tool names: the operation `<operation>` of the snapshot tool `voiceflow_<group>` is the
+v3 tool `vf_<group>_<operation>`, and v3 adds the tools in V3_META_TOOLS. A `vf_*` name
+passes only when v3 serves it, so an operation the MCP always refuses does not pass.
+Every problem is reported as `path:line: reason`, so one run lists everything to fix.
 """
+import fnmatch
 import json
 from pathlib import Path
 from urllib.parse import unquote
@@ -10,8 +14,10 @@ import re
 import unicodedata
 
 SURFACE = Path("tests/fixtures/voiceflow-surface.json")
+V3_META_TOOLS = frozenset({"vf_describe_operations", "vf_get_started", "vf_skill_list", "vf_skill_load"})
+V3_TOKEN = re.compile(r"(?<![\w{])vf_[a-z][a-z0-9_*]*")
 INTERNAL_NAMES = re.compile(
-    r"\b(?:vf_[a-z]+_\w*|describe_operations|audit_wiring|propose_test|skill_read"
+    r"\b(?:describe_operations|audit_wiring|propose_test|skill_read"
     r"|request_(?:secret|integration|mcp_server|phone_number)|grep_transcripts"
     r"|get_debug_transcript|get_transcript_from_url|diff_environments|check_function"
     r"|wait_for_test_runs|ask_question|set_plan|clear_plan|show_[a-z_]+|Atlas|GLM)\b"
@@ -37,6 +43,26 @@ BACKTICKS = re.compile(r"`+")
 
 def load_surface(root):
     return json.loads((root / SURFACE).read_text(encoding="utf-8"))
+
+
+def v3_slugs(tools):
+    """Map each v3 tool name to its snapshot slug, `vf_<group>_<operation>` to `voiceflow_<group>.<operation>`.
+
+    Both halves can hold underscores, so a name goes to the longest group first, as the server names them.
+    """
+    slugs = {}
+    for tool in sorted(tools, key=len, reverse=True):
+        group = tool[len("voiceflow_"):]
+        for operation in sorted(tools[tool]):
+            slugs.setdefault(f"vf_{group}_{operation}", f"{tool}.{operation}")
+    return slugs
+
+
+def v3_names(surface):
+    """Every tool name the account MCP v3 serves: each operation the MCP does not always refuse, and the meta tools."""
+    refused = surface["mcp"]["refused"]
+    return frozenset(name for name, slug in v3_slugs(surface["mcp"]["tools"]).items()
+                     if (refused.get(slug) or {}).get("when") != "always") | V3_META_TOOLS
 
 
 def parse(text):
@@ -199,6 +225,8 @@ class Checker:
         self.skills = self.plugin / "skills"
         self.tools = {tool: set(names) for tool, names in surface["mcp"]["tools"].items()}
         self.refused = surface["mcp"]["refused"]
+        self.slugs = v3_slugs(self.tools)
+        self.served = v3_names(surface)
         self.commands = set(surface["cli"]["commands"])
         self.groups = {" ".join(command.split()[:size]) for command in self.commands
                        for size in range(1, len(command.split()))}
@@ -227,6 +255,8 @@ class Checker:
         for number, line in enumerate(text.splitlines(), 1):
             for match in INTERNAL_NAMES.finditer(line):
                 report(number, f"internal name \"{match.group()}\" is not public")
+            for match in V3_TOKEN.finditer(line):
+                self.check_v3_name(match.group(), number, report)
         for number, content, adjacent, command, named_skill in prose_spans(prose):
             self.check_span(path, content, adjacent, command, named_skill, number, report)
         for start, block in prose:
@@ -266,6 +296,20 @@ class Checker:
         if refusal and refusal["when"] == "always":
             command = f"; name the CLI command \"vf {refusal['cli']}\" instead" if refusal.get("cli") else ""
             report(number, f"MCP always refuses \"{reference}\"{command}")
+
+    def check_v3_name(self, name, number, report):
+        if "*" in name:
+            if not any(fnmatch.fnmatchcase(served, name) for served in self.served):
+                report(number, f"no MCP v3 tool matches \"{name}\"")
+            return
+        if name in self.served:
+            return
+        refusal = self.refused.get(self.slugs.get(name, ""))
+        if refusal and refusal["when"] == "always":
+            command = f"; name the CLI command \"vf {refusal['cli']}\" instead" if refusal.get("cli") else ""
+            report(number, f"MCP always refuses \"{name}\"{command}")
+            return
+        report(number, f"unknown MCP tool \"{name}\"")
 
     def check_commands(self, text, number, report):
         for command, _ in cli_invocations(text):

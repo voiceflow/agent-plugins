@@ -159,13 +159,38 @@ class CheckTests(unittest.TestCase):
 
     def test_internal_names_are_denied(self):
         self.assertProblems(
-            "Call `vf_agent_get` or describe_operations.\nAtlas uses GLM in Safe mode.\n\n"
+            "Call audit_wiring or describe_operations.\nAtlas uses GLM in Safe mode.\n\n"
             "```\nautonomous mode\n```\nAn atlas of maps and request_secrets stay public.\n",
-            [(1, "internal name \"vf_agent_get\" is not public"),
+            [(1, "internal name \"audit_wiring\" is not public"),
              (1, "internal name \"describe_operations\" is not public"),
              (2, "internal name \"Atlas\" is not public"), (2, "internal name \"GLM\" is not public"),
              (2, "internal name \"Safe mode\" is not public"),
              (5, "internal name \"autonomous mode\" is not public")])
+
+    def test_v3_names_the_mcp_serves_pass(self):
+        self.assertProblems(
+            "Call `vf_agent_get`, then vf_agent_update with `body`.\n"
+            "List with `vf_transcript_property_list`; create a secret with `vf_secret_create` and a name only.\n"
+            "Read a schema with `vf_describe_operations`; start with vf_get_started, vf_skill_list or vf_skill_load.\n"
+            "The `vf_agent_*` tools read and write the agent. `{vf_now}` is a variable.\n\n"
+            "```json\n{\"tool\": \"vf_transcript_get\"}\n```\n", [])
+
+    def test_v3_names_the_mcp_does_not_serve(self):
+        self.assertProblems(
+            "Call `vf_agent_delete` or vf_robot_get.\nNever `vf_secret_set_value`.\n"
+            "The `vf_robot_*` tools.\n\n```\nvf_transcript_grep\n```\n",
+            [(1, "unknown MCP tool \"vf_agent_delete\""), (1, "unknown MCP tool \"vf_robot_get\""),
+             (2, "MCP always refuses \"vf_secret_set_value\"; name the CLI command \"vf secret set-value\" instead"),
+             (3, "no MCP v3 tool matches \"vf_robot_*\""), (6, "unknown MCP tool \"vf_transcript_grep\"")])
+
+    def test_v3_names_split_at_the_longest_group(self):
+        surface = {**SURFACE, "mcp": {**SURFACE["mcp"], "tools": {
+            "voiceflow_transcript": ["property_list"], "voiceflow_transcript_property": ["list"]}}}
+        self.assertEqual(references.v3_slugs(surface["mcp"]["tools"])["vf_transcript_property_list"],
+                         "voiceflow_transcript_property.list")
+        self.assertEqual(references.v3_names(SURFACE) - references.V3_META_TOOLS, {
+            "vf_agent_get", "vf_agent_update", "vf_secret_create", "vf_transcript_get",
+            "vf_transcript_property_list"})
 
 
 class ValidateOutputTests(unittest.TestCase):
