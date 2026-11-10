@@ -58,20 +58,24 @@ Read the complete existing routing registry before updating it: a supplied
 playbooks/workflows list replaces the list. Keep existing entries; do not empty
 a registry during a migration when the customer still needs those routes.
 
-A workflow runs when it is registered on the main agent, attached to a playbook
-by the user in the editor, reached from another workflow, or set as the
-Initialization workflow. Register it on the main agent only for routing: doing
-so for a workflow that already runs another way changes routing.
+A workflow runs when it is registered on the main agent, attached to the main
+agent as a [workflow tool](../voiceflow-workflows/SKILL.md#workflow-tools),
+which every playbook can call, reached from another workflow, or set as the
+Initialization workflow. Never attach a workflow tool to a playbook. Register a
+workflow on the main agent only for routing: doing so for a workflow that
+already runs another way changes routing.
 
 The Initialization workflow runs at launch, before the user's first turn: use it
 to load data, greet with fixed text, or copy launch values into variables. Read
-which one is set with `voiceflow_agent.get_initialization_workflow`. Build the
-workflow, then set it with `voiceflow_agent.set_initialization_workflow`. Only
-one is set: a new one replaces it, and `null` clears it. CLI 0.287.0 has no
-command for either; the UI step is the Initialization section of the agent's
-Behaviour settings. Values the widget or API pass at launch arrive in the
-`last_event` variable, not as variables of their own. To use one, add a Code
-step to that workflow that copies it from `last_event.payload` into a variable.
+which one is set with `vf_agent_get_initialization_workflow`. Build the
+workflow, then set it with `vf_agent_set_initialization_workflow`. Only one is
+set: a new one replaces it, and `null` clears it. CLI 0.287.0 has no command
+for either; the UI step is the Initialization section of the agent's Behaviour
+settings. Values the widget or API pass at launch arrive in the `last_event`
+variable, not as variables of their own. To use one, add a Code step to that
+workflow that copies it from `last_event.payload` into a variable. A project
+with no Initialization setting refuses the set: then give the user the Code
+step's code and tell them where it goes.
 
 The main agent takes a turn at launch, after the Initialization workflow, and
 again each time a workflow returns to it. Put the greeting in one place: fixed

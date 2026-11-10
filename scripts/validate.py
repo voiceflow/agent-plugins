@@ -14,6 +14,7 @@ SKILL_NAMES = {
     "voiceflow-voice", "voiceflow-debug", "voiceflow-transcripts",
     "voiceflow-evaluations", "voiceflow-environments", "voiceflow-widget",
     "voiceflow-phone-numbers",
+    "voiceflow-optimize-playbooks",
 }
 LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 

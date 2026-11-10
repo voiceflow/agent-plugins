@@ -1,8 +1,10 @@
 # Request shapes for common product work
 
 These small examples were verified against hosted Voiceflow MCP and CLI 0.287.0
-on 2026-10-16. Use current schemas when they differ. Substitute IDs from live
-reads; the capitalized values below are placeholders, not customer resources.
+on 2026-10-16. The MCP then took each operation inside one grouped tool. The v3
+tools take the same fields without that wrapper, as the next section shows. Use
+current schemas when they differ. Substitute IDs from live reads; the
+capitalized values below are placeholders, not customer resources.
 Read only the section relevant to the task. These are examples, not a full API
 catalog or authorization to run them.
 
@@ -14,60 +16,58 @@ instructions. Reading only route metadata can hide the sample-company text that
 still controls the greeting.
 
 CLI: `agent get --include-prompt --include-instructions` with project/environment
-flags. MCP `voiceflow_agent` `get` places `includePrompt: true` and
-`includeInstructions: true` on `payload`, alongside project/environment.
+flags. MCP: `vf_agent_get` with `includePrompt: true` and
+`includeInstructions: true` beside `projectID` and `environmentAlias`.
 
-Update these fields with `voiceflow_agent` `update` and
-`payload.body: {"prompt":"<global instructions>","instructions":"<main-agent instructions>"}`,
+Update these fields with `vf_agent_update` and
+`body: {"prompt":"<global instructions>","instructions":"<main-agent instructions>"}`,
 or CLI `agent update --prompt '<global instructions>' --instructions '<main-agent instructions>'`.
 Read the full text first and preserve unrelated instructions; these fields
 replace their text. Omit settings and route arrays that do not need to change.
 Read back both fields explicitly, then compile before testing a fresh greeting.
 Changing the playbook name or project name alone does not change this identity.
 
-## MCP envelope and function declarations
+## MCP input and function declarations
 
-MCP operations use `operation.name` and `operation.payload`. Path/query fields
-belong in `payload`; write and execution parameters generally belong in
-`payload.body`. A function's `get_schema` describes its execution inputs and
-outputs, not the request schema for creating or attaching it.
+Each MCP v3 tool runs one operation and is named `vf_<group>_<operation>`.
+Path and query fields, such as `projectID` and `environmentAlias`, sit at the
+top level of the tool's input. Write and execution parameters generally belong
+in `body`. Many tools list a short schema; read the full one with
+`vf_describe_operations` before a tool's first call. A function's
+`vf_function_get_schema` describes its execution inputs and outputs, not the
+request schema for creating or attaching it.
 
-For `voiceflow_function`, execute a declared input by its name:
+For `vf_function_execute`, execute a declared input by its name:
 
 ```json
 {
-  "operation": {
-    "name": "execute",
-    "payload": {
-      "projectID": "PROJECT_ID",
-      "environmentAlias": "ENVIRONMENT_ALIAS",
-      "functionID": "FUNCTION_ID",
-      "body": {"inputs": {"email": "  ADA@EXAMPLE.TEST  "}}
-    }
-  }
+  "projectID": "PROJECT_ID",
+  "environmentAlias": "ENVIRONMENT_ALIAS",
+  "functionID": "FUNCTION_ID",
+  "body": {"inputs": {"email": "  ADA@EXAMPLE.TEST  "}}
 }
 ```
 
-Putting `inputs` or `inputVars` directly on `payload` does not supply the
-execution body. CLI equivalents use `function execute --inputs '<JSON>'`.
+Send `inputs` inside `body`; `inputVars` is not an execution field. CLI
+equivalents use `function execute --inputs '<JSON>'`.
 
-For the same MCP tool's `create_variable`, the body is
+For `vf_function_create_variable`, the body is
 `{"functionID":"FUNCTION_ID","name":"email","type":"input"}`.
 Use `type: "output"` for output declarations. This type selects the declaration
-direction, not a JSON scalar type. For `create_path`, the body is
-`{"functionID":"FUNCTION_ID","name":"success"}`. Both operations also need
-project/environment on `payload`. Read `list_variables` to obtain declaration
-IDs; names alone are insufficient for attachment bindings.
+direction, not a JSON scalar type. For `vf_function_create_path`, the body is
+`{"functionID":"FUNCTION_ID","name":"success"}`. Both tools also need
+`projectID` and `environmentAlias`. Read `vf_function_list_variables` to obtain
+declaration IDs; names alone are insufficient for attachment bindings.
 
 ## Attach a function and capture its results
 
 Read the function declarations, playbook, existing attachment, and intended
-project variables first. `voiceflow_tool` `list` needs either
-`payload.playbookID` or `payload.global: true`; omitting both can return
-`Tool target does not exist` even when the project is valid.
+project variables first. `vf_tool_list` needs either `playbookID` or
+`global: true`; omitting both can return `Tool target does not exist` even when
+the project is valid.
 
-For `voiceflow_tool` `create`, use this body with project/environment on
-`payload`. `target.playbookID` is the target selector; `target.id` is not.
+For `vf_tool_create`, use this body, with `projectID` and `environmentAlias`
+beside it. `target.playbookID` is the target selector; `target.id` is not.
 
 ```json
 {
@@ -104,7 +104,7 @@ authorized, inspect conversation variables after two distinct tool inputs.
 
 ## Register routes
 
-For `voiceflow_agent` `update`, the routing body uses `playbookID` and
+For `vf_agent_update`, the routing body uses `playbookID` and
 `workflowID`, not generic `id` keys:
 
 ```json
@@ -121,11 +121,11 @@ the corresponding arrays through `agent update --playbooks` and `--workflows`.
 ## A message followed by End
 
 First create a message resource with `variants: [{"text":"Your request is ready for review."}]`
-using `voiceflow_message` `create` (`body.variants`) or CLI `message create
+using `vf_message_create` (`body.variants`) or CLI `message create
 --variants`. Use its returned message ID in the workflow step.
 
-For `voiceflow_workflow` `create_block`, provide project/environment/workflow ID
-on `payload` and this body:
+For `vf_workflow_create_block`, send `projectID`, `environmentAlias`, and
+`workflowID` beside this body:
 
 ```json
 {
@@ -143,8 +143,8 @@ create-block --name 'Confirm request' --steps '<steps array>'` plus scope flags.
 Steps in this block execute sequentially; the message does not wait for a reply.
 
 Read the workflow's entry step and new block ID. Connect them using the actual
-returned port. For the entry's `next` port, MCP `link` places `stepID` and
-`portKey: "next"` on `payload` and `toBlockID` inside `payload.body`. CLI uses
+returned port. For the entry's `next` port, `vf_workflow_link` takes `stepID`
+and `portKey: "next"` at the top level and `toBlockID` inside `body`. CLI uses
 `workflow link --step-id ENTRY_STEP_ID --port-key next --to-block-id BLOCK_ID`
 with workflow/project/environment flags. Read back entry, links, and warnings.
 
@@ -154,24 +154,19 @@ Both arrangements were verified at runtime; choose the simpler one for the task.
 
 ## Import a text document over MCP
 
-The hosted `voiceflow_document` `create_text` operation accepts a file object in
-its body. It handles the multipart upload; a chat agent does not need a terminal
-or a public URL for short text it is authorized to import.
+The hosted `vf_document_create_text` tool accepts a file object in its body.
+It handles the multipart upload; a chat agent does not need a terminal or a
+public URL for short text it is authorized to import.
 
 ```json
 {
-  "operation": {
-    "name": "create_text",
-    "payload": {
-      "projectID": "PROJECT_ID",
-      "environmentAlias": "ENVIRONMENT_ALIAS",
-      "body": {
-        "file": {
-          "filename": "returns-policy.txt",
-          "mimeType": "text/plain",
-          "content": "Unused items can be returned within 17 days."
-        }
-      }
+  "projectID": "PROJECT_ID",
+  "environmentAlias": "ENVIRONMENT_ALIAS",
+  "body": {
+    "file": {
+      "filename": "returns-policy.txt",
+      "mimeType": "text/plain",
+      "content": "Unused items can be returned within 17 days."
     }
   }
 }
@@ -184,7 +179,7 @@ that path. Do not create a duplicate merely to rename an accepted document;
 report a naming limitation if the current update schema cannot rename it.
 
 Wait for ingestion to succeed, then query the intended draft. MCP
-`voiceflow_knowledge_base` `query` uses
+`vf_knowledge_base_query` uses
 `body: {"version":"draft","question":"What is the return window?","synthesis":false,"chunkLimit":3}`.
 Verify the returned source and content. A successful upload response or an empty
 retrieval does not establish that the knowledge is usable.
@@ -192,22 +187,22 @@ retrieval does not establish that the knowledge is usable.
 ## Compile before a draft conversation test
 
 After editing routing, instructions, tools, or workflows, compile the intended
-draft before testing it. MCP: `voiceflow_environment`, operation `compile`,
-payload containing project/environment. CLI: `environment compile` with those
-scope flags. Check the result, then start a fresh conversation with version
+draft before testing it. MCP: `vf_environment_compile` with `projectID` and
+`environmentAlias`. CLI: `environment compile` with those scope flags. Check the result, then start a fresh conversation with version
 `draft`. Compilation is distinct from publishing; do not publish to refresh a
 test. In the live checks, an uncompiled draft still executed the old routing.
 
 Pure function executions and direct KB queries can succeed before compilation;
 they do not prove that a conversation is using the new agent configuration.
 
-For MCP `voiceflow_conversation` `send`, put `projectID`, `environmentAlias`, and
-a fresh synthetic `userID` on `payload`, and use
+For MCP `vf_conversation_send`, put `projectID`, `environmentAlias`, and a
+fresh synthetic `userID` at the top level, and use
 `body: {"version":"draft","action":{"type":"launch"}}`.
 Subsequent turns use `action: {"type":"text","payload":"<visitor message>"}`
-with the same user and version. Unlike `send`, `get_state` takes `version: "draft"`
-directly on `payload` with those scope fields. Putting the send version outside
-its body causes a validation error even when the action is correct.
+with the same user and version. Unlike `send`, `vf_conversation_get_state`
+takes `version: "draft"` at the top level with those scope fields. Putting the
+send version outside its body causes a validation error even when the action
+is correct.
 
 CLI uses `conversation send --user-id '<fresh user>' --version-param draft
 --action '{"type":"launch"}'` with project/environment flags. Supply an explicit

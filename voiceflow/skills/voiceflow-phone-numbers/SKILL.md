@@ -37,7 +37,7 @@ In the Voiceflow UI, open the agent and select Phone numbers in the sidebar,
 under Deploy. For a chat agent the item is called SMS.
 
 First look for a number the workspace already holds:
-`voiceflow_phone_number.list` with the `workspaceID`. If a free one fits, assign
+`vf_phone_number_list` with the `workspaceID`. If a free one fits, assign
 it. The MCP refuses to create a number, because that spends money or takes
 carrier credentials. So hand the step to the user, as the
 [phone number handoff](../voiceflow/references/cli-handoffs.md#add-a-phone-number)
@@ -47,28 +47,28 @@ in the UI. Never ask for carrier credentials in the conversation.
 Buying a new number charges the workspace. Offer it only when the user asks to
 buy one and accepts the cost, and hand over the command with `--dry-run` first.
 Ask the user to say when the number exists. Then find it with
-`voiceflow_phone_number.list` and connect it with
-`voiceflow_phone_number.assign`. A handed-over command is not a connected
+`vf_phone_number_list` and connect it with
+`vf_phone_number_assign`. A handed-over command is not a connected
 number; confirm it with a read.
 
 ## Change a number
 
 Each operation takes `phoneNumberID`, the number's ID rather than the digits,
-and `workspaceID`. Find the ID with `voiceflow_phone_number.list`; each entry
+and `workspaceID`. Find the ID with `vf_phone_number_list`; each entry
 shows the project its `voice` and `sms` sides reach.
 
-- Connect or move a side with `voiceflow_phone_number.assign`, giving `target`
+- Connect or move a side with `vf_phone_number_assign`, giving `target`
   and `projectID`. Leave out `environmentAlias` unless the user names an
   environment. With no environment, calls and texts reach the published version
   and follow the traffic split. To try a change on a real call before
   publishing, send `environmentAlias` with `version: "draft"`, and switch back
   afterwards.
-- Disconnect with `voiceflow_phone_number.unassign` and `target`. Leave out
+- Disconnect with `vf_phone_number_unassign` and `target`. Leave out
   `target` to clear both sides. Clearing a side that is not connected is
   refused.
-- Rename with `voiceflow_phone_number.update` and `name`. The name is a label in
+- Rename with `vf_phone_number_update` and `name`. The name is a label in
   the workspace; callers never see it.
-- Delete with `voiceflow_phone_number.delete` only when the user says to delete
+- Delete with `vf_phone_number_delete` only when the user says to delete
   the number. It stops answering at once.
 
 Moving or disconnecting a side that answers for an agent, and deleting a number

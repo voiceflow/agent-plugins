@@ -25,6 +25,9 @@ voiceflow/skills/voiceflow-knowledge/LICENSE
 voiceflow/skills/voiceflow-knowledge/SKILL.md
 voiceflow/skills/voiceflow-messages/LICENSE
 voiceflow/skills/voiceflow-messages/SKILL.md
+voiceflow/skills/voiceflow-optimize-playbooks/LICENSE
+voiceflow/skills/voiceflow-optimize-playbooks/SKILL.md
+voiceflow/skills/voiceflow-optimize-playbooks/references/split-main-agent.md
 voiceflow/skills/voiceflow-phone-numbers/LICENSE
 voiceflow/skills/voiceflow-phone-numbers/SKILL.md
 voiceflow/skills/voiceflow-prompting/LICENSE

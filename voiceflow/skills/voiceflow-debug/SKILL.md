@@ -28,9 +28,9 @@ The [failure patterns](references/failure-patterns.md) list common causes and
 their fixes. For many conversations at once, follow
 [bulk analysis](references/bulk-analysis.md).
 
-Read only the part of a log you need. `voiceflow_transcript.query_logs` reads a
+Read only the part of a log you need. `vf_transcript_query_logs` reads a
 live conversation or a debug session by transcript ID, and
-`voiceflow_test.query_run_logs` reads a test run by run ID. Filter by `levels`
+`vf_test_query_run_logs` reads a test run by run ID. Filter by `levels`
 (`["fatal", "error", "warn"]` for what went wrong), `turns`, `kinds`,
 `debugKinds` (`tool`, `variables`, `llm`, `kb`), or `search`. `search` is plain
 text, ignores case, and takes `|` between alternatives; it does not match the
@@ -39,7 +39,7 @@ entries per kind and level and reports token use per model, so a first query
 with `limit: 1` shows what the log holds. CLI 0.287.0 has no command for log
 queries; use `vf transcript get` there.
 
-A `voiceflow_conversation.send` result leaves out the knowledge chunks a search
+A `vf_conversation_send` result leaves out the knowledge chunks a search
 returned and a playbook's whole instructions. To see the chunks, query the log
 with `debugKinds: ["kb"]` and `detail: "full"`. In a transcript every input
 starts a turn, the launch included, so the user's first message is turn 2. A

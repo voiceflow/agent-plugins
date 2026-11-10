@@ -3,11 +3,11 @@
 CLI contract checked against 0.287.0 on 2026-10-16. Inspect installed help or
 connected MCP schemas if they differ. Examples use placeholders, not real IDs.
 
-| Task | CLI | Account MCP tool / operation |
+| Task | CLI | Account MCP tool |
 | --- | --- | --- |
-| Read draft settings | `vf widget get` | `voiceflow_widget` / `get` |
-| Patch draft settings | `vf widget update` | `voiceflow_widget` / `update` |
-| Get installation code | `vf widget get-snippet` | `voiceflow_widget` / `get_snippet` |
+| Read draft settings | `vf widget get` | `vf_widget_get` |
+| Patch draft settings | `vf widget update` | `vf_widget_update` |
+| Get installation code | `vf widget get-snippet` | `vf_widget_get_snippet` |
 
 The public Knowledge MCP supplies documentation; it does not perform these
 account operations. If a tool is absent, rediscover tools/check connection
@@ -26,10 +26,10 @@ an explicitly requested preview. Do not install a draft snippet on the public
 site by accident. The output contains installation code: extract that code,
 not the CLI's surrounding structured envelope, for the site's HTML field.
 
-MCP uses the `operation.name` / `operation.payload` envelope. Read its schema
-for `projectID`, `environmentAlias`, the snippet version selector, and update
-body placement. Do not translate the CLI's `--version-param` spelling into an
-invented MCP property. See the shared [request shapes](../../voiceflow/references/request-shapes.md#mcp-envelope-and-function-declarations).
+Each MCP tool takes `projectID` and `environmentAlias` at the top level of its
+input. Read its schema for the snippet version selector and update body
+placement. Do not translate the CLI's `--version-param` spelling into an
+invented MCP property. See the shared [request shapes](../../voiceflow/references/request-shapes.md#mcp-input-and-function-declarations).
 
 ## Patch only the intended settings
 

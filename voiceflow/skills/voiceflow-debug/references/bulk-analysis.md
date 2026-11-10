@@ -11,18 +11,20 @@ you will misclassify the same failure many times over.
 
 ## Pick the read
 
-- Find candidates with `voiceflow_transcript.search`. Narrow with the date
+- Find candidates with `vf_transcript_search`. Narrow with the date
   range, evaluation results and transcript properties before paging. Keep pages
   small, about 20 rows, and page with `skip` while the result says there is
   more. Each row already carries the transcript's evaluation scores.
 - Look for a known marker, such as an error text or "transfer to a human", with
-  `voiceflow_transcript.query_logs` on each candidate: `search` for the text,
+  `vf_transcript_query_logs` on each candidate: `search` for the text,
   or `levels: ["fatal", "error", "warn"]` for failures. It returns only the
   matching entries.
-- Read whole conversations with `voiceflow_transcript.get`, only for the few you
-  deep-read. A voice call can be tens of thousands of tokens.
+- Read whole conversations with `vf_transcript_get`, only for the few you
+  deep-read. Start with `format: "summary"`, and ask for `formatted` only for a
+  conversation whose summary points at the turns you must read in full. Never
+  ask for `logs`. A voice call can be tens of thousands of tokens.
 - When a read is cut or too long, read the turns that matter with
-  `voiceflow_transcript.query_logs` and `turns`, `levels` or `debugKinds`.
+  `vf_transcript_query_logs` and `turns`, `levels` or `debugKinds`.
 
 Never read 20 or more transcripts in full. Search and filter first, then
 deep-read the few that matter.
@@ -34,8 +36,9 @@ off", and start here.
 
 1. Take one page of search results for the period and sample.
 2. Run evaluations only when the user asked for it, and only for transcripts
-   missing a score you need. One `voiceflow_evaluation.run` call takes several
-   evaluations and transcripts; batch them instead of looping.
+   missing a score you need. `vf_evaluation_run` scores one evaluation against
+   one transcript per call and waits for the score. Say how many calls that
+   takes before you start.
 3. Build a matrix of transcripts against evaluations:
 
    ```text

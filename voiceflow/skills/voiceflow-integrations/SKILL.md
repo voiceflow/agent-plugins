@@ -21,12 +21,12 @@ available integrations and their schemas before writing a custom API/function.
 A connection is not an attached agent tool: verify both.
 
 Attaching an integration tool takes two steps. First add it with
-`voiceflow_integration.add_tool`, using a `toolName` that
-`voiceflow_integration.get_schema` lists. It returns the tool's
+`vf_integration_add_tool`, using a `toolName` that
+`vf_integration_get_schema` lists. It returns the tool's
 `integrationToolID`; for a tool already added it returns the existing ID and
 changes nothing. It refuses an integration the workspace does not have enabled;
 say so and choose another kind of tool. Then attach it with
-`voiceflow_tool.create`, type `integration`, and wire its inputs and outputs.
+`vf_tool_create`, type `integration`, and wire its inputs and outputs.
 CLI 0.287.0 has no command for the first step; the user adds the tool in the
 agent's Tools in the Voiceflow UI. The tool works only once the integration is
 connected, so connect it first.

@@ -33,7 +33,7 @@ says, not the text, and holds at most 500 entries. Words match ignoring case,
 so `Dr.` and `dr.` are one entry.
 
 Read the dictionary from the agent read, under `voice.pronunciationDictionary`.
-Change it with `voiceflow_agent.patch_pronunciation`: `set` adds a word or
+Change it with `vf_agent_patch_pronunciation`: `set` adds a word or
 changes how it is said, and `remove` deletes words. Send only the words that
 change. Never send the whole dictionary through an agent update to change a few
 words: that replaces every entry and loses changes made since your read. CLI
