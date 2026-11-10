@@ -99,8 +99,8 @@ class CheckTests(unittest.TestCase):
     def test_clean_references_pass(self):
         self.tree.write("voiceflow-build/references/shapes.md", "# Shapes\n## Agent body\n")
         self.assertProblems(
-            "# Build\n\nCall `voiceflow_agent.get`, then MCP `voiceflow_agent` `update`,\n"
-            "`voiceflow_transcript_property` / `list`, or `voiceflow_secret.create`.\n"
+            "# Build\n\nCall `vf_agent_get`, then MCP `vf_agent_update`,\n"
+            "`vf_transcript_property_list`, or `vf_secret_create`.\n"
             "Docs: `ask_voiceflow` on `voiceflow-knowledge`. See `voiceflow-build`.\n"
             "Read `references/shapes.md` and [the body](references/shapes.md#agent-body),\n"
             "[top](#build), [site](https://example.com/x.md#y).\n"
@@ -113,6 +113,17 @@ class CheckTests(unittest.TestCase):
             [(1, "unknown MCP tool \"voiceflow_robot\""),
              (1, "unknown MCP operation \"voiceflow_agent.delete\""),
              (2, "unknown MCP operation \"voiceflow_agent.remove\"")])
+
+    def test_v2_names_point_to_the_v3_tool(self):
+        self.assertProblems(
+            "Call `voiceflow_agent.get`, then MCP `voiceflow_agent` `update`.\n"
+            "`voiceflow_transcript_property` / `list` and `voiceflow_secret`.\n",
+            [(1, "MCP v3 has no tool \"voiceflow_agent.get\"; name \"vf_agent_get\" instead"),
+             (1, "MCP v3 has no tool \"voiceflow_agent.update\"; name \"vf_agent_update\" instead"),
+             (2, "MCP v3 has no tool \"voiceflow_transcript_property.list\"; "
+                 "name \"vf_transcript_property_list\" instead"),
+             (2, "MCP v3 has no tool \"voiceflow_secret\"; name one operation's tool, "
+                 "\"vf_secret_<operation>\"")])
 
     def test_always_refused_operation_names_the_cli_instead(self):
         self.assertProblems(

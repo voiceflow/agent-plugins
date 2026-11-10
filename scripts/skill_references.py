@@ -4,6 +4,7 @@ The surface snapshot comes from scripts/refresh_surface.py. The account MCP serv
 tool names: the operation `<operation>` of the snapshot tool `voiceflow_<group>` is the
 v3 tool `vf_<group>_<operation>`, and v3 adds the tools in V3_META_TOOLS. A `vf_*` name
 passes only when v3 serves it, so an operation the MCP always refuses does not pass.
+An older `voiceflow_<group>.<operation>` name never passes, because v3 does not serve it.
 Every problem is reported as `path:line: reason`, so one run lists everything to fix.
 """
 import fnmatch
@@ -286,7 +287,9 @@ class Checker:
         if tool not in self.tools:
             report(number, f"unknown MCP tool \"{tool}\"")
             return
+        group = tool[len("voiceflow_"):]
         if operation is None:
+            report(number, f"MCP v3 has no tool \"{tool}\"; name one operation's tool, \"vf_{group}_<operation>\"")
             return
         reference = f"{tool}.{operation}"
         if operation not in self.tools[tool]:
@@ -296,6 +299,8 @@ class Checker:
         if refusal and refusal["when"] == "always":
             command = f"; name the CLI command \"vf {refusal['cli']}\" instead" if refusal.get("cli") else ""
             report(number, f"MCP always refuses \"{reference}\"{command}")
+            return
+        report(number, f"MCP v3 has no tool \"{reference}\"; name \"vf_{group}_{operation}\" instead")
 
     def check_v3_name(self, name, number, report):
         if "*" in name:
