@@ -3,6 +3,10 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## 0.5.0 — Unreleased
+
+- Pin the account MCP URL to `https://mcp.voiceflow.com/mcp?version=2`, because the server default is moving to the new v3 tool names. The next major release moves the skills to v3.
+
 ## 0.4.2 — Unreleased
 
 - Update package and support links for the transfer to `voiceflow/agent-plugins`.
