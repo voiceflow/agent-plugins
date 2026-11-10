@@ -9,12 +9,13 @@ without a customer terminal. It does not require local software installation.
 | Setting | Value |
 | --- | --- |
 | Suggested name | Voiceflow |
-| Server URL | `https://mcp.voiceflow.com/mcp?version=2` |
+| Server URL | `https://mcp.voiceflow.com/mcp` |
 | Transport | Streamable HTTP |
 | Authentication | Browser OAuth |
 
-The `version=2` parameter keeps the current tool names that these skills use.
-A later plugin release moves to the new default.
+This URL serves the MCP v3 tools that these skills name, such as
+`vf_project_list`. A connection saved with `?version=2` serves older tool
+names that the skills no longer use. Repair it to the URL above.
 
 The host must support this transport and interactive OAuth, including a callback
 accepted by Voiceflow. Voiceflow's account MCP requires both workspace read and

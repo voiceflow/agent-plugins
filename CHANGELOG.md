@@ -3,6 +3,27 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## 1.0.0 — Unreleased
+
+Breaking: the skills now name the account MCP v3 tools, and the MCP URL no
+longer pins the older tool names. This release needs the Voiceflow MCP server
+that serves v3 by default. To migrate, change a saved account MCP connection
+from `https://mcp.voiceflow.com/mcp?version=2` to
+`https://mcp.voiceflow.com/mcp`, then reload the host's tools.
+
+- Name every account MCP tool by its v3 name, `vf_<group>_<operation>`, such as
+  `vf_agent_get`, in place of `voiceflow_<group>.<operation>`. Request examples
+  put path and query fields at the top level and the write body in `body`.
+- Drop `?version=2` from the account MCP URL. Setup repairs a saved connection
+  that still carries it.
+- Refuse a `vf_*` name that v3 does not serve, and every older
+  `voiceflow_<group>` name, in the skill reference checks.
+- Add the Optimize playbooks skill: condense long instructions, or move a job
+  out of the main agent's instructions, with tests before and after.
+- Port the latest product guidance: workflow tools sit on the main agent,
+  playbook exit paths hold message IDs, transcripts are read in the summary
+  view first, and an evaluation run scores one transcript per call.
+
 ## 0.5.0 — Unreleased
 
 - Pin the account MCP URL to `https://mcp.voiceflow.com/mcp?version=2`, because the server default is moving to the new v3 tool names. The next major release moves the skills to v3.

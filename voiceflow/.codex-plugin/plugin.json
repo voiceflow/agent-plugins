@@ -1,6 +1,6 @@
 {
   "name": "voiceflow",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "Connect to Voiceflow, then build and improve agents with shared product guidance.",
   "author": {
     "name": "Voiceflow, Inc."

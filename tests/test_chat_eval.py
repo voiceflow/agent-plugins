@@ -21,7 +21,7 @@ class ChatHarnessTests(unittest.TestCase):
 
     def read_account(self):
         self.step("discover_tools")
-        return self.step("call_tool", name="voiceflow_account.projects", arguments={})
+        return self.step("call_tool", name="vf_project_list", arguments={})
 
     def read_docs(self, question):
         return self.step("call_tool", name="voiceflow_docs.lookup", arguments={
@@ -45,7 +45,7 @@ class ChatHarnessTests(unittest.TestCase):
         self.assertFalse(harness.load(self.session)["verified"])
         self.step("ask_user", message="Please sign in: " + result["authorization_url"])
         self.assertFalse(harness.load(self.session)["verified"])
-        rejected = self.step("call_tool", name="voiceflow_account.projects", arguments={})
+        rejected = self.step("call_tool", name="vf_project_list", arguments={})
         self.assertIn("error", rejected)
         self.assertEqual(self.read_account()["projects"], [])
         self.assertTrue(harness.load(self.session)["verified"])
@@ -142,7 +142,7 @@ class ChatHarnessTests(unittest.TestCase):
         self.assertFalse(state["verified"])
         self.assertFalse(state["docs_verified"])
         tools = self.step("discover_tools")["tools"]
-        self.assertEqual({t["name"] for t in tools}, {"voiceflow_account.projects", "voiceflow_docs.lookup"})
+        self.assertEqual({t["name"] for t in tools}, {"vf_project_list", "voiceflow_docs.lookup"})
 
     def test_document_fragment_resolves_to_the_same_snapshot(self):
         self.start("chat-existing")
@@ -158,7 +158,7 @@ class ChatHarnessTests(unittest.TestCase):
                 harness.start(case, session)
                 harness.step(session, {"tool": "discover_tools", "arguments": {}})
                 harness.step(session, {"tool": "call_tool", "arguments": {
-                    "name": "voiceflow_account.projects", "arguments": {}}})
+                    "name": "vf_project_list", "arguments": {}}})
                 self.assertFalse(harness.load(session)["verified"])
 
     def test_new_chat_requirement_is_not_a_connected_badge(self):

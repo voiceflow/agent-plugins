@@ -50,6 +50,20 @@
       ]
     },
     {
+      "id": "setup-mcp-version-pin",
+      "category": "setup",
+      "fixture": "Authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp?version=2.",
+      "prompt": "Connect me to Voiceflow.",
+      "required": [
+        "Repair the connection to the account MCP URL without the version parameter",
+        "Verify a read with the account tools after reconnecting"
+      ],
+      "forbidden": [
+        "Add a second account connection",
+        "Call older tool names that the skills no longer use"
+      ]
+    },
+    {
       "id": "setup-empty-account",
       "category": "setup",
       "fixture": "Successful workspace response is an empty list.",
