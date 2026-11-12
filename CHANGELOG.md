@@ -3,7 +3,7 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
-## 1.0.0 — Unreleased
+## 1.0.0
 
 Breaking: the skills now name the account MCP v3 tools. The account MCP URL is
 pinned to `https://mcp.voiceflow.com/mcp?version=3`. To migrate, change a saved
@@ -25,11 +25,11 @@ account MCP connection to that URL, then reload the host's tools.
   playbook exit paths hold message IDs, transcripts are read in the summary
   view first, and an evaluation run scores one transcript per call.
 
-## 0.5.0 — Unreleased
+## 0.5.0
 
 - Pin the account MCP URL to `https://mcp.voiceflow.com/mcp?version=2`, because the server default is moving to the new v3 tool names. The next major release moves the skills to v3.
 
-## 0.4.2 — Unreleased
+## 0.4.2
 
 - Update package and support links for the transfer to `voiceflow/agent-plugins`.
 - Attribute the MIT license and package authorship to Voiceflow, Inc.

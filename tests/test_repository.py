@@ -392,6 +392,12 @@ class ReleaseTests(unittest.TestCase):
                 self.prepare(**options)
         self.assertFalse(self.output.exists())
 
+    def test_a_bare_version_heading_gives_the_notes(self):
+        self.prepare(changelog=f"# Changelog\n\n## {self.version}\n\n- A bare heading.\n\n## 0.0.1\n\n- Older.\n")
+        notes = (self.output / "release-notes.md").read_text(encoding="utf-8")
+        self.assertIn("- A bare heading.", notes)
+        self.assertNotIn("Older.", notes)
+
     def test_tampered_asset_and_missing_notes_are_rejected(self):
         with self.assertRaisesRegex(ValueError, "CHANGELOG"):
             self.prepare(changelog="# Empty\n")
