@@ -12,17 +12,34 @@
   "keywords": [
     "voiceflow",
     "agents",
+    "ai-agents",
+    "chatbots",
+    "voice",
     "workflows",
-    "voice"
+    "mcp"
   ],
   "extensions": {
     "com.openai": {
+      "onboardingSkill": "./skills/voiceflow-setup/SKILL.md",
       "interface": {
         "displayName": "Voiceflow",
         "shortDescription": "Build with Voiceflow",
-        "longDescription": "Connect to Voiceflow, then build, debug, and improve agents using portable product skills.",
+        "longDescription": "Connect to Voiceflow, then build, debug, and improve agents using portable product skills. Setup connects your Voiceflow account through the Voiceflow CLI or the hosted Voiceflow MCP server, with browser sign-in, and adds the public Voiceflow docs server. Eighteen skills cover building agents, prompts and playbooks, workflows, functions, integrations, knowledge bases, messages, voice, phone numbers, the web chat widget, debugging, transcripts, evaluations, and environments. Changes to your account follow your requests and your assistant's approval prompts. You need a Voiceflow account, and your plan's limits apply.",
         "developerName": "Voiceflow, Inc.",
-        "category": "Development"
+        "category": "Developer Tools",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://www.voiceflow.com",
+        "supportURL": "https://github.com/voiceflow/agent-plugins/blob/main/SUPPORT.md",
+        "privacyPolicyURL": "https://www.voiceflow.com/privacy",
+        "termsOfServiceURL": "https://www.voiceflow.com/legal/terms",
+        "defaultPrompt": [
+          "Connect me to Voiceflow and check that my account works.",
+          "Find out why my Voiceflow agent answers twice after a playbook.",
+          "Add the Voiceflow chat widget to my website."
+        ]
       }
     }
   }

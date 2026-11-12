@@ -5,6 +5,17 @@
   "author": {
     "name": "Voiceflow, Inc."
   },
-  "skills": "./skills/",
-  "license": "MIT"
+  "homepage": "https://www.voiceflow.com/docs",
+  "repository": "https://github.com/voiceflow/agent-plugins",
+  "license": "MIT",
+  "keywords": [
+    "voiceflow",
+    "agents",
+    "ai-agents",
+    "chatbots",
+    "voice",
+    "workflows",
+    "mcp"
+  ],
+  "skills": "./skills/"
 }

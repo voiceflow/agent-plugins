@@ -3,6 +3,7 @@ voiceflow/.codex-plugin/plugin.json
 voiceflow/.cursor-plugin/plugin.json
 voiceflow/.mcp.json
 voiceflow/LICENSE
+voiceflow/README.md
 voiceflow/mcp.json
 voiceflow/plugin.json
 voiceflow/skills/voiceflow-build/LICENSE

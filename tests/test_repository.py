@@ -351,6 +351,55 @@ class RepositoryTests(unittest.TestCase):
             self.assertEqual(validator.docs_url_problems(root), [problem, problem])
 
 
+class ListingTests(unittest.TestCase):
+    def setUp(self):
+        scratch = tempfile.TemporaryDirectory()
+        self.addCleanup(scratch.cleanup)
+        self.root = Path(scratch.name)
+        for name in ("voiceflow", ".agents", "mcp-registry"):
+            shutil.copytree(ROOT / name, self.root / name, ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copyfile(ROOT / "skills.sh.json", self.root / "skills.sh.json")
+
+    def test_current_listing_metadata_passes(self):
+        validator.validate_listings(self.root)
+
+    def test_listing_drift_is_rejected(self):
+        def interface(data):
+            return data["extensions"]["com.openai"]["interface"]
+
+        cases = [
+            ("voiceflow/.codex-plugin/plugin.json",
+             lambda data: data["interface"].update(category="Development"), "Codex interface differs"),
+            ("voiceflow/.claude-plugin/plugin.json",
+             lambda data: data.update(privacyPolicyUrl="https://example.invalid/privacy"), "privacyPolicyUrl"),
+            ("voiceflow/plugin.json",
+             lambda data: interface(data)["defaultPrompt"].__setitem__(0, "x" * 129), "default prompt"),
+            ("voiceflow/plugin.json",
+             lambda data: interface(data).update(shortDescription="x" * 31), "shortDescription"),
+            ("voiceflow/.cursor-plugin/plugin.json", lambda data: data.pop("keywords"), "keywords"),
+            ("voiceflow/.claude-plugin/plugin.json", lambda data: data.update(icon="./icon.png"), "Icon file missing"),
+            ("mcp-registry/knowledge/server.json",
+             lambda data: data["remotes"][0].update(url=validator.DOCS_MCP_URL), "Registry URLs differ"),
+            ("skills.sh.json", lambda data: data.update(paths=["./skills"]), "skills.sh.json"),
+        ]
+        for name, change, message in cases:
+            with self.subTest(name=name, message=message):
+                path = self.root / name
+                original = path.read_bytes()
+                data = json.loads(original)
+                change(data)
+                path.write_text(json.dumps(data), encoding="utf-8")
+                with self.assertRaisesRegex(AssertionError, message):
+                    validator.validate_listings(self.root)
+                path.write_bytes(original)
+
+    def test_plugin_readme_counts_prose_words_only(self):
+        readme = self.root / "voiceflow/README.md"
+        readme.write_text("# Voiceflow\n\nShort intro.\n\n```text\n" + "word " * 60 + "\n```\n", encoding="utf-8")
+        with self.assertRaisesRegex(AssertionError, "40\\+ words"):
+            validator.validate_listings(self.root)
+
+
 class ReleaseTests(unittest.TestCase):
     def setUp(self):
         self.scratch = tempfile.TemporaryDirectory()

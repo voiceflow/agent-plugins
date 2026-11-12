@@ -1,0 +1,14 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.voiceflow/voiceflow",
+  "title": "Voiceflow",
+  "description": "Build, test, and manage Voiceflow agents in your workspace. Sign in with OAuth.",
+  "version": "3.0.0",
+  "websiteUrl": "https://www.voiceflow.com/docs",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.voiceflow.com/mcp?version=3"
+    }
+  ]
+}
