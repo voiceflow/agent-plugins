@@ -16,7 +16,7 @@ import unicodedata
 
 SURFACE = Path("tests/fixtures/voiceflow-surface.json")
 V3_META_TOOLS = frozenset({"vf_describe_operations", "vf_get_started", "vf_skill_list", "vf_skill_load"})
-V3_TOKEN = re.compile(r"(?<![\w{])vf_[a-z][a-z0-9_*]*")
+V3_TOKEN = re.compile(r"(?<![\w{])vf_[a-z0-9_*]*[a-z0-9*]")
 INTERNAL_NAMES = re.compile(
     r"\b(?:describe_operations|audit_wiring|propose_test|skill_read"
     r"|request_(?:secret|integration|mcp_server|phone_number)|grep_transcripts"
