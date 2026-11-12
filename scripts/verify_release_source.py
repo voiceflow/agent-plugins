@@ -1,4 +1,4 @@
-"""Reject releases outside the protected default branch; read-only GitHub access."""
+"""Reject releases outside the protected default branch or without their tag; read-only GitHub access."""
 import argparse
 import json
 import re
@@ -9,7 +9,9 @@ GITHUB_ACTIONS_APP_ID = 15368
 REQUIRED_CHECKS = {
     "security / Secrets and workflow security",
     "checks (ubuntu-latest)", "checks (macos-latest)", "checks (windows-latest)",
+    "Conventional PR title",
 }
+SHA = re.compile(r"[a-f0-9]{40}")
 
 
 def verify_rules(prefix, branch, api):
@@ -57,7 +59,7 @@ def verify_rules(prefix, branch, api):
     if not pull_requests_required:
         raise ValueError("Active rules must require pull requests, stale-review dismissal, and resolved threads")
     if not REQUIRED_CHECKS <= checks:
-        raise ValueError("Active rules must require all four current GitHub Actions checks with strict status checking")
+        raise ValueError("Active rules must require all five current GitHub Actions checks with strict status checking")
 
 
 def github_json(endpoint):
@@ -91,7 +93,25 @@ def verify(repository, commit, version, workflow_ref, api=github_json):
     if (comparison.get("status") not in ("identical", "ahead")
             or comparison.get("merge_base_commit", {}).get("sha") != commit):
         raise ValueError("Release commit must already be on the default branch")
+    verify_tag(prefix, version, commit, api)
     return default
+
+
+def verify_tag(prefix, version, commit, api):
+    # The Version workflow tags the release commit before it starts a draft.
+    # A missing tag, or one at another commit, blocks the draft; nothing here writes.
+    tag = "v" + version
+    refs = api(prefix + "/git/matching-refs/tags/" + quote(tag, safe=""))
+    if not isinstance(refs, list):
+        raise ValueError("Invalid tag response; release blocked")
+    matches = [ref for ref in refs if isinstance(ref, dict) and ref.get("ref") == "refs/tags/" + tag]
+    if not matches:
+        raise ValueError(f"Tag {tag} must exist before a draft release")
+    target = matches[0].get("object")
+    if isinstance(target, dict) and target.get("type") == "tag" and SHA.fullmatch(str(target.get("sha"))):
+        target = api(prefix + "/git/tags/" + target["sha"]).get("object")
+    if not isinstance(target, dict) or target.get("type") != "commit" or target.get("sha") != commit:
+        raise ValueError(f"Tag {tag} must point at the release commit")
 
 
 def main():

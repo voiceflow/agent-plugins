@@ -24,7 +24,7 @@ python3 scripts/build.py
 | --- | --- |
 | `voiceflow/skills/` | Customer instructions, linked references, and installers |
 | `voiceflow/skills/voiceflow-setup/references/setup.md` | Canonical setup guide; edit this before generating website content |
-| `scripts/` and `tests/` | Package validation, build, release preparation, and offline tests |
+| `scripts/` and `tests/` | Package validation, build, version bumps, release preparation, and offline tests |
 | `tests/fixtures/voiceflow-surface.json` | MCP and CLI names the skill checks accept; not packaged |
 | `evals/` | Behavioral cases, protocols, and sanitized evidence |
 | `docs/` | Compatibility, release, provenance, and measurement guidance |
@@ -110,9 +110,19 @@ for model evaluations. Static checks do not prove model behavior.
 
 Open a focused pull request describing the problem, resulting behavior, checks,
 and any unrun acceptance work. Maintainers review compatibility and evidence;
-small changes are easier to assess. Version changes and the corresponding
-[CHANGELOG](CHANGELOG.md) entry are coordinated by maintainers before release.
-See [release policy](docs/releasing.md) for the release checklist.
+small changes are easier to assess.
+
+Title the pull request `type(scope)!: summary`, such as
+`fix(setup): repair a saved MCP URL`. The title sets the next package version
+after merge. `feat` is a minor change, `fix` is a patch, and a `!` after the type
+marks a breaking, major change. Other types, such as `docs` or `ci`, change no
+version. A change under `voiceflow/` must be `feat`, `fix`, or breaking.
+
+Do not edit version numbers. For `feat`, `fix`, and breaking changes, add a line
+under `## Unreleased` in the [CHANGELOG](CHANGELOG.md) that says what changes for
+customers. A breaking change also adds a line that tells customers how to migrate.
+See [how versions change](docs/releasing.md#how-versions-change) for every rule,
+and the [release policy](docs/releasing.md) for the release checklist.
 
 By contributing, you agree to provide your contribution under this repository's
 MIT license. Submit only material you have the right to contribute; preserve

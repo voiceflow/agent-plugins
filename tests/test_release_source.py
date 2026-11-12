@@ -28,21 +28,26 @@ class ReleaseSourceTests(unittest.TestCase):
                 "strict_required_status_checks_policy": True,
                 "required_status_checks": [{"context": name, "integration_id": 15368} for name in (
                     "security / Secrets and workflow security", "checks (ubuntu-latest)",
-                    "checks (macos-latest)", "checks (windows-latest)")],
+                    "checks (macos-latest)", "checks (windows-latest)", "Conventional PR title")],
             }},
         ]
+        self.tag_refs = [{"ref": "refs/tags/v0.4.2", "object": {"type": "commit", "sha": self.commit}}]
+        self.annotated = []
 
     def verify(self, status="ahead", protected=True, workflow_ref="refs/heads/main",
                merge_base=None, branch_name="main"):
         responses = [{"default_branch": branch_name},
                      {"protected": protected, "commit": {"sha": self.head}},
                      self.rules,
-                     {"status": status, "merge_base_commit": {"sha": merge_base or self.commit}}]
+                     {"status": status, "merge_base_commit": {"sha": merge_base or self.commit}},
+                     self.tag_refs, *self.annotated]
         with patch.object(guard, "github_json", side_effect=responses) as api:
-            result = guard.verify("example/package", self.commit, "0.4.2", workflow_ref, api=api)
-            self.assertEqual(api.call_args.args[0],
-                             "repos/example/package/compare/" + self.commit + "..." + self.head)
-            return result
+            try:
+                return guard.verify("example/package", self.commit, "0.4.2", workflow_ref, api=api)
+            finally:
+                if api.call_count >= 4:
+                    self.assertEqual(api.call_args_list[3].args[0],
+                                     "repos/example/package/compare/" + self.commit + "..." + self.head)
 
     def test_protected_flag_without_required_active_rules_is_rejected(self):
         for rules in ([], [{"type": "non_fast_forward"}], {"rules": self.rules}, [None]):
@@ -77,7 +82,7 @@ class ReleaseSourceTests(unittest.TestCase):
 
     def test_each_required_check_must_be_present_strict_and_from_actions(self):
         original = copy.deepcopy(self.rules)
-        for index in range(4):
+        for index in range(5):
             for change in ("missing", "wrong_app", "unspecified_app"):
                 self.rules = copy.deepcopy(original)
                 checks = self.rules[3]["parameters"]["required_status_checks"]
@@ -87,7 +92,7 @@ class ReleaseSourceTests(unittest.TestCase):
                     checks[index]["integration_id"] = 99
                 else:
                     del checks[index]["integration_id"]
-                with self.subTest(index=index, change=change), self.assertRaisesRegex(ValueError, "four"):
+                with self.subTest(index=index, change=change), self.assertRaisesRegex(ValueError, "five"):
                     self.verify()
         self.rules = original
         self.rules[3]["parameters"]["strict_required_status_checks_policy"] = False
@@ -132,6 +137,35 @@ class ReleaseSourceTests(unittest.TestCase):
                 self.verify(status=status)
         with self.assertRaisesRegex(ValueError, "already be on"):
             self.verify(merge_base="c" * 40)
+
+    def test_the_tag_must_already_point_at_the_release_commit(self):
+        self.assertEqual(self.verify(), "main")
+        for refs in ([], [{"ref": "refs/tags/v0.4.20", "object": {"type": "commit", "sha": self.commit}}]):
+            self.tag_refs = refs
+            with self.subTest(refs=refs), self.assertRaisesRegex(ValueError, "must exist"):
+                self.verify()
+        for target in ({"type": "commit", "sha": "c" * 40}, {"type": "tree", "sha": self.commit}, None):
+            self.tag_refs = [{"ref": "refs/tags/v0.4.2", "object": target}]
+            with self.subTest(target=target), self.assertRaisesRegex(ValueError, "must point at"):
+                self.verify()
+        self.tag_refs = {"ref": "refs/tags/v0.4.2"}
+        with self.assertRaisesRegex(ValueError, "Invalid tag"):
+            self.verify()
+
+    def test_an_annotated_tag_is_followed_to_its_commit(self):
+        tag_object = "d" * 40
+        self.tag_refs = [{"ref": "refs/tags/v0.4.2", "object": {"type": "tag", "sha": tag_object}}]
+        self.annotated = [{"object": {"type": "commit", "sha": self.commit}}]
+        with patch.object(guard, "github_json") as api:
+            api.side_effect = [{"default_branch": "main"}, {"protected": True, "commit": {"sha": self.head}},
+                               self.rules, {"status": "ahead", "merge_base_commit": {"sha": self.commit}},
+                               self.tag_refs, *self.annotated]
+            self.assertEqual(guard.verify("example/package", self.commit, "0.4.2", "refs/heads/main", api=api), "main")
+            self.assertEqual(api.call_args_list[4].args[0], "repos/example/package/git/matching-refs/tags/v0.4.2")
+            self.assertEqual(api.call_args.args[0], "repos/example/package/git/tags/" + tag_object)
+        self.annotated = [{"object": {"type": "commit", "sha": "c" * 40}}]
+        with self.assertRaisesRegex(ValueError, "must point at"):
+            self.verify()
 
     def test_unprotected_default_branch_is_rejected(self):
         for protected in (False, None):

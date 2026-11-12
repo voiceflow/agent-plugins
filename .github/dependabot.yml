@@ -8,3 +8,6 @@ updates:
     groups:
       github-actions:
         patterns: ['*']
+    # The PR title check needs a conventional title; ci changes no package version.
+    commit-message:
+      prefix: ci

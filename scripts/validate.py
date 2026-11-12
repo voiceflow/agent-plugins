@@ -5,6 +5,7 @@ import re
 import sys
 
 from skill_references import check_references
+from versioning import VERSION_FILES, changelog_problem, read_version
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_NAMES = {
@@ -50,6 +51,10 @@ def validate(root=ROOT):
     assert knowledge.startswith("---\n"), "Missing skill package metadata"
     record = dict(line.split(": ", 1) for line in knowledge.split("---", 2)[1].strip().splitlines())
     assert record == {"package": data[0]["name"], "version": data[0]["version"]}, "Skill package version differs"
+    for path in VERSION_FILES:
+        assert read_version(root, path) == data[0]["version"], f"Package version differs: {path}"
+    problem = changelog_problem((root / "CHANGELOG.md").read_text(encoding="utf-8"), data[0]["version"])
+    assert problem is None, problem
     assert len(data[0]["extensions"]["com.openai"]["interface"]["shortDescription"]) <= 30
     portable = json.loads((plugin / "mcp.json").read_text(encoding="utf-8"))
     legacy = json.loads((plugin / ".mcp.json").read_text(encoding="utf-8"))

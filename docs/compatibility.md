@@ -1,7 +1,8 @@
 # Compatibility and support
 
-Current package candidate: **0.4.2**, reviewed 2026-10-16. This is a beta package.
-A source version is not a published release. Support claims below distinguish
+This is a beta package. The [CHANGELOG](../CHANGELOG.md) lists the current version.
+This matrix was last reviewed on 2026-10-16, for 0.4.2. A source version is not a
+published release. Support claims below distinguish
 file installation, observed agent behavior, and real host onboarding.
 
 | Surface | Current evidence | Status / limit |
