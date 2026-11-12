@@ -1,0 +1,171 @@
+name: Version
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+# Runs never overlap. A newer run waits, then reads every merge since the last tag.
+concurrency:
+  group: version-main
+  cancel-in-progress: false
+jobs:
+  compute:
+    name: Compute the next version
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      mode: ${{ steps.next.outputs.mode }}
+      version: ${{ steps.next.outputs.version }}
+      target: ${{ steps.next.outputs.target }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Read merged titles and rewrite the version files
+        id: next
+        run: python scripts/next_version.py --write --github-output "$GITHUB_OUTPUT"
+      - name: Validate the rewritten package
+        if: steps.next.outputs.mode == 'release'
+        run: python scripts/validate.py
+      - name: Save the change as a patch
+        if: steps.next.outputs.mode == 'release'
+        run: |
+          git diff --binary > "$RUNNER_TEMP/release.patch"
+          test -s "$RUNNER_TEMP/release.patch"
+          git diff --stat
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: steps.next.outputs.mode == 'release'
+        with:
+          name: release-patch
+          path: ${{ runner.temp }}/release.patch
+          if-no-files-found: error
+          retention-days: 1
+  write:
+    name: Push the release commit and tag
+    needs: compute
+    if: needs.compute.outputs.mode == 'release' || needs.compute.outputs.mode == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: release
+    permissions:
+      contents: read
+      actions: write
+    env:
+      MODE: ${{ needs.compute.outputs.mode }}
+      VERSION: ${{ needs.compute.outputs.version }}
+      TARGET: ${{ needs.compute.outputs.target }}
+      BASE: ${{ github.sha }}
+    # This job runs no repository code. It checks out main only to apply the patch and push.
+    steps:
+      - name: Require the release App secrets
+        env:
+          APP_CLIENT_ID: ${{ secrets.RELEASE_APP_CLIENT_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+        run: |
+          if [ -z "$APP_CLIENT_ID" ] || [ -z "$APP_PRIVATE_KEY" ]; then
+            echo '::error::The release environment needs RELEASE_APP_CLIENT_ID and RELEASE_APP_PRIVATE_KEY. Nothing was changed.'
+            exit 1
+          fi
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo '::error::The compute job returned an invalid version. Nothing was changed.'
+            exit 1
+          fi
+      - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        id: app
+        with:
+          client-id: ${{ secrets.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          token: ${{ steps.app.outputs.token }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        if: env.MODE == 'release'
+        with:
+          name: release-patch
+          path: ${{ runner.temp }}/release-patch
+      - name: Apply the patch if it changes only version files
+        if: env.MODE == 'release'
+        env:
+          # Keep this list equal to VERSION_FILES in scripts/versioning.py plus CHANGELOG.md.
+          # tests/test_versioning.py compares them.
+          ALLOWED_FILES: |
+            CHANGELOG.md
+            voiceflow/plugin.json
+            voiceflow/.claude-plugin/plugin.json
+            voiceflow/.codex-plugin/plugin.json
+            voiceflow/.cursor-plugin/plugin.json
+            voiceflow/skills/voiceflow/references/documentation.md
+        run: |
+          set -euo pipefail
+          git apply --index "$RUNNER_TEMP/release-patch/release.patch"
+          if [ -n "$(git diff --cached --summary)" ]; then
+            echo '::error::The patch adds, deletes, renames, or changes the mode of a file. Nothing was pushed.'
+            exit 1
+          fi
+          changed="$(git diff --cached --name-only)"
+          if [ -z "$changed" ]; then
+            echo '::error::The patch is empty. Nothing was pushed.'
+            exit 1
+          fi
+          while IFS= read -r path; do
+            if ! grep -Fxq -- "$path" <<<"$ALLOWED_FILES"; then
+              echo "::error::The patch changes $path, which is not a version file. Nothing was pushed."
+              exit 1
+            fi
+          done <<<"$changed"
+      - name: Push the commit and tag together, unless main moved
+        id: push
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          APP_SLUG: ${{ steps.app.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+          tag="v$VERSION"
+          if [ "$(git ls-remote origin refs/heads/main | cut -f1)" != "$BASE" ]; then
+            echo "::notice::main moved after this run started. Nothing was pushed; the next run covers every merge."
+            exit 0
+          fi
+          if [ "$MODE" = release ]; then
+            user_id="$(gh api "users/${APP_SLUG}%5Bbot%5D" --jq .id)"
+            git config user.name "${APP_SLUG}[bot]"
+            git config user.email "${user_id}+${APP_SLUG}[bot]@users.noreply.github.com"
+            git commit --quiet --message "chore(release): $VERSION"
+            commit="$(git rev-parse HEAD)"
+            refspecs=("$commit:refs/heads/main" "$commit:refs/tags/$tag")
+          else
+            if ! [[ "$TARGET" =~ ^[0-9a-f]{40}$ ]] || ! git merge-base --is-ancestor "$TARGET" "$BASE"; then
+              echo '::error::The commit to tag is not on main. Nothing was pushed.'
+              exit 1
+            fi
+            commit="$TARGET"
+            refspecs=("$commit:refs/tags/$tag")
+          fi
+          # One atomic push: main and the tag both move, or neither does.
+          if ! git push --atomic origin "${refspecs[@]}"; then
+            if [ "$MODE" = release ] && [ "$(git ls-remote origin refs/heads/main | cut -f1)" != "$BASE" ]; then
+              echo "::notice::main moved during the push. Nothing was pushed; the next run covers every merge."
+              exit 0
+            fi
+            echo '::error::The push was rejected. Nothing was pushed.'
+            exit 1
+          fi
+          echo "Pushed $tag at $commit."
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+      - name: Start the draft release for the new tag
+        if: steps.push.outputs.commit != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMIT: ${{ steps.push.outputs.commit }}
+        run: |
+          gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main \
+            -f commit="$COMMIT" -f version="$VERSION"

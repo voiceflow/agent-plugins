@@ -2,6 +2,10 @@
 
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
+Add each customer-facing change under Unreleased. When the release workflow
+releases a version, it moves those lines under that version number.
+
+## Unreleased
 
 ## 1.0.0
 

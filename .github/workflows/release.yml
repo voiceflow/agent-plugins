@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       commit:
-        description: Approved full source commit SHA
+        description: Full source commit SHA; tag v<version> must already point at it
         required: true
         type: string
       version:
@@ -91,15 +91,21 @@ jobs:
           set -euo pipefail
           tag="v$RELEASE_VERSION"
           # This job has no Git credentials or checkout; query through the scoped token.
-          existing_tags="$(gh api --paginate "repos/$GH_REPO/git/matching-refs/tags/$tag" --jq '.[].ref')"
-          if printf '%s\n' "$existing_tags" | grep -Fxq "refs/tags/$tag"; then
-            echo 'Refusing to replace an existing tag.' >&2
+          # The Version workflow creates the tag. This job never creates, moves, or deletes one.
+          tag_ref="$(gh api --paginate "repos/$GH_REPO/git/matching-refs/tags/$tag" \
+            --jq ".[] | select(.ref == \"refs/tags/$tag\") | .object.type + \" \" + .object.sha")"
+          read -r tag_type tag_sha <<<"$tag_ref" || true
+          if [ "${tag_type:-}" = tag ]; then
+            tag_sha="$(gh api "repos/$GH_REPO/git/tags/$tag_sha" --jq '.object.sha')"
+          fi
+          if [ -z "${tag_sha:-}" ] || [ "$tag_sha" != "$RELEASE_COMMIT" ]; then
+            echo "Refusing to draft: tag $tag must already exist at the release commit." >&2
             exit 1
           fi
           if gh release view "$tag" >/dev/null 2>&1; then
             echo 'Refusing to replace an existing release or draft.' >&2
             exit 1
           fi
-          gh release create "$tag" --target "$RELEASE_COMMIT" --draft --prerelease \
+          gh release create "$tag" --verify-tag --draft --prerelease \
             --title "Voiceflow $tag (beta)" --notes-file release-assets/release-notes.md \
             release-assets/*.zip release-assets/manifest.json release-assets/SHA256SUMS
