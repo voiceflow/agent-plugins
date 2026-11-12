@@ -5,17 +5,18 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
 
 ## 1.0.0 — Unreleased
 
-Breaking: the skills now name the account MCP v3 tools, and the MCP URL no
-longer pins the older tool names. This release needs the Voiceflow MCP server
-that serves v3 by default. To migrate, change a saved account MCP connection
-from `https://mcp.voiceflow.com/mcp?version=2` to
-`https://mcp.voiceflow.com/mcp`, then reload the host's tools.
+Breaking: the skills now name the account MCP v3 tools. The account MCP URL is
+pinned to `https://mcp.voiceflow.com/mcp?version=3`. To migrate, change a saved
+account MCP connection to that URL, then reload the host's tools.
 
 - Name every account MCP tool by its v3 name, `vf_<group>_<operation>`, such as
   `vf_agent_get`, in place of `voiceflow_<group>.<operation>`. Request examples
   put path and query fields at the top level and the write body in `body`.
-- Drop `?version=2` from the account MCP URL. Setup repairs a saved connection
-  that still carries it.
+- Pin the account MCP URL to `https://mcp.voiceflow.com/mcp?version=3`. Setup
+  repairs a saved connection that has no version or another version. The plugin
+  pins the MCP surface it was written for, so each plugin release pairs with one
+  MCP server version. The server default can move to a later version without
+  breaking installed plugins. A later plugin release moves the pin.
 - Refuse a `vf_*` name that v3 does not serve, and every older
   `voiceflow_<group>` name, in the skill reference checks.
 - Add the Optimize playbooks skill: condense long instructions, or move a job

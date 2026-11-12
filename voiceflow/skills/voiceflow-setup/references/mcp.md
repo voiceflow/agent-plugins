@@ -9,13 +9,18 @@ without a customer terminal. It does not require local software installation.
 | Setting | Value |
 | --- | --- |
 | Suggested name | Voiceflow |
-| Server URL | `https://mcp.voiceflow.com/mcp` |
+| Server URL | `https://mcp.voiceflow.com/mcp?version=3` |
 | Transport | Streamable HTTP |
 | Authentication | Browser OAuth |
 
-This URL serves the MCP v3 tools that these skills name, such as
-`vf_project_list`. A connection saved with `?version=2` serves older tool
-names that the skills no longer use. Repair it to the URL above.
+This URL pins MCP version 3, which serves the tools that these skills name,
+such as `vf_project_list`. Each plugin release pairs with one MCP server
+version. The server default can move to a later version without breaking this
+plugin. A later plugin release moves the pin.
+
+A saved connection whose URL has no `version`, or a version other than `3`,
+must be changed to `https://mcp.voiceflow.com/mcp?version=3`. Then reload the
+host's tools.
 
 The host must support this transport and interactive OAuth, including a callback
 accepted by Voiceflow. Voiceflow's account MCP requires both workspace read and
