@@ -24,6 +24,7 @@ only the specialist relevant to the task:
 | --- | --- |
 | Build an agent or playbook | [Build](../voiceflow-build/SKILL.md) |
 | Write global, routing, or playbook instructions | [Prompting](../voiceflow-prompting/SKILL.md) |
+| Condense or split long instructions | [Optimize playbooks](../voiceflow-optimize-playbooks/SKILL.md) |
 | Deterministic canvas logic | [Workflows](../voiceflow-workflows/SKILL.md) |
 | Write function code | [Functions](../voiceflow-functions/SKILL.md) |
 | Connect inputs, outputs, and state | [Wiring](../voiceflow-wiring/SKILL.md) |

@@ -1,6 +1,6 @@
 ---
 package: voiceflow
-version: 0.5.0
+version: 1.0.0
 ---
 
 # Answer product questions with the docs MCP

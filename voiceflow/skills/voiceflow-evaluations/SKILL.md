@@ -43,11 +43,11 @@ routing even when the management API returns the new configuration. See the
 [compile sequence](../voiceflow/references/request-shapes.md#compile-before-a-draft-conversation-test).
 
 To check a short exchange without saving a test, use
-`voiceflow_conversation.run_script` with up to 10 user messages in order. It
+`vf_conversation_run_script` with up to 10 user messages in order. It
 starts a fresh conversation and returns each turn's replies, tool calls,
 changed variables, and errors; pass `variables` to start as a known caller. It
 does not compile: compile first after an edit, and when the result says
-`needsRecompile: true`, compile and run it again. Use `voiceflow_conversation.send`
+`needsRecompile: true`, compile and run it again. Use `vf_conversation_send`
 only when the next message depends on the reply. CLI 0.287.0 has no command for
 the script run. A reply is not proof a tool worked; read the turn's tool calls.
 
@@ -61,7 +61,7 @@ Before you save a test:
   route the agent took.
 - Test a limit with real attempts, such as three wrong answers, not a message
   saying "I failed three times".
-- Seed a variable by its ID from `voiceflow_variable.list`; a name in its place
+- Seed a variable by its ID from `vf_variable_list`; a name in its place
   sets nothing. Check once in the run's log that the value reached the agent.
 - When a test you wrote fails, check the test before the agent, and say so when
   the mistake was yours.
@@ -75,14 +75,14 @@ Poll run status with a bounded deadline; pending is not passed. Separate
 infrastructure errors from agent failures. Inspect traces to identify why an
 assertion failed instead of weakening the assertion until it passes.
 
-Read a run with `voiceflow_test.get_run` about every 15 seconds, at most 20
+Read a run with `vf_test_get_run` about every 15 seconds, at most 20
 times. A run goes from idle through pending and running to passed,
 failed, or canceled. If it is still running at the deadline, say so and offer
-to stop it with `voiceflow_test.cancel_runs`: a run that has not started never
+to stop it with `vf_test_cancel_runs`: a run that has not started never
 starts, and a finished run keeps its result. CLI 0.287.0 has no cancel command.
 
 When the agent under test can reach a tool that writes to an outside system,
-list each finished run's tool calls with `voiceflow_test.query_run_logs` and
+list each finished run's tool calls with `vf_test_query_run_logs` and
 `debugKinds: ["tool"]`, and report every write-shaped call before pass or fail.
 A page holds at most 50 entries or about 30,000 tokens; while `hasMore` is true,
 call again with `offset` set to `nextOffset`. Then report passed checks of total

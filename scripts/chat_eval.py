@@ -18,7 +18,7 @@ except ImportError:  # Direct script execution has no package parent.
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = "https://preview.invalid/agents/"
-ACCOUNT = "https://mcp.voiceflow.com/mcp?version=2"
+ACCOUNT = "https://mcp.voiceflow.com/mcp?version=3"
 DOCS = "https://www.voiceflow.com/docs/mcp"
 AUTH = "https://auth.example.invalid/fixture-sign-in"
 SETTINGS = "https://chat.example.invalid/settings/connections"
@@ -145,7 +145,7 @@ def dispatch(state, tool, args):
     if tool == "discover_tools":
         tools = []
         if state["connected"] and not (case == "chat-reload" and state["user_completed"]):
-            tools.append({"name": "voiceflow_account.projects", "description": "List projects visible to the signed-in user; read-only.",
+            tools.append({"name": "vf_project_list", "description": "List projects visible to the signed-in user; read-only.",
                           "input_schema": {"type": "object", "properties": {}, "additionalProperties": False}})
         if state["docs_connected"] and not (case == "chat-reload" and state["user_completed"]):
             tools.append({"name": "voiceflow_docs.lookup", "description": "Read public Voiceflow product guidance; no account required.",
@@ -197,7 +197,7 @@ def dispatch(state, tool, args):
         name, arguments = args["name"], args["arguments"]
         if name not in state.get("discovered", {}):
             return reject(state, "Tool must be available and discovered: " + name)
-        if name == "voiceflow_account.projects":
+        if name == "vf_project_list":
             if arguments != {}:
                 return reject(state, "Account list requires no project selection or arguments")
             if not state["signed_in"]:

@@ -20,9 +20,9 @@ For MCP text import, use the [verified file shape](../voiceflow/references/reque
 the hosted tool can upload inline text without a local CLI or public URL.
 
 To import a whole website, a section of one, or a sitemap.xml, use
-`voiceflow_document.create_managed_sitemap`. It creates one sitemap document
+`vf_document_create_managed_sitemap`. It creates one sitemap document
 that owns its pages and re-syncs them, and
-`voiceflow_document.update_managed_sitemap` changes which pages it keeps and how
+`vf_document_update_managed_sitemap` changes which pages it keeps and how
 often it re-syncs. Never import a site by adding its pages one by one as URL
 documents.
 
@@ -46,7 +46,7 @@ Deleting a document is a separate destructive operation; don't treat it as a
 routine refresh if an update is supported.
 
 To change what a text or markdown document says, send its whole new text as
-`content` to `voiceflow_document.update`. A document read returns its chunks,
+`content` to `vf_document_update`. A document read returns its chunks,
 not its source text, so never rebuild the text from them. Send `content` only
 when you have the whole new text: from the user, or from a document of one
 chunk without smart chunking. Otherwise ask the user for the full text. Do not

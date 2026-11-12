@@ -28,6 +28,10 @@ Keep docs access available alongside either CLI or account MCP operations.
 
 Use the connected MCP schemas or the installed CLI:
 `vf <resource> --help`, then `vf <resource> <operation> --help` or `--usage`.
+Over the account MCP, each operation is its own tool, named
+`vf_<group>_<operation>`, such as `vf_agent_get`. Many tools list a short
+schema; read the full one with `vf_describe_operations` before a tool's first
+call.
 The CLI covers agent, project, workspace, playbook, workflow, function, tool,
 api-tool, variable, secret, document, knowledge-base, message, prompt, integration,
 mcp-server, mcp-tool, transcript, test, evaluation, environment, and other resources.

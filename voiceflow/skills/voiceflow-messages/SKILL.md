@@ -35,7 +35,7 @@ duplicate and claiming the user-facing text changed.
 
 ## Find text and owners
 
-Use `voiceflow_environment.search_text` to check an exact word, phrase, or
+Use `vf_environment_search_text` to check an exact word, phrase, or
 pattern across the project, or to find every holder of a message or prompt ID.
 Use a targeted read when one can answer. `pattern` is literal text; add
 `regex: true` for a regular expression, `wholeWord: true` to skip matches inside
@@ -46,9 +46,12 @@ in `usedBy` the steps that hold its ID. Page with `offset` set to `nextOffset`.
 names what it never reads, such as knowledge documents and transcripts. CLI
 0.287.0 has no command for this search.
 
-Workflow steps hold message IDs too: Message and End steps, End actions on an
-exit, and no-match and no-reply reprompts. Capture entity items and required
-entities can hold one as well, and no read shows those; search for the ID.
+A playbook's exit paths hold message IDs too, under `messages`:
+`vf_playbook_list_paths` shows them, and `vf_playbook_create_path` and
+`vf_playbook_update_path` set them. Workflow steps hold message IDs as well:
+Message and End steps, End actions on an exit, and no-match and no-reply
+reprompts. Capture entity items and required entities can hold one too, and no
+read shows those; search for the ID.
 
 ## Delete a message or prompt
 
@@ -58,7 +61,7 @@ user what you found and what you could not check, and ask whether any entity
 uses the message. Delete only after the user confirms that none does.
 
 Clear or repoint each owner before deleting the message. For an End step that
-speaks, keep the End and clear its message with `voiceflow_workflow.update_step`
+speaks, keep the End and clear its message with `vf_workflow_update_step`
 and `"content": {"messageID": null, "responseEnabled": false}`. Deleting the End
 leaves the path with no ending, so do that only when the user asks.
 

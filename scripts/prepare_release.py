@@ -34,7 +34,7 @@ def prepare_assets(site, output, changelog, expected_version, expected_commit):
         if (not path.resolve().is_relative_to(site.resolve()) or path.is_symlink()
                 or not path.is_file() or sha(path.read_bytes()) != checksum):
             raise ValueError(f"Release asset verification failed: {name}")
-    heading = re.search(rf"^## {re.escape(version)} — [^\n]+\n(.*?)(?=^## |\Z)",
+    heading = re.search(rf"^## {re.escape(version)}(?: — [^\n]+)?\n(.*?)(?=^## |\Z)",
                         changelog, re.M | re.S)
     if not heading:
         raise ValueError("Release version is missing from CHANGELOG.md")

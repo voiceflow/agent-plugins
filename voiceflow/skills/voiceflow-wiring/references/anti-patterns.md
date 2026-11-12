@@ -122,7 +122,7 @@ bind the secret on every attachment:
 
 Leave `required` out: a secret default makes it `false`, so the runtime fills
 in the value and the model never sees it. Copy the secret's name exactly from
-`voiceflow_secret.list`. A mistyped name is saved as literal text, appears in
+`vf_secret_list`. A mistyped name is saved as literal text, appears in
 `unresolvedReferences`, and the model is then asked for the input.
 
 Never fix a failing secret reference by putting the literal value back in the

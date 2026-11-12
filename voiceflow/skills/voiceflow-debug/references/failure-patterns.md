@@ -169,8 +169,9 @@ start, such as transfer, re-route, greet, triage, transfer.
 
 Symptoms: the agent says goodbye but the call stays open, or the user hangs up.
 
-Check: whether the end-call tool is available to the agent, and whether the
-prompt says when to use it.
+Check: whether `endTool` is enabled on the agent or playbook that ends the
+call, with `vf_agent_get` or `vf_playbook_get`, and whether the prompt says when
+to call it.
 
 ```markdown
 ## Ending the call

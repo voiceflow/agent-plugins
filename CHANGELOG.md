@@ -3,11 +3,33 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
-## 0.5.0 — Unreleased
+## 1.0.0
+
+Breaking: the skills now name the account MCP v3 tools. The account MCP URL is
+pinned to `https://mcp.voiceflow.com/mcp?version=3`. To migrate, change a saved
+account MCP connection to that URL, then reload the host's tools.
+
+- Name every account MCP tool by its v3 name, `vf_<group>_<operation>`, such as
+  `vf_agent_get`, in place of `voiceflow_<group>.<operation>`. Request examples
+  put path and query fields at the top level and the write body in `body`.
+- Pin the account MCP URL to `https://mcp.voiceflow.com/mcp?version=3`. Setup
+  repairs a saved connection that has no version or another version. The plugin
+  pins the MCP surface it was written for, so each plugin release pairs with one
+  MCP server version. The server default can move to a later version without
+  breaking installed plugins. A later plugin release moves the pin.
+- Refuse a `vf_*` name that v3 does not serve, and every older
+  `voiceflow_<group>` name, in the skill reference checks.
+- Add the Optimize playbooks skill: condense long instructions, or move a job
+  out of the main agent's instructions, with tests before and after.
+- Port the latest product guidance: workflow tools sit on the main agent,
+  playbook exit paths hold message IDs, transcripts are read in the summary
+  view first, and an evaluation run scores one transcript per call.
+
+## 0.5.0
 
 - Pin the account MCP URL to `https://mcp.voiceflow.com/mcp?version=2`, because the server default is moving to the new v3 tool names. The next major release moves the skills to v3.
 
-## 0.4.2 — Unreleased
+## 0.4.2
 
 - Update package and support links for the transfer to `voiceflow/agent-plugins`.
 - Attribute the MIT license and package authorship to Voiceflow, Inc.

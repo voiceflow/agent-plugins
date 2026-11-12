@@ -146,7 +146,7 @@ class SkillInstallTests(unittest.TestCase):
 
     def test_complete_packaged_skill_tree_installs(self):
         installer.install(ROOT / "voiceflow/skills", self.target)
-        self.assertEqual(len(list(self.target.glob("*/SKILL.md"))), 17)
+        self.assertEqual(len(list(self.target.glob("*/SKILL.md"))), 18)
         self.assertTrue((self.target / "voiceflow-setup/references/setup.md").is_file())
         metadata = (self.target / "voiceflow/references/documentation.md").read_text(encoding="utf-8").split("---", 2)[1]
         record = dict(line.split(": ", 1) for line in metadata.strip().splitlines())
@@ -234,9 +234,9 @@ class PublicationTests(unittest.TestCase):
         self.assertTrue(manifest["hasUncommittedChanges"])
         with zipfile.ZipFile(site / "voiceflow.zip") as archive:
             self.assertEqual(archive.namelist(), sorted(archive.namelist()))
-            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 17)
+            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 18)
             licenses = [n for n in archive.namelist() if n.endswith("/LICENSE")]
-            self.assertEqual(len(licenses), 18)
+            self.assertEqual(len(licenses), 19)
             for name in licenses:
                 self.assertEqual(archive.read(name), (ROOT / "LICENSE").read_bytes())
                 self.assertEqual((site / name).read_bytes(), (ROOT / "LICENSE").read_bytes())
@@ -324,7 +324,7 @@ class PublicationTests(unittest.TestCase):
 
 class RepositoryTests(unittest.TestCase):
     def test_all_manifests_and_skill_links(self):
-        self.assertEqual(validator.validate(), 17)
+        self.assertEqual(validator.validate(), 18)
 
     def test_stale_standalone_version_is_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -391,6 +391,12 @@ class ReleaseTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.prepare(**options)
         self.assertFalse(self.output.exists())
+
+    def test_a_bare_version_heading_gives_the_notes(self):
+        self.prepare(changelog=f"# Changelog\n\n## {self.version}\n\n- A bare heading.\n\n## 0.0.1\n\n- Older.\n")
+        notes = (self.output / "release-notes.md").read_text(encoding="utf-8")
+        self.assertIn("- A bare heading.", notes)
+        self.assertNotIn("Older.", notes)
 
     def test_tampered_asset_and_missing_notes_are_rejected(self):
         with self.assertRaisesRegex(ValueError, "CHANGELOG"):

@@ -50,6 +50,34 @@
       ]
     },
     {
+      "id": "setup-mcp-version-pin",
+      "category": "setup",
+      "fixture": "Authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp?version=2.",
+      "prompt": "Connect me to Voiceflow.",
+      "required": [
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3",
+        "Verify a read with the account tools after reconnecting"
+      ],
+      "forbidden": [
+        "Add a second account connection",
+        "Call older tool names that the skills no longer use"
+      ]
+    },
+    {
+      "id": "setup-mcp-version-missing",
+      "category": "setup",
+      "fixture": "Authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp.",
+      "prompt": "Connect me to Voiceflow.",
+      "required": [
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3",
+        "Verify a read with the account tools after reconnecting"
+      ],
+      "forbidden": [
+        "Add a second account connection",
+        "Call older tool names that the skills no longer use"
+      ]
+    },
+    {
       "id": "setup-empty-account",
       "category": "setup",
       "fixture": "Successful workspace response is an empty list.",
@@ -307,6 +335,23 @@
       ]
     },
     {
+      "id": "playbook-condense",
+      "category": "product",
+      "fixture": "Synthetic project whose Refunds playbook has 30,000 characters of instructions that repeat its rules, two routing tests that route to it, and a live version; account MCP connected.",
+      "prompt": "Our refunds playbook is too long. Clean it up.",
+      "required": [
+        "Read every page of the instructions before writing the plan",
+        "Show one plan with the size now and the target size, and ask once before any change",
+        "Run the same tests before and after the change",
+        "Send the whole new text in one update and check unresolvedMentions"
+      ],
+      "forbidden": [
+        "Change the instructions before the user answers the plan",
+        "Drop a rule because it looks out of date without the user saying so",
+        "Change a test to make it pass"
+      ]
+    },
+    {
       "id": "publish-then-merge",
       "category": "product",
       "fixture": "Synthetic project with a working environment refund-policy-update whose draft changes were never published; Main is live.",
@@ -379,6 +424,21 @@
       ]
     },
     {
+      "id": "workflow-tool-main-agent",
+      "category": "product",
+      "fixture": "Synthetic project with an Order lookup workflow and a Returns playbook; account MCP connected.",
+      "prompt": "Let the returns playbook run our order lookup workflow.",
+      "required": [
+        "Attach the workflow as a tool on the main agent with a global target",
+        "Give the tool a description that says when to run it",
+        "Explain that every playbook can call a workflow tool on the main agent"
+      ],
+      "forbidden": [
+        "Attach the workflow tool to the playbook",
+        "Add the workflow to the main agent's workflows list"
+      ]
+    },
+    {
       "id": "debug-log-turn",
       "category": "product",
       "fixture": "Synthetic transcript T1 where a tool call failed on the user's second message.",
@@ -390,6 +450,20 @@
       "forbidden": [
         "Read many transcripts in full",
         "Rewrite the prompt before finding the failing entry"
+      ]
+    },
+    {
+      "id": "transcript-read-view",
+      "category": "product",
+      "fixture": "Synthetic voice transcript T2 of four minutes where the agent misread an order number; account MCP connected.",
+      "prompt": "What went wrong in conversation T2?",
+      "required": [
+        "Read the transcript in the summary view first",
+        "Ask for the formatted view only when the summary points at turns to read in full"
+      ],
+      "forbidden": [
+        "Ask for the logs format to read the conversation",
+        "Read other transcripts in full"
       ]
     },
     {
@@ -408,11 +482,12 @@
     {
       "id": "message-delete-owners",
       "category": "product",
-      "fixture": "Synthetic project where a goodbye message is used by a speaking End step; the text search reports incomplete.",
+      "fixture": "Synthetic project where a goodbye message is used by a speaking End step and by a playbook exit path; the text search reports incomplete.",
       "prompt": "Delete the goodbye message.",
       "required": [
         "Search for every owner of the message ID",
         "Keep the End step and clear its message",
+        "Clear or repoint the exit path's message with the playbook path tools",
         "Say the search was incomplete and ask whether an entity uses the message before deleting"
       ],
       "forbidden": [

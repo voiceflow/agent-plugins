@@ -50,7 +50,7 @@ before you say it works. Write the cases first: a normal case; each limit at one
 below, at, and one above (for "at most 3 items", send 2, 3 and 4); an empty
 value; a wrong type; and `"0"`, which is what an unset variable sends. Decide
 the expected path and outputs for each case, then run
-`voiceflow_function.execute` once per case and compare `output.path` and
+`vf_function_execute` once per case and compare `output.path` and
 `output.outputVars` with them. Fix the code and check again. If cases still fail
 after two rounds of fixes, stop and tell the user which ones fail and why: the
 code or the expectation may be wrong.

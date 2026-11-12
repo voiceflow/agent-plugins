@@ -36,7 +36,7 @@ Example. Filled from the secret EXAMPLE_API_KEY; do not change."
 
 ## Bind it on the attachment
 
-On the tool attachment, `voiceflow_tool.create` or `voiceflow_tool.update`, set
+On the tool attachment, `vf_tool_create` or `vf_tool_update`, set
 the input's `defaultValue` to the secret's name in braces, `"{EXAMPLE_API_KEY}"`,
 and leave `required` out. Key each input by its variable's UUID and repeat that
 UUID in `functionInputVariableID`. The full body is in
@@ -63,11 +63,11 @@ See [wiring](../../voiceflow-wiring/SKILL.md) for the other `required` rules.
 
 ## Check the secret name
 
-`voiceflow_secret.list` takes the project only, because secrets belong to the
+`vf_secret_list` takes the project only, because secrets belong to the
 project. It returns each secret's `id`, `name` and `hasValue`, never the value.
 Copy the `name` exactly. A mistyped name is saved as literal text, comes back in
 the write result's `unresolvedReferences`, and the model is then asked for the
-input. A value can differ per environment, and `voiceflow_secret.list_overrides`
+input. A value can differ per environment, and `vf_secret_list_overrides`
 reports which, but the name you bind stays the same.
 
 To create a secret or set its value, follow the

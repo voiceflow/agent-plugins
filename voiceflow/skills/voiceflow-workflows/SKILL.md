@@ -45,8 +45,8 @@ field into a step payload.
 
 ## Reading
 
-`voiceflow_workflow.get` and `voiceflow_workflow.get_step` answer most
-questions. `voiceflow_workflow.get_raw` returns the stored canvas nodes with
+`vf_workflow_get` and `vf_workflow_get_step` answer most
+questions. `vf_workflow_get_raw` returns the stored canvas nodes with
 their coordinates; it is long and unprocessed. Use it only when the other reads
 cannot answer, such as where blocks sit, send `blockIDs` for the blocks you
 need, and never plan an edit from it. To find where a word, phrase, or ID is
@@ -60,21 +60,26 @@ used across the project, see [messages](../voiceflow-messages/SKILL.md#find-text
   keep it silent. A speaking End step is the exception, because deleting it
   leaves the path with no ending: keep it and send
   `"content": {"messageID": null, "responseEnabled": false}` with
-  `voiceflow_workflow.update_step`. An update keeps every field you leave out.
-- `voiceflow_workflow.add_blocks` adds up to 20 blocks with their steps, links
+  `vf_workflow_update_step`. An update keeps every field you leave out.
+- `vf_workflow_add_blocks` adds up to 20 blocks with their steps, links
   between them, and `from` ports that link existing ports to them. Create their
-  messages first, in one batch. `voiceflow_workflow.link_many` sets up to 50
+  messages first, in one batch. `vf_workflow_link_many` sets up to 50
   links in one write.
-- To change an exit action's kind, use `voiceflow_workflow.replace_action`. It
+- To change an exit action's kind, use `vf_workflow_replace_action`. It
   keeps the action's place in one write. Deleting and re-adding leaves the path
   running without the action in between.
-- Arrange blocks with `voiceflow_workflow.arrange_blocks` only when the user asks
+- Arrange blocks with `vf_workflow_arrange_blocks` only when the user asks
   to tidy the canvas. Pass `blockIDs` when they mean some blocks; without them
   every block moves, including ones the user placed by hand.
-- `voiceflow_workflow.duplicate` copies a workflow with its own messages,
-  prompts, and playbooks, and maps each original ID to the copy's. Edit the copy
-  through those IDs. To route to the copy, send every workflow already in the
-  agent's `workflows` list plus the copy; the copy alone replaces the list.
+- `vf_workflow_duplicate` copies a workflow with its own messages, prompts,
+  and playbooks, and maps each original ID to the copy's. Edit the copy through
+  those IDs. When the main agent should route to the copy, send every workflow
+  already in the agent's `workflows` list plus the copy; the copy alone
+  replaces the list.
+- A new workflow needs a way in. Add it to the agent's `workflows` list, with a
+  routing rule, only when the main agent should route to it. Skip both when it
+  runs another way: as the Initialization workflow, from a Workflow or Go to
+  block step in another workflow, or as a workflow tool.
 
 CLI 0.287.0 has no commands for the raw read, adding several blocks, several
 links, replacing an action, arranging, or duplicating; use the single-item
@@ -83,7 +88,7 @@ commands there.
 ## Workflow tools
 
 When the user asks for a workflow tool rather than a routing entry, attach it
-with `voiceflow_tool.create`, type `workflow`, `target: {"global": true}`, the
+with `vf_tool_create`, type `workflow`, `target: {"global": true}`, the
 `workflowID`, and a `description` that says when to run it. The main agent and
 every playbook can then call it, so add no routing rule. Never send a
 `playbookID`: playbooks do not take a workflow tool of their own. Without a

@@ -53,7 +53,8 @@ by Git. Do not regenerate this inventory just to bypass that failure.
 `python3 scripts/validate.py` also checks that skill text names only things that
 exist. It prints one `file:line: reason` line per problem and fails when a skill:
 
-- names an MCP tool or operation that does not exist;
+- names an MCP tool that the account MCP v3 does not serve, including an
+  older `voiceflow_<tool>.<operation>` name;
 - names an MCP operation that the MCP always refuses, where the skill must
   give the `vf` command instead;
 - names a `vf` command that the pinned CLI does not have;
@@ -61,13 +62,15 @@ exist. It prints one `file:line: reason` line per problem and fails when a skill
   or `references/*.md` file;
 - uses an internal tool or product name that is not public.
 
-Write an MCP operation as `` `voiceflow_<tool>.<operation>` `` and a CLI command
-as `` `vf <command> --flag` ``. In CI, `scripts/verify_cli.py` also runs
+Write an MCP tool by its v3 name, `` `vf_<group>_<operation>` ``, such as
+`vf_agent_get`, and a CLI command as `` `vf <command> --flag` ``. In CI, `scripts/verify_cli.py` also runs
 `--help` for every `vf` command the skills name and checks each flag they use.
 
 The accepted names live in `tests/fixtures/voiceflow-surface.json`. MCP tools
 come from the latest voiceflow/cli release, because that release tracks the
-hosted MCP. CLI commands come from the pinned CLI version. Refresh the file
+hosted MCP. The operation `<operation>` of the snapshot tool `voiceflow_<group>`
+is the v3 tool `vf_<group>_<operation>`. The v3 tools `vf_get_started`,
+`vf_skill_list`, `vf_skill_load` and `vf_describe_operations` are accepted too. CLI commands come from the pinned CLI version. Refresh the file
 when either changes, then review the diff:
 
 ```sh
