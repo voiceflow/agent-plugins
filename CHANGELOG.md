@@ -24,6 +24,12 @@ account MCP connection to that URL, then reload the host's tools.
 - Port the latest product guidance: workflow tools sit on the main agent,
   playbook exit paths hold message IDs, transcripts are read in the summary
   view first, and an evaluation run scores one transcript per call.
+- Connect the docs MCP with `logging=off` in every native plugin and standalone
+  setup. Once the docs server supports this option, it does not log this
+  package's requests. Hand-added docs connections are still logged. The name is
+  provisional until the docs server ships the option.
+- Send only the package, skill, and stage tag in the docs `why` field, with no
+  task, symptom, or setup-state sentence.
 
 ## 0.5.0
 

@@ -19,7 +19,7 @@ except ImportError:  # Direct script execution has no package parent.
 ROOT = Path(__file__).resolve().parents[1]
 BASE = "https://preview.invalid/agents/"
 ACCOUNT = "https://mcp.voiceflow.com/mcp?version=3"
-DOCS = "https://www.voiceflow.com/docs/mcp"
+DOCS = "https://www.voiceflow.com/docs/mcp?logging=off"
 AUTH = "https://auth.example.invalid/fixture-sign-in"
 SETTINGS = "https://chat.example.invalid/settings/connections"
 CASES = {

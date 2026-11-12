@@ -10,8 +10,8 @@ For questions about test assertions, evaluation criteria, run behavior, or inter
 that this skill does not answer, follow the
 [docs MCP workflow](../voiceflow/references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
-when this skill suggests a fix. Include package/skill/stage context in `why` as
-described there. Reuse guidance for the same issue; consult it whenever unsure.
+when this skill suggests a fix. Put only the package/skill/stage tag in `why`,
+as described there. Reuse guidance for the same issue; consult it whenever unsure.
 
 Read the [operation contract](../voiceflow/references/operations.md). Distinguish
 a saved conversational test, its individual run, and an evaluation criterion.

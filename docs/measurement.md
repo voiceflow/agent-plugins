@@ -1,30 +1,48 @@
 # Understand headless onboarding through docs questions
 
-Use the existing Voiceflow Knowledge MCP logs to learn where assistants and
-customers need help. The plugin adds context to useful documentation requests;
-it does not send a separate analytics request, report success through a fake
-question, or require customer identification.
+This package does not log its own docs requests. Measure it with controlled
+evaluations, and use the Voiceflow Knowledge MCP logs only for traffic that
+the package does not configure.
 
-## Attribution contract
+## Who is logged
 
-The shared [documentation workflow](../voiceflow/skills/voiceflow/references/documentation.md)
-uses this prefix inside the existing `why` field:
+Every docs connection this package creates adds `logging=off` to the server URL.
+That covers the native plugins and the standalone-skill setup. Once the docs
+server supports this option, it does not log those requests.
 
-`vf-agent-plugin/<installed-version> skill=<active-skill> stage=<stage>: <task or symptom>`
+The docs server still logs connections without the option. These include
+people who add the docs MCP by hand from the Voiceflow docs, and Voiceflow's
+own products that call the docs server. A host can hold both a package
+connection and a hand-added one; requests through the hand-added one are logged.
+
+`logging=off` is a provisional name. The docs server does not support it yet.
+Until it does, the server ignores the parameter and logs package requests as
+before. `scripts/validate.py` holds the exact URL, so a rename changes one value
+and the check then lists every file to update.
+
+## Package tag
+
+While the docs tools require a `why` field, the shared
+[documentation workflow](../voiceflow/skills/voiceflow/references/documentation.md)
+fills it with this tag and nothing else:
+
+`vf-agent-plugin/<installed-version> skill=<active-skill> stage=<stage>`
+
+The tag carries no task, symptom, or setup state. Anthropic's directory policy
+does not allow collecting extra conversation data, even for logging. The
+question already says what the assistant needs.
 
 `stage` is `setup`, `troubleshooting`, or `usage`. A setup error stays `setup`;
 `intent=error`, where supported by the tool, distinguishes it from a normal
-documentation check. The installed documentation workflow carries package metadata at its top,
-so reading the guidance also supplies the version in standalone skill installs. Unavailable metadata is `unknown`, never guessed.
-Keep the entire field under 200 characters and omit customer-identifying data.
-The prefix belongs in context, not in the retrieval question. Keep `initiator`
+documentation check. The installed documentation workflow carries package
+metadata at its top, so reading the guidance also supplies the version in
+standalone skill installs. Unavailable metadata is `unknown`, never guessed.
+The tag belongs in `why`, not in the retrieval question. Keep `initiator`
 and `purpose` truthful; an autonomous troubleshooting call is still an answer
 request, not automatically research.
 
-This is self-reported attribution. A host name is not a model name, a connection
-is not a person, and a version label does not prove the installation is unedited.
-Older releases and assistants that skip these instructions remain unattributed.
-Preserve that unknown bucket rather than assigning it to the latest release.
+The tag is self-reported. A host name is not a model name, a connection is not
+a person, and a version label does not prove the installation is unedited.
 
 ## What the existing pipeline can show
 
@@ -34,13 +52,14 @@ latency, and client/session information when the host supplies it. Its existing
 log collection and docs-gap reporting are owned by the website repository.
 This plugin change does not deploy changes to that pipeline or its dashboard.
 
-Filter the existing `why` values by the prefix, then compare:
+Once the server supports `logging=off`, these logs hold no package traffic.
+They still show where people with hand-added connections need help. Until then,
+package requests also appear, and filtering `why` by the tag separates them:
 
 | Signal | Useful interpretation | Limit |
 | --- | --- | --- |
 | Setup questions by version/client | Observed setup activity and common connection blockers | Not total installs or unique customers |
 | Normal setup documentation checks | The assistant attempted to verify current guidance | A docs answer alone does not prove account access or completed onboarding |
-| Questions after an account read, as stated in `why` | A reported account-access milestone | Self-reported, not independently verified conversion |
 | Troubleshooting topics by skill | Repeated product friction and candidate regression cases | Volume also reflects adoption and consultation behavior |
 | Weak answers and tool errors | Candidate documentation, retrieval, or schema gaps | Confidence is not correctness or customer resolution |
 | Rephrased questions and follow-up reads | Possible difficulty finding enough evidence | Follow-up reads can be appropriate; session grouping is approximate |

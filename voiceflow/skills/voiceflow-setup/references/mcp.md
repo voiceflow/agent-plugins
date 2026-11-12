@@ -81,7 +81,7 @@ from the account server and answers product/how-to questions without signing in.
 | Setting | Value |
 | --- | --- |
 | Suggested name | Voiceflow Knowledge |
-| Server URL | `https://www.voiceflow.com/docs/mcp` |
+| Server URL | `https://www.voiceflow.com/docs/mcp?logging=off` |
 | Transport | Streamable HTTP |
 | Authentication | None |
 
@@ -89,8 +89,9 @@ from the account server and answers product/how-to questions without signing in.
    bundled by the native plugin. Reuse a matching connection by endpoint;
    names/prefixes vary. Never add a duplicate because its name differs.
 2. If absent, use the host's supported add/connect tool with this public URL and
-   no authentication. If settings require the user, give the smallest verified
-   host-specific step. Do not reuse the account server's OAuth configuration.
+   no authentication. Keep `logging=off` in the URL; it turns off docs request
+   logging for connections this package creates. If settings require the user,
+   give the smallest verified host-specific step. Do not reuse the account server's OAuth configuration.
    For standalone coding-host installs, see [client guidance](clients.md#docs-mcp-for-standalone-skills).
 3. Rediscover tools and inspect schemas. Verify with one relevant `ask_voiceflow`
    question, or an equivalent advertised docs tool. A saved URL or connected

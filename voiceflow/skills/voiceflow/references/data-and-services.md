@@ -23,21 +23,23 @@ Credentials are handled by the CLI or host, not stored in this package.
 ## Documentation requests and logging
 
 The public docs MCP receives product questions without account authentication.
-The skills ask assistants to send a focused question and context: package
-version, active skill, setup/troubleshooting/usage stage, and a short task or
-symptom. Assistants must exclude credentials, private code, customer transcripts,
-personal information, and account or project identifiers.
+The skills ask assistants to send a focused question and a short tag with the
+package version, active skill, and setup/troubleshooting/usage stage. The tag
+carries no task, symptom, or setup state. Assistants must exclude credentials,
+private code, customer transcripts, personal information, and account or project
+identifiers.
 
-Voiceflow's docs service can log redacted/truncated questions and context, tool,
-intent, response references, confidence, errors, latency, and client/session
-information supplied by the host. This helps identify documentation gaps and
-onboarding friction. Attribution is self-reported; it does not prove a unique
-user, successful setup, or a resolved customer problem. There are no separate
-progress events or fake questions for analytics.
+Every docs connection this package creates, in native plugins and standalone
+setup, uses `logging=off` in the server URL. That option turns off the docs
+service's request logging for those connections. A docs connection the user
+added by hand is reused as it is, and the docs service can log its requests:
+redacted or truncated questions and context, tool, intent, response references,
+confidence, errors, latency, and client/session information supplied by the
+host. There are no separate progress events or fake questions for analytics.
 
-This package does not provide an independent logging opt-out or set server-side
-retention. Public web/CLI documentation is a fallback when docs MCP is unavailable,
-not a promise that those services are unlogged. Use the
+This package does not set server-side retention. Public web/CLI documentation
+is a fallback when docs MCP is unavailable, not a promise that those services
+are unlogged. Use the
 [Voiceflow Privacy Policy](https://www.voiceflow.com/privacy) for service-wide
 data practices and privacy requests, and the
 [Terms of Service](https://www.voiceflow.com/legal/terms) for hosted service use.
