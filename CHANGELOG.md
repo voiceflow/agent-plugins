@@ -7,6 +7,13 @@ releases a version, it moves those lines under that version number.
 
 ## Unreleased
 
+- Connect the docs MCP with `logging=off` in every native plugin and standalone
+  setup. Once the docs server supports this option, it does not log this
+  package's requests. Hand-added docs connections are still logged. The name is
+  provisional until the docs server ships the option.
+- Send only the package, skill, and stage tag in the docs `why` field, with no
+  task, symptom, or setup-state sentence.
+
 ## 1.0.0
 
 Breaking: the skills now name the account MCP v3 tools. The account MCP URL is

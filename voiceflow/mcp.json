@@ -3,7 +3,7 @@
   "mcpServers": {
     "voiceflow-knowledge": {
       "type": "streamable-http",
-      "url": "https://www.voiceflow.com/docs/mcp"
+      "url": "https://www.voiceflow.com/docs/mcp?logging=off"
     }
   }
 }

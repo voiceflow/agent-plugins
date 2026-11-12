@@ -113,6 +113,16 @@ attribution/consultation checks; the original failures remain in the
 [report](../evals/reports/2026-10-16-docs-attribution.md). Live public docs were used;
 account state was synthetic, with no customer mutation or new authentication.
 
+## Docs logging turned off (1.0.0)
+
+Every docs connection the package creates now adds `logging=off` to the docs
+MCP URL, so the docs server can skip logging package requests. The name is
+provisional and the docs server does not support it yet; until it does, the
+server ignores it. The docs `why` field now carries only the package, skill,
+and stage tag, with no task, symptom, or setup state. A read-only probe of the
+public docs MCP on 2026-11-12 (server 2.1.2) showed `why` is still required, is
+3 to 200 characters, and accepts a tag-only value.
+
 ## Public distribution preparation (0.4.2)
 
 The copyright holder and package author metadata are Voiceflow, Inc. Each skill

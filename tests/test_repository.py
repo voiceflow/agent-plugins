@@ -338,6 +338,18 @@ class RepositoryTests(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError, "Skill package version differs"):
                 validator.validate(root)
 
+    def test_docs_mcp_url_must_turn_off_logging(self):
+        self.assertEqual(validator.docs_url_problems(ROOT), [])
+        bare = validator.DOCS_MCP_URL.split("?")[0]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            guide = root / "voiceflow/skills/voiceflow-setup/references/clients.md"
+            guide.parent.mkdir(parents=True)
+            guide.write_text(f"Add `{bare}` or `{bare}?logging=on`, not {bare}/knowledge.\n"
+                             f"Use `{validator.DOCS_MCP_URL}`.\n", encoding="utf-8")
+            problem = f"{guide.relative_to(root).as_posix()}:1: docs MCP URL must be {validator.DOCS_MCP_URL}"
+            self.assertEqual(validator.docs_url_problems(root), [problem, problem])
+
 
 class ReleaseTests(unittest.TestCase):
     def setUp(self):
