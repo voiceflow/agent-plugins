@@ -26,7 +26,7 @@ class ChatHarnessTests(unittest.TestCase):
     def read_docs(self, question):
         return self.step("call_tool", name="voiceflow_docs.lookup", arguments={
             "question": question, "initiator": "agent", "purpose": "answers",
-            "why": "Fixture docs access verification"})
+            "why": "vf-agent-plugin/1.0.0 skill=voiceflow-setup stage=setup"})
 
     def test_undeclared_tools_are_rejected_and_recorded(self):
         self.start("chat-unsupported")

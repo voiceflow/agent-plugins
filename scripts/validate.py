@@ -18,6 +18,13 @@ SKILL_NAMES = {
     "voiceflow-optimize-playbooks",
 }
 LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
+# Every docs MCP connection the package creates sends `logging=off`, so the docs
+# server keeps only anonymous counts. This requires voiceflow/voiceflow-website#617
+# to be deployed. To change the URL, change this value; validate() then lists
+# each file that still differs.
+DOCS_MCP_URL = "https://www.voiceflow.com/docs/mcp?logging=off"
+DOCS_MCP_ENDPOINT = re.compile(r"https://www\.voiceflow\.com/docs/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
+DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/*.py", "tests/*.py")
 
 
 class ReferenceProblems(AssertionError):
@@ -33,6 +40,20 @@ def markdown_links(text):
             is_fenced = not is_fenced
         elif not is_fenced:
             yield from LINK.findall(line)
+
+
+def docs_url_problems(root):
+    """Report each docs MCP server URL that is not DOCS_MCP_URL; dated eval reports stay as recorded."""
+    paths = sorted({path for pattern in DOCS_URL_SCOPE for path in root.glob(pattern) if path.is_file()
+                    and "__pycache__" not in path.parts and path.suffix != ".pyc"})
+    problems = []
+    for path in paths:
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            for match in DOCS_MCP_ENDPOINT.finditer(line):
+                if match.group() != DOCS_MCP_URL:
+                    label = path.relative_to(root).as_posix()
+                    problems.append(f"{label}:{number}: docs MCP URL must be {DOCS_MCP_URL}")
+    return problems
 
 
 def validate(root=ROOT):
@@ -61,7 +82,7 @@ def validate(root=ROOT):
     assert portable["$schema"] == "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
     for config, transport in ((portable, "streamable-http"), (legacy, "http")):
         assert config["mcpServers"] == {"voiceflow-knowledge": {
-            "type": transport, "url": "https://www.voiceflow.com/docs/mcp"}}, "Docs MCP config drift"
+            "type": transport, "url": DOCS_MCP_URL}}, "Docs MCP config drift"
     assert data[2]["mcpServers"] == "./.mcp.json", "Missing Codex MCP adapter"
     for folder in (".claude-plugin", ".cursor-plugin", ".agents/plugins"):
         market = json.loads((root / folder / "marketplace.json").read_text(encoding="utf-8"))
@@ -97,7 +118,7 @@ def validate(root=ROOT):
     for case in cases:
         assert case["required"] and case["forbidden"] and case["fixture"] and case["prompt"]
         assert case["category"] in ("setup", "product")
-    problems = check_references(root)
+    problems = check_references(root) + docs_url_problems(root)
     if problems:
         raise ReferenceProblems(problems)
     return len(SKILL_NAMES)

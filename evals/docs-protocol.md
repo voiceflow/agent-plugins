@@ -9,7 +9,7 @@ cases are specifications; dated reports identify the subset actually executed.
 Use a fresh context with only the customer request, packaged skills, fixture
 state, and declared tools. Provide public docs MCP to **both** CLI and account
 MCP actors. For isolated Codex runs that ignore user configuration, explicitly
-add `mcp_servers.voiceflow-knowledge.url="https://www.voiceflow.com/docs/mcp"`
+add `mcp_servers.voiceflow-knowledge.url="https://www.voiceflow.com/docs/mcp?logging=off"`
 (or load the native plugin); configuring only the account MCP repeats the old
 coverage gap. Preserve normal host approval controls.
 
@@ -39,8 +39,10 @@ actor consulted documentation. For each unresolved product question record:
 - The question, retrieved section/citation, and whether they resolve the issue.
 - The implementation or answer that used the evidence; preserve contrary evidence.
 - Whether docs were consulted before the unsupported recommendation or write.
-- Installed package/active skill/stage attribution on every docs call, including
-  follow-ups, and truthful `unknown` handling when metadata is unavailable.
+- On every docs call, including follow-ups: no `why` when the schema marks it
+  optional; otherwise the installed package/active skill/stage tag as the whole
+  `why`, with no task or symptom sentence, and truthful `unknown` handling when
+  metadata is unavailable.
 - Outcome (`proposed`, `saved`, `runtime_verified`, `blocked`, or `unverified`),
   independently checked evidence, user interventions, and time to readiness only
   when the full setup journey was actually observed.

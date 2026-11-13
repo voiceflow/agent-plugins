@@ -10,8 +10,9 @@ For questions about instruction inheritance, routing, resource references, or pr
 that this skill does not answer, follow the
 [docs MCP workflow](../voiceflow/references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
-when this skill suggests a fix. Include package/skill/stage context in `why` as
-described there. Reuse guidance for the same issue; consult it whenever unsure.
+when this skill suggests a fix. Leave `why` out when it is optional; otherwise
+send only the package/skill/stage tag described there. Reuse guidance for the
+same issue; consult it whenever unsure.
 
 Read the [operation contract](../voiceflow/references/operations.md).
 Read existing instructions before editing. Preserve unrelated behavior and use
