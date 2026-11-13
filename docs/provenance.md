@@ -113,15 +113,17 @@ attribution/consultation checks; the original failures remain in the
 [report](../evals/reports/2026-10-16-docs-attribution.md). Live public docs were used;
 account state was synthetic, with no customer mutation or new authentication.
 
-## Docs logging turned off (1.0.0)
+## Docs MCP `logging=off` for package connections
 
 Every docs connection the package creates now adds `logging=off` to the docs
-MCP URL, so the docs server can skip logging package requests. The name is
-provisional and the docs server does not support it yet; until it does, the
-server ignores it. The docs `why` field now carries only the package, skill,
-and stage tag, with no task, symptom, or setup state. A read-only probe of the
-public docs MCP on 2026-11-12 (server 2.1.2) showed `why` is still required, is
-3 to 200 characters, and accepts a tag-only value.
+MCP URL. This requires voiceflow/voiceflow-website#617 to be deployed on the
+docs server. With the option, the server writes one anonymous count line per
+call, does not log the question, and treats `why` as optional and ignored. The
+skills then leave `why` out. A connection without the option still requires
+`why`, and the skills send only the package, skill, and stage tag, with no task,
+symptom, or setup state. A read-only probe of the public docs MCP on 2026-11-12
+(server 2.1.2), before that deploy, showed `why` is required, is 3 to 200
+characters, and accepts a tag-only value.
 
 ## Public distribution preparation (0.4.2)
 

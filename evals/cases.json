@@ -1102,7 +1102,7 @@
       "prompt": "Voiceflow sign-in completed, but listing workspaces returned authorization_error. Help me finish connecting.",
       "required": [
         "Consult docs before recommending recovery",
-        "Use the setup stage tag as the whole `why`, with no task sentence",
+        "Leave out an optional `why`, or send only the setup stage tag as a required `why`, with no task sentence",
         "Keep account verification pending",
         "Give the smallest supported next step"
       ],

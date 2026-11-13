@@ -66,7 +66,7 @@ still be needed. Standalone skill copying does not install server configuration.
 For standalone installs, inspect existing connections first. Reuse a connection
 to the Voiceflow docs server that the user already added. If there is none, add
 it with the URL below, using the current host's supported MCP setup. The URL
-ends in `logging=off`, which turns off docs request logging for this connection.
+ends in `logging=off`, so the docs server keeps only anonymous counts for it.
 Keep the URL in quotes in a shell, because `?` is a wildcard in some shells.
 
 - Claude Code: `claude mcp add --transport http --scope user voiceflow-knowledge "https://www.voiceflow.com/docs/mcp?logging=off"`.
