@@ -15,6 +15,15 @@ releases a version, it moves those lines under that version number.
 - Leave the docs `why` field out when the tool marks it optional, as it does
   with `logging=off`. When a tool still requires it, send only the package,
   skill, and stage tag, with no task, symptom, or setup-state sentence.
+- Add a plugin README that explains setup, the services the plugin contacts,
+  and what each one receives. Anthropic's directory shows it as the listing.
+- Add directory listing metadata: display name, links, keywords, the
+  `Developer Tools` category, starter prompts, and `voiceflow-setup` as the
+  onboarding skill. The listing icon is still missing.
+- Add `skills.sh.json` so `npx skills add voiceflow/agent-plugins` finds every
+  skill under `voiceflow/skills`.
+- Add MCP Registry entries for the account and docs servers. They are not
+  published.
 
 ## 1.0.0
 

@@ -210,9 +210,9 @@ class ValidateOutputTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "repo"
             for folder in ("voiceflow", "scripts", "tests/fixtures", "docs", "evals",
-                           ".claude-plugin", ".cursor-plugin", ".agents"):
+                           ".claude-plugin", ".cursor-plugin", ".agents", "mcp-registry"):
                 shutil.copytree(ROOT / folder, root / folder, ignore=shutil.ignore_patterns("__pycache__"))
-            for document in [*ROOT.glob("*.md"), ROOT / "LICENSE"]:
+            for document in [*ROOT.glob("*.md"), ROOT / "LICENSE", ROOT / "skills.sh.json"]:
                 shutil.copyfile(document, root / document.name)
             skill = root / "voiceflow/skills/voiceflow-build/SKILL.md"
             lines = skill.read_text(encoding="utf-8").splitlines()

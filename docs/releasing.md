@@ -227,6 +227,12 @@ plugin name `voiceflow`, marketplace name `voiceflow-plugins`, and skill names
 stable. Do not recreate the repository at its previous location: that removes
 GitHub's redirect. Marketplace submission is independent of repository publication.
 
+Directory listings read the plugin manifests and `voiceflow/README.md`.
+`scripts/validate.py` checks that the manifests share their links, keywords,
+category, and onboarding skill. Anthropic's portal may take the listing icon
+only from the first save or submission, so add the official icon first.
+Submitting to a directory is an owner decision, like publishing a release.
+
 Package docs connections send `logging=off`, so the Knowledge MCP keeps only
 anonymous counts for them. See [measurement](measurement.md). Releases do not
 add a separate analytics service.

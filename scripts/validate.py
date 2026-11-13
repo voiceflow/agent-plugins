@@ -25,6 +25,18 @@ LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 DOCS_MCP_URL = "https://www.voiceflow.com/docs/mcp?logging=off"
 DOCS_MCP_ENDPOINT = re.compile(r"https://www\.voiceflow\.com/docs/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/*.py", "tests/*.py")
+ACCOUNT_MCP_URL = "https://mcp.voiceflow.com/mcp?version=3"
+REGISTRY_SCHEMA = "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+SKILLS_SH_SCHEMA = "https://skills.sh/schemas/skills.sh.schema.json"
+KEYWORD = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+SEMVER = re.compile(r"\d+\.\d+\.\d+")
+# Limits from developers.openai.com/plugins/deploy/submission (listing metadata).
+INTERFACE_LIMITS = {"displayName": 30, "shortDescription": 30, "longDescription": 4000, "developerName": 80,
+                    "category": 80, "websiteURL": 1024, "supportURL": 1024, "privacyPolicyURL": 1024,
+                    "termsOfServiceURL": 1024}
+# Anthropic's directory reads these from .claude-plugin/plugin.json; each matches an OpenAI interface field.
+CLAUDE_LISTING = {"supportUrl": "supportURL", "privacyPolicyUrl": "privacyPolicyURL",
+                  "termsOfServiceUrl": "termsOfServiceURL"}
 
 
 class ReferenceProblems(AssertionError):
@@ -56,6 +68,68 @@ def docs_url_problems(root):
     return problems
 
 
+def prose_words(text):
+    """Count words outside fenced code, as Anthropic's directory counts README words."""
+    words, is_fenced = 0, False
+    for line in text.splitlines():
+        if line.lstrip().startswith(("```", "~~~")):
+            is_fenced = not is_fenced
+        elif not is_fenced:
+            words += len(line.split())
+    return words
+
+
+def validate_listings(root=ROOT):
+    """Check the directory listing metadata: manifests, plugin README, skills.sh, and MCP Registry entries."""
+    plugin = root / "voiceflow"
+    portable = json.loads((plugin / "plugin.json").read_text(encoding="utf-8"))
+    claude, codex, cursor = (json.loads((plugin / folder / "plugin.json").read_text(encoding="utf-8"))
+                             for folder in (".claude-plugin", ".codex-plugin", ".cursor-plugin"))
+    for manifest in (portable, claude, codex, cursor):
+        for field in ("homepage", "repository", "keywords"):
+            assert manifest.get(field) == portable[field], f"Listing field differs between manifests: {field}"
+    assert portable["homepage"].startswith("https://") and portable["repository"].startswith("https://github.com/")
+    assert portable["keywords"] and all(KEYWORD.fullmatch(word) for word in portable["keywords"]), "Keywords must be lowercase-hyphenated"
+    openai = portable["extensions"]["com.openai"]
+    interface = openai["interface"]
+    for field, limit in INTERFACE_LIMITS.items():
+        assert isinstance(interface.get(field), str) and 0 < len(interface[field]) <= limit, f"Invalid interface.{field}"
+        if field.endswith("URL"):
+            assert interface[field].startswith("https://"), f"interface.{field} must be https"
+    capabilities, prompts = interface["capabilities"], interface["defaultPrompt"]
+    assert len(capabilities) <= 20 and all(0 < len(item) <= 120 for item in capabilities), "Invalid capabilities"
+    assert 0 < len(prompts) <= 3 and len(set(prompts)) == len(prompts), "Use one to three unique default prompts"
+    assert all(0 < len(prompt) <= 128 and "@" not in prompt for prompt in prompts), "Invalid default prompt"
+    onboarding = openai["onboardingSkill"]
+    assert onboarding.startswith("./") and (plugin / onboarding).is_file(), "Onboarding skill missing"
+    assert codex["interface"] == interface, "Codex interface differs from plugin.json"
+    assert codex["extensions"]["com.openai"]["onboardingSkill"] == onboarding, "Codex onboarding skill differs"
+    assert claude["displayName"] == interface["displayName"], "Claude displayName differs"
+    assert claude["documentationUrl"].startswith("https://"), "documentationUrl must be https"
+    for field, openai_field in CLAUDE_LISTING.items():
+        assert claude[field] == interface[openai_field], f"Claude {field} differs from interface.{openai_field}"
+    icons = [claude.get("icon"), cursor.get("logo"), interface.get("logo"), interface.get("composerIcon")]
+    for icon in filter(None, icons):
+        assert (plugin / icon).is_file() and icon.endswith((".png", ".jpg", ".jpeg")), f"Icon file missing: {icon}"
+    market = json.loads((root / ".agents/plugins/marketplace.json").read_text(encoding="utf-8"))
+    assert market["plugins"][0]["category"] == interface["category"], "Marketplace category differs"
+    readme = plugin / "README.md"
+    assert readme.is_file() and prose_words(readme.read_text(encoding="utf-8")) >= 40, "Plugin README needs 40+ words"
+    skills_sh = json.loads((root / "skills.sh.json").read_text(encoding="utf-8"))
+    assert skills_sh == {"$schema": SKILLS_SH_SCHEMA, "paths": ["./voiceflow/skills"]}, "skills.sh.json drift"
+    # Registry users add the docs server themselves, so its entry omits the package's logging option.
+    expected = {ACCOUNT_MCP_URL, DOCS_MCP_URL.split("?")[0]}
+    entries = [json.loads(path.read_text(encoding="utf-8"))
+               for path in sorted((root / "mcp-registry").glob("*/server.json"))]
+    assert {remote["url"] for entry in entries for remote in entry["remotes"]} == expected, "Registry URLs differ"
+    assert len({entry["name"] for entry in entries}) == len(entries) == len(expected), "One registry entry per server"
+    for entry in entries:
+        assert entry["$schema"] == REGISTRY_SCHEMA and SEMVER.fullmatch(entry["version"])
+        assert re.fullmatch(r"com\.voiceflow/[a-z0-9-]+", entry["name"]), "Registry names use com.voiceflow/"
+        assert 0 < len(entry["description"]) <= 100 and 0 < len(entry["title"]) <= 100
+        assert [remote["type"] for remote in entry["remotes"]] == ["streamable-http"]
+
+
 def validate(root=ROOT):
     plugin = root / "voiceflow"
     manifests = [plugin / "plugin.json"] + [
@@ -76,7 +150,7 @@ def validate(root=ROOT):
         assert read_version(root, path) == data[0]["version"], f"Package version differs: {path}"
     problem = changelog_problem((root / "CHANGELOG.md").read_text(encoding="utf-8"), data[0]["version"])
     assert problem is None, problem
-    assert len(data[0]["extensions"]["com.openai"]["interface"]["shortDescription"]) <= 30
+    validate_listings(root)
     portable = json.loads((plugin / "mcp.json").read_text(encoding="utf-8"))
     legacy = json.loads((plugin / ".mcp.json").read_text(encoding="utf-8"))
     assert portable["$schema"] == "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
