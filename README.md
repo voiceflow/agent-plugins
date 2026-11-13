@@ -78,9 +78,11 @@ Product knowledge comes from the [Voiceflow documentation](https://www.voiceflow
 Account access uses Voiceflow's CLI or hosted MCP OAuth. The hosted account MCP
 requests workspace read and write access; setup itself only reads.
 Documentation questions go to Voiceflow's public docs MCP. The package connects
-with `logging=off`, which turns off docs request logging for its connections.
-Each request carries only the question and a package, skill, and stage tag.
-Skills instruct assistants to omit secrets and customer data.
+with `logging=off`, so the docs server keeps only an anonymous count of each
+call and does not log the question. The docs site's host still logs each
+request's URL and IP address, but not the question. A docs connection added by
+hand is logged as before. Skills instruct assistants to omit secrets and
+customer data.
 See [data and services](voiceflow/skills/voiceflow/references/data-and-services.md)
 and the [Voiceflow Privacy Policy](https://www.voiceflow.com/privacy).
 

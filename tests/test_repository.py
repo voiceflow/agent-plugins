@@ -338,7 +338,7 @@ class RepositoryTests(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError, "Skill package version differs"):
                 validator.validate(root)
 
-    def test_docs_mcp_url_must_turn_off_logging(self):
+    def test_docs_mcp_url_must_send_logging_off(self):
         self.assertEqual(validator.docs_url_problems(ROOT), [])
         bare = validator.DOCS_MCP_URL.split("?")[0]
         with tempfile.TemporaryDirectory() as temporary:

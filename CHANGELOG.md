@@ -8,11 +8,13 @@ releases a version, it moves those lines under that version number.
 ## Unreleased
 
 - Connect the docs MCP with `logging=off` in every native plugin and standalone
-  setup. Once the docs server supports this option, it does not log this
-  package's requests. Hand-added docs connections are still logged. The name is
-  provisional until the docs server ships the option.
-- Send only the package, skill, and stage tag in the docs `why` field, with no
-  task, symptom, or setup-state sentence.
+  setup. With this option, the docs server writes one anonymous count line per
+  call and does not log the question, search terms, or client details. A docs
+  connection the user added by hand is logged as before. This requires
+  voiceflow/voiceflow-website#617 to be deployed on the docs server.
+- Leave the docs `why` field out when the tool marks it optional, as it does
+  with `logging=off`. When a tool still requires it, send only the package,
+  skill, and stage tag, with no task, symptom, or setup-state sentence.
 
 ## 1.0.0
 

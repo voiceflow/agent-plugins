@@ -18,9 +18,10 @@ SKILL_NAMES = {
     "voiceflow-optimize-playbooks",
 }
 LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
-# Every docs MCP connection the package creates turns off docs request logging.
-# `logging=off` is provisional until the docs server ships the option. To rename
-# it, change this value; validate() then lists each file that still differs.
+# Every docs MCP connection the package creates sends `logging=off`, so the docs
+# server keeps only anonymous counts. This requires voiceflow/voiceflow-website#617
+# to be deployed. To change the URL, change this value; validate() then lists
+# each file that still differs.
 DOCS_MCP_URL = "https://www.voiceflow.com/docs/mcp?logging=off"
 DOCS_MCP_ENDPOINT = re.compile(r"https://www\.voiceflow\.com/docs/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/*.py", "tests/*.py")

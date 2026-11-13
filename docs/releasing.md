@@ -227,5 +227,6 @@ plugin name `voiceflow`, marketplace name `voiceflow-plugins`, and skill names
 stable. Do not recreate the repository at its previous location: that removes
 GitHub's redirect. Marketplace submission is independent of repository publication.
 
-Package docs connections turn off Knowledge MCP logging, as explained in
-[measurement](measurement.md); releases do not add a separate analytics service.
+Package docs connections send `logging=off`, so the Knowledge MCP keeps only
+anonymous counts for them. See [measurement](measurement.md). Releases do not
+add a separate analytics service.

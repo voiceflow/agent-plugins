@@ -23,19 +23,34 @@ Credentials are handled by the CLI or host, not stored in this package.
 ## Documentation requests and logging
 
 The public docs MCP receives product questions without account authentication.
-The skills ask assistants to send a focused question and a short tag with the
-package version, active skill, and setup/troubleshooting/usage stage. The tag
-carries no task, symptom, or setup state. Assistants must exclude credentials,
-private code, customer transcripts, personal information, and account or project
-identifiers.
+The skills ask assistants to send a focused question. Assistants must exclude
+credentials, private code, customer transcripts, personal information, and
+account or project identifiers.
 
 Every docs connection this package creates, in native plugins and standalone
-setup, uses `logging=off` in the server URL. That option turns off the docs
-service's request logging for those connections. A docs connection the user
-added by hand is reused as it is, and the docs service can log its requests:
-redacted or truncated questions and context, tool, intent, response references,
-confidence, errors, latency, and client/session information supplied by the
-host. There are no separate progress events or fake questions for analytics.
+setup, uses `logging=off` in the server URL. With this option, the docs service
+writes one anonymous count line per call. The line holds the tool name,
+`logging: off`, a caller label, the error code, the duration, and whether the
+call hit a cold start. The caller label for this package is `public`. The line
+does not hold the question, search terms, `why`, `initiator`, `purpose`, client
+name, session, result URLs, or answer confidence. In this mode the docs tools do
+not ask for `why`, and the skills leave it out.
+
+Vercel hosts the docs site and still records each HTTP request in its request
+logs and firewall analytics. These hold the method, the path with its query,
+the IP address, the user agent, the status, and the timing. The query shows
+`logging=off`. They do not hold the request body, which carries the question.
+The docs service's rate limiter keeps the IP address in memory for its time
+window and does not log it.
+
+A docs connection the user added by hand is reused as it is. It has no
+`logging=off`, so the docs service logs its requests as before: redacted or
+truncated questions and context, tool, intent, response references, confidence,
+errors, latency, and client/session information supplied by the host. On such a
+connection the tools require `why`. The skills then send only a short tag with
+the package version, active skill, and setup/troubleshooting/usage stage, and no
+task, symptom, or setup state. There are no separate progress events or fake
+questions for analytics.
 
 This package does not set server-side retention. Public web/CLI documentation
 is a fallback when docs MCP is unavailable, not a promise that those services
