@@ -8,13 +8,13 @@ license: MIT
 
 For questions about widget options, styling, browser APIs, installation, or troubleshooting
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Finish with
+Read the [operation contract](references/operations.md). Finish with
 the requested widget working on the intended site, or an exact installation
 handoff and a clear statement of what remains unverified. This skill covers
 the website widget, including its voice mode; phone numbers are a separate task.
@@ -44,7 +44,7 @@ published widget as a floating launcher; keep customization optional.
 
 An account MCP connection manages Voiceflow, not the website. Do not ask a
 chat-only user to install a terminal when MCP can do the Voiceflow portion.
-For missing Voiceflow access, use [setup](../voiceflow-setup/SKILL.md).
+For missing Voiceflow access, use the `voiceflow-setup` skill.
 
 ## Configure, install, verify
 

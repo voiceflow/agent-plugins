@@ -5,6 +5,7 @@ import re
 import sys
 
 from skill_references import check_references
+from sync_shared_references import drift_problems
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_NAMES = {
@@ -141,6 +142,7 @@ def validate(root=ROOT):
     assert "Copyright (c) 2026 Voiceflow, Inc." in license_text, "Incorrect copyright holder"
     assert all(m["author"]["name"] == "Voiceflow, Inc." and m["license"] == "MIT" for m in data), "License metadata differs"
     assert re.fullmatch(r"\d+\.\d+\.\d+", data[0]["version"]), "Invalid version"
+    # This is the source. Its copies in other skills must match it, which drift_problems checks.
     knowledge = (plugin / "skills/voiceflow/references/documentation.md").read_text(encoding="utf-8")
     assert knowledge.startswith("---\n"), "Missing skill package metadata"
     record = dict(line.split(": ", 1) for line in knowledge.split("---", 2)[1].strip().splitlines())
@@ -187,7 +189,7 @@ def validate(root=ROOT):
     for case in cases:
         assert case["required"] and case["forbidden"] and case["fixture"] and case["prompt"]
         assert case["category"] in ("setup", "product")
-    problems = check_references(root) + docs_url_problems(root)
+    problems = drift_problems(root) + check_references(root) + docs_url_problems(root)
     if problems:
         raise ReferenceProblems(problems)
     return len(SKILL_NAMES)
@@ -199,4 +201,5 @@ if __name__ == "__main__":
     except ReferenceProblems as error:
         print("\n".join(error.problems), file=sys.stderr)
         sys.exit(1)
-    print(f"Validated {count} skills, manifests, checksums, local references, and MCP and CLI names.")
+    print(f"Validated {count} skills, manifests, checksums, shared reference copies, local references, "
+          "and MCP and CLI names.")

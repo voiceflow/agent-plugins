@@ -1,7 +1,7 @@
 # Find the failing stage
 
 For each new Voiceflow widget issue, use the
-[docs MCP workflow](../../voiceflow/references/documentation.md) before choosing
+[docs MCP workflow](documentation.md) before choosing
 a fix, including symptoms covered below. Inspect the actual install first when
 needed to focus the question; reuse the answer while resolving the same issue.
 

@@ -8,17 +8,17 @@ license: MIT
 
 For questions about step behavior, ports, transitions, branching, or workflow errors
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md), then the
+Read the [operation contract](references/operations.md), then the
 workflow and relevant step schemas. A block is a canvas container; steps inside
 it execute in order. A workflow ID, block ID, step ID, and port ID are distinct.
 For the message/end discriminators and entry connection, read the
-[verified example](../voiceflow/references/request-shapes.md#a-message-followed-by-end).
+[verified example](references/request-shapes.md#a-message-followed-by-end).
 
 Plan the path before mutation: start, decisions, actions, success, error, and
 termination. Create resources first and connect returned IDs; do not fabricate
@@ -51,7 +51,8 @@ questions. `vf_workflow_get_raw` returns the stored canvas nodes with
 their coordinates; it is long and unprocessed. Use it only when the other reads
 cannot answer, such as where blocks sit, send `blockIDs` for the blocks you
 need, and never plan an edit from it. To find where a word, phrase, or ID is
-used across the project, see [messages](../voiceflow-messages/SKILL.md#find-text-and-owners).
+used across the project, see the "Find text and owners" section of the
+`voiceflow-messages` skill.
 
 ## Editing
 
@@ -99,7 +100,7 @@ only for workflows in the agent's `workflows` list. To undo it, delete the tool
 with the ID the create returned.
 
 Verification starts with read-back topology and reference checks. A runtime
-test can invoke real integrations; scope it with [evaluations](../voiceflow-evaluations/SKILL.md)
-only when the user requested testing.
+test can invoke real integrations; scope it with the `voiceflow-evaluations`
+skill only when the user requested testing.
 
 Source: [Workflows](https://www.voiceflow.com/docs/documentation/build/workflows).

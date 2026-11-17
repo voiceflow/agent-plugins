@@ -6,7 +6,7 @@ design a new tool attachment or decide how a value should reach project state.
 Every map is keyed by the function variable's UUID. A `defaultValue` names a
 project variable in braces; `variableOrEntityID` takes the variable's ID. The
 full attachment body is in
-[attach a function](../../voiceflow/references/request-shapes.md#attach-a-function-and-capture-its-results).
+[attach a function](request-shapes.md#attach-a-function-and-capture-its-results).
 
 ## 1. Read-only lookup
 

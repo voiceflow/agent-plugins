@@ -20,9 +20,20 @@ python3 -m unittest discover -s tests -v
 python3 scripts/build.py
 ```
 
+If you edit a file in `voiceflow/skills/voiceflow/references/`, run the sync
+script before the checks. It copies each shared reference into every skill that
+links it, deletes copies no skill needs, and updates their lines in
+`package-files.txt`. Never edit a copy: validation fails when a copy differs
+from its source. Use `--check` to compare without writing.
+
+```sh
+python3 scripts/sync_shared_references.py
+```
+
 | Location | Purpose |
 | --- | --- |
 | `voiceflow/skills/` | Customer instructions, linked references, and installers |
+| `voiceflow/skills/voiceflow/references/` | Shared references; other skills get generated copies |
 | `voiceflow/skills/voiceflow-setup/references/setup.md` | Canonical setup guide; edit this before generating website content |
 | `scripts/` and `tests/` | Package validation, build, release preparation, and offline tests |
 | `tests/fixtures/voiceflow-surface.json` | MCP and CLI names the skill checks accept; not packaged |
@@ -62,6 +73,10 @@ exist. It prints one `file:line: reason` line per problem and fails when a skill
 - names a `vf` command that the pinned CLI does not have;
 - links to a missing file or heading, or names a missing `voiceflow-*` skill
   or `references/*.md` file;
+- links to, or writes the path of, a file outside its own skill folder. Each
+  skill must work when installed alone, so name the other skill instead, as in
+  "the `voiceflow-wiring` skill". The few allowed exceptions are listed, with
+  reasons, in `OUTSIDE_SKILL_ALLOWED` in `scripts/skill_references.py`;
 - uses an internal tool or product name that is not public.
 
 Write an MCP tool by its v3 name, `` `vf_<group>_<operation>` ``, such as

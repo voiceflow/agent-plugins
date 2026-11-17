@@ -10,9 +10,9 @@ Ask for the missing choice if ambiguous. Never pick the first workspace or
 project automatically. Do not require a new environment for every trivial edit;
 use the user's intended draft and explain material shared/live effects. For a
 project with a live version, propose a working environment for the change and
-clone only after the user agrees, as
-[Environments](../../voiceflow-environments/SKILL.md#where-to-make-a-change)
-describes. Proposing is not requiring: the user can choose Main's draft.
+clone only after the user agrees, as the "Where to make a change" section of the
+`voiceflow-environments` skill describes. Proposing is not requiring: the user
+can choose Main's draft.
 
 For every new troubleshooting issue, even if a skill suggests a fix, and for
 other product questions the relevant skill does not answer, use the
@@ -23,6 +23,10 @@ Use `ask_voiceflow` first for a specific question, then search/read as needed.
 Skills are not a complete product manual; consult docs whenever uncertain or
 when current behavior may differ. Reuse already-retrieved relevant guidance.
 Keep docs access available alongside either CLI or account MCP operations.
+
+Skills refer to each other by name, such as the `voiceflow-wiring` skill. If a
+named skill is not installed or available, say so and use the
+[documentation workflow](documentation.md) instead of guessing its steps.
 
 ## Discover the actual operation
 

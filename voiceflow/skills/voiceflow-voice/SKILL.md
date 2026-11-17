@@ -8,13 +8,13 @@ license: MIT
 
 For questions about voice providers, turn handling, interruptions, telephony, or transfer behavior
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Identify the
+Read the [operation contract](references/operations.md). Identify the
 channel and current voice/provider settings before editing. Use supported
 provider values from live schemas; never invent a voice ID.
 
@@ -52,9 +52,9 @@ Only perform them within the user's explicit task. Inspect configuration before
 placing calls. Custom traces or transfer payloads require the documented runtime
 contract; do not assume a chat trace works in telephony.
 
-Use [functions](../voiceflow-functions/SKILL.md) for custom transfer logic and
-[evaluations](../voiceflow-evaluations/SKILL.md) for scoped voice testing. To
-give the agent a phone number, or to move or disconnect one, use
-[phone numbers](../voiceflow-phone-numbers/SKILL.md).
+Use the `voiceflow-functions` skill for custom transfer logic and the
+`voiceflow-evaluations` skill for scoped voice testing. To give the agent a
+phone number, or to move or disconnect one, use the `voiceflow-phone-numbers`
+skill.
 
 Source: [Voiceflow documentation](https://www.voiceflow.com/docs).

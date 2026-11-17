@@ -73,8 +73,8 @@ function takes its error path and the model makes up an answer.
 
 Fix: declare `api_key` as an input, read `args.inputVars.api_key`, and on the
 attachment set that input's default to `"{MY_API_KEY}"`, keyed by its UUID,
-with `required` left out. See
-[secrets](../../voiceflow-functions/references/sensitive-inputs.md).
+with `required` left out. The `voiceflow-functions` skill explains how a
+function reads secrets.
 
 ## 8. `required: false` without a writer on every path
 

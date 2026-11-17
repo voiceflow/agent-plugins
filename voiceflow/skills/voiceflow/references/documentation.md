@@ -1,6 +1,6 @@
 ---
 package: voiceflow
-version: 1.1.0
+version: 1.1.1
 ---
 
 # Answer product questions with the docs MCP
@@ -111,9 +111,9 @@ discrepancy; do not guess fields or use failed writes to discover a contract.
 
 ## If docs MCP is unavailable
 
-Check discovery first. Reuse or connect it through the host-supported
-[docs connection path](../../voiceflow-setup/references/mcp.md#documentation-connection)
-when available; never require OAuth for this public server. If the host cannot
+Check discovery first. Reuse it, or connect it through the host-supported docs
+connection path that the `voiceflow-setup` skill describes, when available;
+never require OAuth for this public server. If the host cannot
 expose it, or the service fails, use the public Voiceflow website docs or
 `vf docs search "<question>" -o json` / `vf docs get <page>` through an available
 CLI. Inspect that CLI's help; do not install it solely to answer a docs question.

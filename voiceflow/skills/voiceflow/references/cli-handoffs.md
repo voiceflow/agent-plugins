@@ -22,7 +22,7 @@ in their own terminal, then continue with reads.
 - Fill in IDs from live reads. Capitalized placeholders such as `PROJECT_ID`
   are yours to replace; variables such as `"$VF_SECRET_VALUE"` stay as written.
 - The user needs the Voiceflow CLI signed in to the same workspace. If they do
-  not have it, point them to [setup](../../voiceflow-setup/SKILL.md) or the UI step.
+  not have it, point them to the `voiceflow-setup` skill or the UI step.
 - Afterwards, confirm with a read. Handing over a command is not a success.
 
 ## Read a value without showing it

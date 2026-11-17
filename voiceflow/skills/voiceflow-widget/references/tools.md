@@ -29,7 +29,7 @@ not the CLI's surrounding structured envelope, for the site's HTML field.
 Each MCP tool takes `projectID` and `environmentAlias` at the top level of its
 input. Read its schema for the snippet version selector and update body
 placement. Do not translate the CLI's `--version-param` spelling into an
-invented MCP property. See the shared [request shapes](../../voiceflow/references/request-shapes.md#mcp-input-and-function-declarations).
+invented MCP property. See the shared [request shapes](request-shapes.md#mcp-input-and-function-declarations).
 
 ## Patch only the intended settings
 
@@ -76,7 +76,7 @@ Saved widget settings require publication to affect the published widget.
 Before publishing, inspect the environment's complete pending changes: a widget
 request is not permission to release unrelated agent edits. If authorization
 already covers that release, proceed; otherwise finish the reviewable draft
-and explain the specific publication decision. See
-[environments](../../voiceflow-environments/SKILL.md).
+and explain the specific publication decision. See the
+`voiceflow-environments` skill.
 
 Source: [Widget API](https://www.voiceflow.com/docs/documentation/deploy/widget/web-chat-api).

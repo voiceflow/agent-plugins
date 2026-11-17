@@ -8,16 +8,16 @@ license: MIT
 
 For questions about supported integrations, authentication, API tools, or remote MCP capabilities
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-For embedding an agent on a website, use [Widget](../voiceflow-widget/SKILL.md).
+For embedding an agent on a website, use the `voiceflow-widget` skill.
 This skill connects services used by the agent, rather than installing its UI.
 
-Read the [operation contract](../voiceflow/references/operations.md). Inspect
+Read the [operation contract](references/operations.md). Inspect
 available integrations and their schemas before writing a custom API/function.
 A connection is not an attached agent tool: verify both.
 
@@ -44,13 +44,13 @@ resume inspection after it exists. Don't invent a private connection helper.
 The MCP refuses to carry credentials. Hand a secret value or an api-key
 connection to the user as a `vf` command they run in their own terminal, and
 send OAuth and app integrations to the Voiceflow UI, as the
-[CLI handoffs](../voiceflow/references/cli-handoffs.md) describe. The same file
+[CLI handoffs](references/cli-handoffs.md) describe. The same file
 covers MCP server headers. A handed-over command is not a connection: confirm
 it with a read afterwards.
 
 API-tool fields reference the tool's declared input variables. Bind project
 variables or secrets through defaults on each attachment, not by assuming a
-URL token can read all project state. Use [wiring](../voiceflow-wiring/SKILL.md).
+URL token can read all project state. Use the `voiceflow-wiring` skill.
 
 Secret names may be shared while values differ by environment. Publishing
 does not promote Draft credentials to Default credentials. Check whether a
