@@ -63,13 +63,16 @@ Native plugin packages include the public Voiceflow Knowledge MCP configuration.
 After installation, discover and verify its tools; host approval or reload may
 still be needed. Standalone skill copying does not install server configuration.
 
-For standalone installs, inspect existing connections first. If none matches
-`https://www.voiceflow.com/docs/mcp`, use the current host's supported MCP setup:
+For standalone installs, inspect existing connections first. Reuse a connection
+to the Voiceflow docs server that the user already added. If there is none, add
+it with the URL below, using the current host's supported MCP setup. The URL
+ends in `logging=off`, so the docs server keeps only anonymous counts for it.
+Keep the URL in quotes in a shell, because `?` is a wildcard in some shells.
 
-- Claude Code: `claude mcp add --transport http --scope user voiceflow-knowledge https://www.voiceflow.com/docs/mcp`.
-- Codex: `codex mcp add voiceflow-knowledge --url https://www.voiceflow.com/docs/mcp`.
+- Claude Code: `claude mcp add --transport http --scope user voiceflow-knowledge "https://www.voiceflow.com/docs/mcp?logging=off"`.
+- Codex: `codex mcp add voiceflow-knowledge --url "https://www.voiceflow.com/docs/mcp?logging=off"`.
 - Cursor: add a `voiceflow-knowledge` entry with
-  `{"url":"https://www.voiceflow.com/docs/mcp"}` to `mcpServers` in its current
+  `{"url":"https://www.voiceflow.com/docs/mcp?logging=off"}` to `mcpServers` in its current
   user/project MCP settings. Merge with existing configuration, preserving other
   entries. A different server already using that name is not safe to replace.
 

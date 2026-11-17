@@ -945,7 +945,7 @@
       "prompt": "Set up Voiceflow for me.",
       "required": [
         "Reuse account connection",
-        "Add public docs MCP with no authentication",
+        "Add public docs MCP with no authentication and the package URL with `logging=off`",
         "Discover docs tool and verify a real response",
         "Finish only after account and docs verification"
       ],
@@ -1102,7 +1102,7 @@
       "prompt": "Voiceflow sign-in completed, but listing workspaces returned authorization_error. Help me finish connecting.",
       "required": [
         "Consult docs before recommending recovery",
-        "Use setup stage and truthful task context",
+        "Leave out an optional `why`, or send only the setup stage tag as a required `why`, with no task sentence",
         "Keep account verification pending",
         "Give the smallest supported next step"
       ],
@@ -1143,7 +1143,7 @@
       "forbidden": [
         "Claim low-confidence retrieval proves correctness",
         "Put attribution in query text or invent tool fields",
-        "Leak customer details in task context"
+        "Add a task, symptom, or customer detail to `why`"
       ]
     },
     {

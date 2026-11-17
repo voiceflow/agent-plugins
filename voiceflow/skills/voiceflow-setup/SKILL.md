@@ -10,8 +10,9 @@ For questions about host connection requirements, OAuth, account access, or setu
 that this skill does not answer, follow the
 [docs MCP workflow](../voiceflow/references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
-when this skill suggests a fix. Include package/skill/stage context in `why` as
-described there. Reuse guidance for the same issue; consult it whenever unsure.
+when this skill suggests a fix. Leave `why` out when it is optional; otherwise
+send only the package/skill/stage tag described there. Reuse guidance for the
+same issue; consult it whenever unsure.
 
 Follow the [canonical setup guide](references/setup.md) for the connection
 decision tree, browser sign-in, persistence checks, and completion criteria.
