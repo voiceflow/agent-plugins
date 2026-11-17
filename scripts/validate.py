@@ -56,7 +56,7 @@ def markdown_links(text):
 def docs_url_problems(root):
     """Report each docs MCP server URL that is not DOCS_MCP_URL; dated eval reports stay as recorded."""
     paths = sorted({path for pattern in DOCS_URL_SCOPE for path in root.glob(pattern) if path.is_file()
-                    and "__pycache__" not in path.parts and path.suffix != ".pyc"})
+                    and "__pycache__" not in path.parts and path.suffix not in {".pyc", ".png"}})
     problems = []
     for path in paths:
         for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):

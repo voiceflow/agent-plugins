@@ -4,6 +4,7 @@ voiceflow/.cursor-plugin/plugin.json
 voiceflow/.mcp.json
 voiceflow/LICENSE
 voiceflow/README.md
+voiceflow/assets/icon.png
 voiceflow/mcp.json
 voiceflow/plugin.json
 voiceflow/skills/voiceflow-build/LICENSE

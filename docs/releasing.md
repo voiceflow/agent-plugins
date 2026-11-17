@@ -157,8 +157,9 @@ GitHub's redirect. Marketplace submission is independent of repository publicati
 
 Directory listings read the plugin manifests and `voiceflow/README.md`.
 `scripts/validate.py` checks that the manifests share their links, keywords,
-category, and onboarding skill. Anthropic's portal may take the listing icon
-only from the first save or submission, so add the official icon first.
+category, and onboarding skill. The listing icon lives at
+`voiceflow/assets/icon.png`. Do not change it before the first Anthropic
+submission, because the portal may lock the icon at the first save.
 Submitting to a directory is an owner decision, like publishing a release.
 
 Package docs connections send `logging=off`, so the Knowledge MCP keeps only
