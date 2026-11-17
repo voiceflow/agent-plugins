@@ -8,7 +8,7 @@ license: MIT
 
 For questions about host connection requirements, OAuth, account access, or setup errors
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the

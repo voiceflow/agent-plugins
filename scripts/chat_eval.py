@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import tempfile
 from urllib.parse import urldefrag
 
@@ -22,6 +23,9 @@ ACCOUNT = "https://mcp.voiceflow.com/mcp?version=3"
 DOCS = "https://www.voiceflow.com/docs/mcp?logging=off"
 AUTH = "https://auth.example.invalid/fixture-sign-in"
 SETTINGS = "https://chat.example.invalid/settings/connections"
+SHARED_REFERENCE_URL = re.compile(
+    r"/voiceflow-[a-z-]+/references/"
+    r"(documentation|operations|request-shapes|cli-handoffs|data-and-services)\.md$")
 CASES = {
     "chat-existing", "chat-connect", "chat-manual", "chat-knowledge-only",
     "chat-sandbox", "chat-forbidden", "chat-reload", "chat-tools-guidance",
@@ -128,8 +132,10 @@ def dispatch(state, tool, args):
         return info
     if tool == "read_document":
         url = urldefrag(args["url"])[0]
+        # Block the entry skill and every generated copy of a shared reference.
         if case in {"chat-tools-guidance", "chat-no-guidance"} and (
-                "/voiceflow/SKILL.md" in url or "/voiceflow/references/" in url):
+                "/voiceflow/SKILL.md" in url or "/voiceflow/references/" in url
+                or SHARED_REFERENCE_URL.search(url)):
             return {"error": "repository_access_denied", "status": 403}
         if url in state["documents"]:
             if "/voiceflow/SKILL.md" in url or "/voiceflow/references/operations.md" in url:

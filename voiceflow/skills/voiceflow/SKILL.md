@@ -15,30 +15,30 @@ optional; otherwise send only the installed package, active skill, and stage tag
 described in that workflow. Reuse a retrieved answer for the same issue.
 Public guidance does not require account setup.
 
-For initial connection, read [setup](../voiceflow-setup/SKILL.md). After setup,
-ask what the user wants to build or improve before selecting any project.
+For initial connection, use the `voiceflow-setup` skill. After setup, ask what
+the user wants to build or improve before selecting any project.
 
 For product work, read [the operation contract](references/operations.md), then
-only the specialist relevant to the task:
+only the specialist skill relevant to the task:
 
 | Task | Skill |
 | --- | --- |
-| Build an agent or playbook | [Build](../voiceflow-build/SKILL.md) |
-| Write global, routing, or playbook instructions | [Prompting](../voiceflow-prompting/SKILL.md) |
-| Condense or split long instructions | [Optimize playbooks](../voiceflow-optimize-playbooks/SKILL.md) |
-| Deterministic canvas logic | [Workflows](../voiceflow-workflows/SKILL.md) |
-| Write function code | [Functions](../voiceflow-functions/SKILL.md) |
-| Connect inputs, outputs, and state | [Wiring](../voiceflow-wiring/SKILL.md) |
-| Connect services, API tools, MCP, or secrets | [Integrations](../voiceflow-integrations/SKILL.md) |
-| Import and query documents | [Knowledge](../voiceflow-knowledge/SKILL.md) |
-| Edit reusable messages and prompts | [Messages](../voiceflow-messages/SKILL.md) |
-| Configure spoken conversations | [Voice](../voiceflow-voice/SKILL.md) |
-| Give an agent a phone number for calls or texts | [Phone numbers](../voiceflow-phone-numbers/SKILL.md) |
-| Install, customize, or troubleshoot a website widget | [Widget](../voiceflow-widget/SKILL.md) |
-| Diagnose behavior | [Debug](../voiceflow-debug/SKILL.md) |
-| Review customer conversations | [Transcripts](../voiceflow-transcripts/SKILL.md) |
-| Saved tests and quality checks | [Evaluations](../voiceflow-evaluations/SKILL.md) |
-| Drafts, environments, merging, publishing | [Environments](../voiceflow-environments/SKILL.md) |
+| Build an agent or playbook | `voiceflow-build` |
+| Write global, routing, or playbook instructions | `voiceflow-prompting` |
+| Condense or split long instructions | `voiceflow-optimize-playbooks` |
+| Deterministic canvas logic | `voiceflow-workflows` |
+| Write function code | `voiceflow-functions` |
+| Connect inputs, outputs, and state | `voiceflow-wiring` |
+| Connect services, API tools, MCP, or secrets | `voiceflow-integrations` |
+| Import and query documents | `voiceflow-knowledge` |
+| Edit reusable messages and prompts | `voiceflow-messages` |
+| Configure spoken conversations | `voiceflow-voice` |
+| Give an agent a phone number for calls or texts | `voiceflow-phone-numbers` |
+| Install, customize, or troubleshoot a website widget | `voiceflow-widget` |
+| Diagnose behavior | `voiceflow-debug` |
+| Review customer conversations | `voiceflow-transcripts` |
+| Saved tests and quality checks | `voiceflow-evaluations` |
+| Drafts, environments, merging, publishing | `voiceflow-environments` |
 
 Product knowledge comes from the [Voiceflow docs](https://www.voiceflow.com/docs).
 Use the live CLI help or available MCP schemas for exact operation fields.

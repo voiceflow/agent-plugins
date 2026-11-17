@@ -8,16 +8,16 @@ license: MIT
 
 For questions about an error, unexpected runtime behavior, or a proposed fix
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
 For widget loading, styling, duplicate launchers, or website navigation problems,
-use [Widget](../voiceflow-widget/SKILL.md) before changing the agent's behavior.
+use the `voiceflow-widget` skill before changing the agent's behavior.
 
-Read the [operation contract](../voiceflow/references/operations.md). Establish
+Read the [operation contract](references/operations.md). Establish
 the expected behavior, actual behavior, project, environment, and one relevant
 conversation or failing step. Do not assume the currently published version is
 the same as the draft.
@@ -50,7 +50,7 @@ message is turn 1. Find the turn the user means with `kinds: ["user"]` or a
 
 For a tool failure, distinguish model selection from missing inputs, external
 HTTP failure, output shape, capture mapping, and dependent-call ordering.
-Use [wiring](../voiceflow-wiring/SKILL.md); prompt edits cannot repair missing
+Use the `voiceflow-wiring` skill; prompt edits cannot repair missing
 output captures or IDs.
 
 For an unexpected answer, check the actual retrieved source and active prompt
@@ -66,7 +66,7 @@ new visitor message and return when that new request needs another capability.
 Adding "do not repeat" only to main leaves the premature handoff intact. Give
 the final answer one owner; if main must answer, the playbook should hand off
 without also answering. Preserve deliberate workflow exits. See
-[prompting](../voiceflow-prompting/SKILL.md) for related instruction guidance.
+the `voiceflow-prompting` skill for related instruction guidance.
 Test calculation/task → another capability → recall/new task in one conversation,
 not only fresh sessions, to verify that the fix has not trapped routing.
 

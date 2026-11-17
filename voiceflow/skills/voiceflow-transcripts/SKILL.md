@@ -8,13 +8,13 @@ license: MIT
 
 For questions about transcript fields, filters, retention, traces, or version interpretation
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Use the
+Read the [operation contract](references/operations.md). Use the
 requested project, environment, time range, and sample. Start with metadata or
 a bounded list; fetch full content only for relevant conversations.
 
@@ -49,7 +49,7 @@ use `vf transcript get` there.
 
 For debugging, inspect the smallest relevant tool request/result and associated
 state changes. Do not assume a current draft matches the version that generated
-an older transcript. Use [debug](../voiceflow-debug/SKILL.md) for fixes and
-[evaluations](../voiceflow-evaluations/SKILL.md) for repeatable regression checks.
+an older transcript. Use the `voiceflow-debug` skill for fixes and the
+`voiceflow-evaluations` skill for repeatable regression checks.
 
 Source: [Transcripts](https://www.voiceflow.com/docs/documentation/measure/transcripts).

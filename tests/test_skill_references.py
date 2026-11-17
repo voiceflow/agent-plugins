@@ -168,6 +168,75 @@ class CheckTests(unittest.TestCase):
             "From the reference: `shapes.md`, `../SKILL.md`, `references/shapes.md`, `references/gone.md`.\n",
             [(1, "missing file \"references/gone.md\"")], name="voiceflow-build/references/notes.md")
 
+    def test_links_that_leave_the_skill_fail(self):
+        self.tree.write("voiceflow-build/references/shapes.md", "# Shapes\n")
+        leaves = "link leaves the skill folder \"{}\"; name the other skill instead"
+        self.assertProblems(
+            "[a](../voiceflow-knowledge/SKILL.md) ![b](<../voiceflow-knowledge/SKILL.md> \"title\")\n"
+            "[c][ref], [d](references/shapes.md), and [e](<references/shapes.md>).\n\n"
+            "[ref]: ../voiceflow-knowledge/SKILL.md\n"
+            "[unused]: <../voiceflow-knowledge/SKILL.md#x>\n"
+            "[^1]: A footnote is not a definition.\n",
+            [(1, leaves.format("../voiceflow-knowledge/SKILL.md")),
+             (1, leaves.format("../voiceflow-knowledge/SKILL.md")),
+             (4, leaves.format("../voiceflow-knowledge/SKILL.md")),
+             (5, leaves.format("../voiceflow-knowledge/SKILL.md#x"))])
+
+    def test_paths_that_leave_the_skill_fail(self):
+        self.assertProblems(
+            "Read `../voiceflow-knowledge/SKILL.md` or ../voiceflow/references/x.md.\n"
+            "Run `voiceflow/skills/voiceflow-knowledge/scripts/run.py` with voiceflow-knowledge/SKILL.md.\n"
+            "Not /srv/repo/voiceflow/skills/voiceflow-build/SKILL.md or ~/.claude/skills/voiceflow-knowledge/SKILL.md.\n"
+            "\n```sh\ncat ../../voiceflow-knowledge/references/x.md\n```\n",
+            [(1, "path leaves the skill folder \"../voiceflow-knowledge/SKILL.md\""),
+             (1, "path leaves the skill folder \"../voiceflow/references/x.md\""),
+             (2, "path points into another skill \"voiceflow/skills/voiceflow-knowledge/scripts/run.py\""),
+             (2, "path points into another skill \"voiceflow-knowledge/SKILL.md\""),
+             (3, "absolute path points into the plugin or another skill "
+                 "\"/srv/repo/voiceflow/skills/voiceflow-build/SKILL.md\""),
+             (3, "absolute path points into the plugin or another skill "
+                 "\"~/.claude/skills/voiceflow-knowledge/SKILL.md\""),
+             (6, "path leaves the skill folder \"../../voiceflow-knowledge/references/x.md\"")])
+
+    def test_reference_files_resolve_dot_paths_from_their_folder(self):
+        self.assertProblems(
+            "Back to `../SKILL.md`; not `../voiceflow-knowledge/SKILL.md` or ../../voiceflow/SKILL.md.\n",
+            [(1, "path leaves the skill folder \"../voiceflow-knowledge/SKILL.md\""),
+             (1, "path leaves the skill folder \"../../voiceflow/SKILL.md\"")],
+            name="voiceflow-build/references/notes.md")
+
+    def test_urls_names_and_local_paths_pass(self):
+        self.tree.write("voiceflow-build/references/shapes.md", "# Shapes\n")
+        self.assertProblems(
+            "See https://example.com/agents/voiceflow/skills/voiceflow-knowledge/SKILL.md and <https://example.com/../x>.\n"
+            "Also [docs](https://example.com/../voiceflow-knowledge/SKILL.md), voiceflow://skill, mailto:a@example.com.\n"
+            "Read `references/shapes.md`, [shapes](references/shapes.md), [def][s], and ./references/shapes.md.\n"
+            "Use the `voiceflow-knowledge` skill. Install into ~/.claude/skills/voiceflow-build/ or\n"
+            "`--target /absolute/directory`, and/or keep skills/plugins as they are.\n\n"
+            "[s]: <references/shapes.md>\n", [])
+
+    def test_allowed_link_may_leave_its_skill_and_its_skill_may_be_absent(self):
+        allowed = "Read the [entry skill](../../voiceflow/SKILL.md).\n"
+        self.assertEqual(self.tree.check("voiceflow-setup/references/setup.md", allowed), [])
+        self.assertEqual(self.tree.check("voiceflow-setup/references/setup.md",
+                                         "Read the [entry skill](../../voiceflow/SKILL.md#nope).\n"),
+                         ["voiceflow/skills/voiceflow-setup/references/setup.md:1: link leaves the skill folder "
+                          "\"../../voiceflow/SKILL.md#nope\"; name the other skill instead"])
+        self.tree.write("voiceflow-setup/references/setup.md", "# Setup\n")
+        self.assertEqual(self.tree.check("voiceflow-setup/references/mcp.md", allowed),
+                         ["voiceflow/skills/voiceflow-setup/references/mcp.md:1: link leaves the skill folder "
+                          "\"../../voiceflow/SKILL.md\"; name the other skill instead"])
+
+    def test_paths_in_scripts_are_checked(self):
+        self.tree.write("voiceflow-build/scripts/run.py",
+                        "SKILL = 'SKILL.md'\nOTHER = '../voiceflow-knowledge/SKILL.md'\n"
+                        "MORE = ROOT / 'voiceflow-knowledge/references/x.md'\nURL = 'https://example.com/../x'\n")
+        self.assertEqual(self.tree.check("voiceflow-build/SKILL.md", "# Build\n"), [
+            "voiceflow/skills/voiceflow-build/scripts/run.py:2: path leaves the skill folder "
+            "\"../voiceflow-knowledge/SKILL.md\"",
+            "voiceflow/skills/voiceflow-build/scripts/run.py:3: path points into another skill "
+            "\"voiceflow-knowledge/references/x.md\""])
+
     def test_internal_names_are_denied(self):
         self.assertProblems(
             "Call audit_wiring or describe_operations.\nAtlas uses GLM in Safe mode.\n\n"
@@ -205,6 +274,18 @@ class CheckTests(unittest.TestCase):
             "vf_transcript_property_list"})
 
 
+class SingleSkillTests(unittest.TestCase):
+    def test_each_skill_passes_alone(self):
+        """A skill installed alone, as `npx skills add --skill <name>` does, has every file it refers to."""
+        surface = references.load_surface(ROOT)
+        names = {path.parent.name for path in (ROOT / "voiceflow/skills").glob("*/SKILL.md")}
+        for name in sorted(names):
+            with self.subTest(skill=name), tempfile.TemporaryDirectory() as temporary:
+                shutil.copytree(ROOT / "voiceflow/skills" / name, Path(temporary) / "voiceflow/skills" / name,
+                                ignore=shutil.ignore_patterns("__pycache__"))
+                self.assertEqual(references.Checker(Path(temporary), surface, skill_names=names).check(), [])
+
+
 class ValidateOutputTests(unittest.TestCase):
     def test_validate_lists_every_problem_and_exits_nonzero(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -212,7 +293,8 @@ class ValidateOutputTests(unittest.TestCase):
             for folder in ("voiceflow", "scripts", "tests/fixtures", "docs", "evals",
                            ".claude-plugin", ".cursor-plugin", ".agents", "mcp-registry"):
                 shutil.copytree(ROOT / folder, root / folder, ignore=shutil.ignore_patterns("__pycache__"))
-            for document in [*ROOT.glob("*.md"), ROOT / "LICENSE", ROOT / "skills.sh.json"]:
+            for document in [*ROOT.glob("*.md"), ROOT / "LICENSE", ROOT / "skills.sh.json",
+                             ROOT / "package-files.txt"]:
                 shutil.copyfile(document, root / document.name)
             skill = root / "voiceflow/skills/voiceflow-build/SKILL.md"
             lines = skill.read_text(encoding="utf-8").splitlines()

@@ -8,16 +8,16 @@ license: MIT
 
 For questions about input collection, defaults, captures, references, or state behavior
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Inspect the
+Read the [operation contract](references/operations.md). Inspect the
 resource declarations and the specific attachment using them. Tool definitions,
 attachments, and project variables are different resources.
-Read [attachment request shapes](../voiceflow/references/request-shapes.md#attach-a-function-and-capture-its-results)
+Read [attachment request shapes](references/request-shapes.md#attach-a-function-and-capture-its-results)
 when creating a binding or diagnosing an invalid target/capture payload.
 
 For function inputs, key inputVariables by the declared input UUID, with the same

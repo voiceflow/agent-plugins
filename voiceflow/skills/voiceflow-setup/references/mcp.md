@@ -101,7 +101,7 @@ from the account server and answers product/how-to questions without signing in.
    distinction and use a verified public-docs/CLI-docs fallback. Do not restart
    working account auth or require a terminal just to retrieve documentation.
 
-Follow the [documentation workflow](../../voiceflow/references/documentation.md)
+Follow the [documentation workflow](documentation.md)
 for question routing, source use, and bounded recovery. Account verification
 and docs verification are separate; neither substitutes for the other.
 

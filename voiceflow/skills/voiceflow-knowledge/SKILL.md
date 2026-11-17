@@ -8,16 +8,16 @@ license: MIT
 
 For questions about import formats, ingestion, filtering, retrieval, or document scope
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Resolve the
+Read the [operation contract](references/operations.md). Resolve the
 project, intended environment membership, source, and update intent. Inspect
 existing documents before importing duplicates.
-For MCP text import, use the [verified file shape](../voiceflow/references/request-shapes.md#import-a-text-document-over-mcp);
+For MCP text import, use the [verified file shape](references/request-shapes.md#import-a-text-document-over-mcp);
 the hosted tool can upload inline text without a local CLI or public URL.
 
 To import a whole website, a section of one, or a sitemap.xml, use

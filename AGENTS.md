@@ -9,6 +9,9 @@ auto-approval hooks, or a new backend. Never run customer writes or sign-in flow
 in repository tests. Use temporary host configuration for installation tests.
 
 Keep one shared skill tree. Every relative reference must ship with the package.
+Each skill must also work alone, so skills name other skills instead of linking
+to them. Shared references have one source in the `voiceflow` skill: after you
+edit one, run `python3 scripts/sync_shared_references.py`. Never edit a copy.
 Preserve user-edited skills; update conflicts must fail before changing files.
 Run `python3 scripts/validate.py`, `python3 -m unittest discover -s tests -v`,
 and `python3 scripts/build.py`. Schema checks do not prove model behavior.

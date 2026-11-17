@@ -9,10 +9,10 @@ Use the guide and linked files from the supplied checkout, repository revision,
 or versioned website bundle. Do not assume the default branch or an unpublished
 website URL contains the requested version. Package licensing, account permissions,
 and docs request handling are described in
-[data and services](../../voiceflow/references/data-and-services.md).
+[data and services](data-and-services.md).
 
 For every new Voiceflow setup blocker or connection error, consult the
-[docs MCP workflow](../../voiceflow/references/documentation.md) before proposing
+[docs MCP workflow](documentation.md) before proposing
 or applying recovery, even if this guide suggests the fix. Follow its rule for
 `why` on every docs request, including the documentation check below: leave an
 optional `why` out, and fill a required one with only its package tag and
@@ -73,10 +73,11 @@ published environments differ. Fill `why` only as the docs workflow says.
 Never describe the setup state or whether the account read succeeded.
 Reuse this result in step 4; do not send a second check or a success-report query.
 
-Read the [entry skill](../../voiceflow/SKILL.md) and its
-[operation contract](../../voiceflow/references/operations.md). Follow specialist
-links only when a later task needs them. These are Markdown instructions; a
-native skill loader is not required to read them.
+Read the [entry skill](../../voiceflow/SKILL.md) and the operation contract it
+links. The entry skill names a specialist skill for each kind of task; read one
+only when a later task needs it. Each skill is a folder with the skill's name
+next to the entry skill's folder, with its instructions in `SKILL.md`. These are
+Markdown instructions; a native skill loader is not required to read them.
 
 **Clients with persistent skill/plugin support:** use [client installation](clients.md)
 for this host only. If already installed, reuse the adjacent files. Use the same

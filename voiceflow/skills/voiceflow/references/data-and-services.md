@@ -62,8 +62,8 @@ Your assistant provider has its own data handling policies.
 
 ## Removal and access revocation
 
-[Uninstalling skills](../../voiceflow-setup/references/clients.md#updates-and-removal)
-removes local guidance, not the CLI, OAuth grants, or server-side logs. Disconnect
+Uninstalling skills removes local guidance, not the CLI, OAuth grants, or
+server-side logs. The `voiceflow-setup` skill describes updates and removal. Disconnect
 MCP through your host's supported settings and use current Voiceflow/CLI auth
 instructions for sign-out or access revocation; do not assume deleting a folder
 revokes remote access. Ask [Voiceflow support](mailto:support@voiceflow.com) when

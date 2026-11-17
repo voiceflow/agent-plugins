@@ -8,16 +8,16 @@ license: MIT
 
 For questions about architecture, agent capabilities, routing behavior, or a requested feature
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Resolve the
+Read the [operation contract](references/operations.md). Resolve the
 user's intended project and environment from context; clarify only missing
 choices. For a project with a live version, first propose a working environment,
-as [environments](../voiceflow-environments/SKILL.md#where-to-make-a-change)
+as the "Where to make a change" section of the `voiceflow-environments` skill
 describes. A build request authorizes its necessary draft work, not publishing.
 
 Keep knowledge-only Q&A and lightweight conversational collection on the main
@@ -34,7 +34,7 @@ they do not see each other's private instructions.
 Before building for a new business, read the actual global `prompt` and main-agent
 `instructions`, not just route metadata. CLI `agent get` needs both
 `--include-prompt --include-instructions`; MCP `get` needs `includePrompt: true`
-and `includeInstructions: true`. See [identity and greeting fields](../voiceflow/references/request-shapes.md#identity-and-greeting).
+and `includeInstructions: true`. See [identity and greeting fields](references/request-shapes.md#identity-and-greeting).
 Replace sample identity and starter instructions in those fields, preserving
 unrelated settings. A business name in a playbook does not override the global
 identity. For an existing agent, retain its identity unless the task changes it.
@@ -60,9 +60,9 @@ playbooks/workflows list replaces the list. Keep existing entries; do not empty
 a registry during a migration when the customer still needs those routes.
 
 A workflow runs when it is registered on the main agent, attached to the main
-agent as a [workflow tool](../voiceflow-workflows/SKILL.md#workflow-tools),
-which every playbook can call, reached from another workflow, or set as the
-Initialization workflow. Never attach a workflow tool to a playbook. Register a
+agent as a workflow tool, which every playbook can call, reached from another
+workflow, or set as the Initialization workflow. The `voiceflow-workflows` skill
+describes workflow tools. Never attach a workflow tool to a playbook. Register a
 workflow on the main agent only for routing: doing so for a workflow that
 already runs another way changes routing.
 
@@ -87,15 +87,15 @@ one, the agent greets at launch and again after every workflow.
 Use returned IDs. Confirm write results, unresolved references, tool descriptions,
 and routing before reporting the draft ready. Do not run tools that contact
 external services merely to inspect configuration. Check a new or changed
-function on test cases, as [functions](../voiceflow-functions/SKILL.md) describes,
+function on test cases, as the `voiceflow-functions` skill describes,
 before offering a conversation test.
 
 When runtime testing is authorized, compile the draft and check a fresh greeting
 and the job's completion response. Ask whether the requested action actually
-happened; verify the answer against the executed tool's effect. See
-[evaluations](../voiceflow-evaluations/SKILL.md). Report configuration-only checks
+happened; verify the answer against the executed tool's effect. See the
+`voiceflow-evaluations` skill. Report configuration-only checks
 as such when runtime testing is outside scope.
 
-Read [prompting](../voiceflow-prompting/SKILL.md) for instructions and
-[wiring](../voiceflow-wiring/SKILL.md) before attaching functions/API tools.
+Read the `voiceflow-prompting` skill for instructions and the `voiceflow-wiring`
+skill before attaching functions/API tools.
 Source: [Playbooks](https://www.voiceflow.com/docs/documentation/build/playbooks).

@@ -8,15 +8,15 @@ license: MIT
 
 For questions about playbooks, instruction size, routing, or tests that this skill
 does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Resolve the
-working environment first, as
-[environments](../voiceflow-environments/SKILL.md#where-to-make-a-change) describes.
+Read the [operation contract](references/operations.md). Resolve the
+working environment first, as the "Where to make a change" section of the
+`voiceflow-environments` skill describes.
 
 This skill makes a long playbook, or the main agent's instructions, shorter
 without changing what the agent does. It can also move a separate job into a
@@ -92,13 +92,13 @@ runs named. When the plan moves a job, offer "condense and move the job" or
 "condense only". Never offer to move every job out of the main agent. List each
 contradiction with both versions of the rule. When no test covers the
 playbook, offer to create a few first, as
-[evaluations](../voiceflow-evaluations/SKILL.md) describes. Change nothing
+the `voiceflow-evaluations` skill describes. Change nothing
 before the user answers.
 
 ## After the go-ahead
 
 1. Start the tests with `vf_test_create_many_runs`, and read each run until it
-   finishes, as [evaluations](../voiceflow-evaluations/SKILL.md) describes. Keep
+   finishes, as the `voiceflow-evaluations` skill describes. Keep
    each test's passed checks. A test run builds the environment first, so do
    not compile.
 2. Make the changes, as below.

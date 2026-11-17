@@ -8,13 +8,13 @@ license: MIT
 
 For questions about draft/live behavior, cloning, shared resources, merges, or publishing
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Resolve the
+Read the [operation contract](references/operations.md). Resolve the
 project and environment from live data. An environment alias, environment ID,
 and version ID are different. Draft-editing operations use the alias required
 by their schema. Never silently choose Main because it is the default.
@@ -45,7 +45,7 @@ publish merely to make a clone include recent edits.
 Compile draft edits before a conversation test: use the environment's `compile`
 operation, check its result, and start a fresh draft conversation. This refreshes
 the runtime representation without publishing. See the
-[verified compile sequence](../voiceflow/references/request-shapes.md#compile-before-a-draft-conversation-test).
+[verified compile sequence](references/request-shapes.md#compile-before-a-draft-conversation-test).
 
 Environment isolation has limits: knowledge document bodies and evaluation
 resources can be project-shared; secret names are shared while values are

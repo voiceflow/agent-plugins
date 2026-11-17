@@ -32,7 +32,9 @@ with unrun checks recorded honestly.
 Use feature branches and obtain the owner's approval before merging. Increment
 all four plugin manifests and metadata in the
 [documentation workflow](../voiceflow/skills/voiceflow/references/documentation.md)
-together when preparing an update. Update the changelog and compatibility matrix;
+together when preparing an update. Then run
+`python3 scripts/sync_shared_references.py`, so every skill's copy of that
+workflow carries the new version. Update the changelog and compatibility matrix;
 never rewrite old evaluation reports to imply a rerun.
 
 For a CLI baseline change, review release notes and auth changes, update all six

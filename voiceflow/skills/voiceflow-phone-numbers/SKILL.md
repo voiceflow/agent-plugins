@@ -8,13 +8,13 @@ license: MIT
 
 For questions about phone providers, calls, texts, or number setup that this
 skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md).
+Read the [operation contract](references/operations.md).
 
 A phone number belongs to the workspace, not to one agent. It has two sides:
 the `voice` side takes calls and the `sms` side takes texts. Each side reaches
@@ -41,7 +41,7 @@ First look for a number the workspace already holds:
 `vf_phone_number_list` with the `workspaceID`. If a free one fits, assign
 it. The MCP refuses to create a number, because that spends money or takes
 carrier credentials. So hand the step to the user, as the
-[phone number handoff](../voiceflow/references/cli-handoffs.md#add-a-phone-number)
+[phone number handoff](references/cli-handoffs.md#add-a-phone-number)
 describes: connect a number they hold with `vf phone-number create`, or add it
 in the UI. Never ask for carrier credentials in the conversation.
 
@@ -78,8 +78,8 @@ them and get the user's go-ahead first. After a move, say that the old agent no
 longer gets those calls or texts. When a number reaches the published version,
 say that unpublished changes are not live on it yet.
 
-Use [voice](../voiceflow-voice/SKILL.md) for how the agent speaks on a call, and
-[environments](../voiceflow-environments/SKILL.md) for publishing.
+Use the `voiceflow-voice` skill for how the agent speaks on a call, and the
+`voiceflow-environments` skill for publishing.
 
 Sources: [Connect a phone number](https://www.voiceflow.com/docs/documentation/deploy/phone/connect-a-phone-number),
 [Inbound SMS](https://www.voiceflow.com/docs/documentation/deploy/sms/inbound).

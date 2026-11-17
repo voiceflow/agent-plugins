@@ -3,6 +3,24 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## 1.1.1
+
+- Each skill now works when it is installed alone. Before, most skills linked
+  files in other skill folders. A single-skill install, such as
+  `npx skills add voiceflow/agent-plugins --skill <name>`, copies one folder, so
+  those links broke. GitHub's awesome-copilot marketplace lint rejects such
+  links for the same reason.
+- Skills now name each other, such as "the `voiceflow-wiring` skill", instead
+  of linking to each other's files. If a named skill is not installed, the
+  assistant says so and uses the documentation workflow.
+- The shared references, such as the operation contract and the docs workflow,
+  still have one source in the `voiceflow` skill. A script copies each one
+  into every skill that links it, and validation fails when a copy differs
+  from its source. Each copy carries the package version, so a single-skill
+  install reports the real version in docs requests.
+- The setup guide keeps one link to the entry skill, because chat assistants
+  that read the guide from the website follow it to find the skills.
+
 ## 1.1.0
 
 - Connect the docs MCP with `logging=off` in every native plugin and standalone

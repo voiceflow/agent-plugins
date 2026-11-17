@@ -5,7 +5,7 @@ after you have classified a failure and before you write the fix.
 
 Adapt each template to the agent's own wording and put it in the layer that
 owns the behavior: global prompt, main-agent instructions, or one playbook. See
-[prompting](../../voiceflow-prompting/SKILL.md).
+the `voiceflow-prompting` skill.
 
 ## 1. Made-up information
 
@@ -31,7 +31,7 @@ Symptoms: generic or guessed answers where the agent has a tool for real data.
 Check: the tool's attachment description must say both what it does and when
 to call it. If the "when" lives only in one playbook's instructions, other
 routes never see it. This is the most common cause of a skipped tool; see
-[build](../../voiceflow-build/SKILL.md). Then check that the active playbook's
+the `voiceflow-build` skill. Then check that the active playbook's
 instructions also say when to call it.
 
 ```markdown
@@ -115,8 +115,8 @@ Always include: [essentials]. Leave out: [extras].
 ## 8. Voice problems
 
 Symptoms on voice agents: numbers read wrongly, several questions in one turn,
-references to buttons or screens, poor recovery from misheard speech. See
-[voice](../../voiceflow-voice/SKILL.md).
+references to buttons or screens, poor recovery from misheard speech. See the
+`voiceflow-voice` skill.
 
 ```markdown
 ## Voice

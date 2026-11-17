@@ -40,7 +40,7 @@ On the tool attachment, `vf_tool_create` or `vf_tool_update`, set
 the input's `defaultValue` to the secret's name in braces, `"{EXAMPLE_API_KEY}"`,
 and leave `required` out. Key each input by its variable's UUID and repeat that
 UUID in `functionInputVariableID`. The full body is in
-[attach a function](../../voiceflow/references/request-shapes.md#attach-a-function-and-capture-its-results).
+[attach a function](request-shapes.md#attach-a-function-and-capture-its-results).
 
 At the start of a turn the runtime replaces the reference with the stored value.
 The model never sees the value, because the input is not collected from it.
@@ -59,7 +59,7 @@ contradict each other. `"required": false` is always accepted.
 In the Voiceflow UI, the Agent collect toggle is the same field: on means
 `required: true`. Adding a default in the UI does not turn the toggle off. If a
 user reports that the agent still asks for a secret input, check the toggle.
-See [wiring](../../voiceflow-wiring/SKILL.md) for the other `required` rules.
+See the `voiceflow-wiring` skill for the other `required` rules.
 
 ## Check the secret name
 
@@ -71,7 +71,7 @@ input. A value can differ per environment, and `vf_secret_list_overrides`
 reports which, but the name you bind stays the same.
 
 To create a secret or set its value, follow the
-[CLI handoff](../../voiceflow/references/cli-handoffs.md#set-a-secret-value).
+[CLI handoff](cli-handoffs.md#set-a-secret-value).
 Never ask for a credential in the conversation.
 
 ## Several secrets, several attachments

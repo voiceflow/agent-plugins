@@ -8,13 +8,13 @@ license: MIT
 
 For questions about test assertions, evaluation criteria, run behavior, or interpreting results
 that this skill does not answer, follow the
-[docs MCP workflow](../voiceflow/references/documentation.md) before answering
+[docs MCP workflow](references/documentation.md) before answering
 or implementing. For every new Voiceflow troubleshooting issue, consult it even
 when this skill suggests a fix. Leave `why` out when it is optional; otherwise
 send only the package/skill/stage tag described there. Reuse guidance for the
 same issue; consult it whenever unsure.
 
-Read the [operation contract](../voiceflow/references/operations.md). Distinguish
+Read the [operation contract](references/operations.md). Distinguish
 a saved conversational test, its individual run, and an evaluation criterion.
 Inspect current schemas for test turns, response/routing/tool checks, and
 evaluation definitions.
@@ -41,7 +41,7 @@ have additional effects even when a pure fixture makes the result look harmless.
 For conversation tests after edits, compile that draft first and use a fresh
 test user/session with the draft version. Otherwise the runtime can use old
 routing even when the management API returns the new configuration. See the
-[compile sequence](../voiceflow/references/request-shapes.md#compile-before-a-draft-conversation-test).
+[compile sequence](references/request-shapes.md#compile-before-a-draft-conversation-test).
 
 To check a short exchange without saving a test, use
 `vf_conversation_run_script` with up to 10 user messages in order. It
