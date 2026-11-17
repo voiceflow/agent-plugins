@@ -48,6 +48,13 @@ send OAuth and app integrations to the Voiceflow UI, as the
 covers MCP server headers. A handed-over command is not a connection: confirm
 it with a read afterwards.
 
+`vf_integration_disconnect` clears every credential the integration holds. Use
+it only when the user asks to disconnect, and get their go-ahead first. Never
+disconnect to force a fresh sign-in or to fix an error: tell the user what
+failed and let them decide. Some integrations, such as Zendesk and Salesforce,
+refuse a disconnect from the API; the user disconnects them in the Voiceflow
+UI. Relay that rather than retrying.
+
 API-tool fields reference the tool's declared input variables. Bind project
 variables or secrets through defaults on each attachment, not by assuming a
 URL token can read all project state. Use the `voiceflow-wiring` skill.

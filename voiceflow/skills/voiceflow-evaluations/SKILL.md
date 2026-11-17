@@ -44,13 +44,22 @@ routing even when the management API returns the new configuration. See the
 [compile sequence](references/request-shapes.md#compile-before-a-draft-conversation-test).
 
 To check a short exchange without saving a test, use
-`vf_conversation_run_script` with up to 10 user messages in order. It
-starts a fresh conversation and returns each turn's replies, tool calls,
-changed variables, and errors; pass `variables` to start as a known caller. It
-does not compile: compile first after an edit, and when the result says
-`needsRecompile: true`, compile and run it again. Use `vf_conversation_send`
-only when the next message depends on the reply. CLI 0.287.0 has no command for
-the script run. A reply is not proof a tool worked; read the turn's tool calls.
+`vf_conversation_run_script` with up to 10 user messages in order. A message is
+a string, or a button press written `{ "button": "<label>" }` for a button the
+reply before offered. It starts a fresh conversation and returns, per turn, who
+replied, the replies, tool calls, changed variables, warnings, and errors, and
+which step ended the conversation when one did. Next to the messages, pass
+`variables` to preset values, a launch payload to start the way the website
+widget does, or a user ID to run as a known caller on the draft; `variables`
+never goes inside the launch. Read its schema with `vf_describe_operations`
+first. To test a step deep in a workflow, send the messages that reach it; do
+not write the conversation state. It does not compile: compile first after an
+edit, and when the result says `needsRecompile: true`, compile and run it
+again. Use `vf_conversation_send` only when the next message depends on the
+reply. CLI 0.287.0 has no command for the script run. A reply is not proof a
+tool worked; read the turn's tool calls, warnings, and errors. For the full
+logs, query them with `vf_transcript_query_logs` and the transcript ID the run
+returns.
 
 Before you save a test:
 
@@ -70,7 +79,11 @@ Before you save a test:
 Tests can invoke real tools and external services. Prefer fixtures or a safe
 environment when available, but do not claim an environment clone isolates
 external systems or shared KB documents. Explain any material side effect
-outside the user's requested testing scope before running it.
+outside the user's requested testing scope before running it. Count the tools
+on sub-playbooks and the workflow steps that send a request or write to an
+integration by themselves, with no saved tool behind them: name each one and
+what it could write before the first run. For a batch, say in one line what its
+runs could write.
 
 Poll run status with a bounded deadline; pending is not passed. Separate
 infrastructure errors from agent failures. Inspect traces to identify why an

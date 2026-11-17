@@ -21,7 +21,32 @@ request, and a function for transformation, branching, or composed logic.
 Functions run in Voiceflow's sandbox, not Node or a browser. Use
 `export default async function main(args)` and declared inputs from
 `args.inputVars`. Do not assume imports, require, process, Buffer, DOM, or
-browser URL utilities exist.
+browser URL utilities exist. `TextEncoder`, `TextDecoder`, `URLSearchParams`,
+`FormData`, `setTimeout`, and `setInterval` are not defined either. Beyond
+standard JavaScript, the sandbox has the modified `fetch`, `delay(ms)`, which
+returns a promise (`await delay(500)` waits half a second), and `btoa` and
+`atob` for base64, as in a browser.
+
+For base64 in new code, call the built-in `btoa` and `atob` directly; they are
+always defined, so never check for them first or hand-write an encoder.
+`btoa` takes one byte per character: it throws on a character above U+00FF and
+encodes `é` as Latin-1, not UTF-8. So use plain `btoa` only for ASCII, such as
+a Basic auth header, and the UTF-8 form for text that may hold accents or
+emoji:
+
+```javascript
+const authorization = 'Basic ' + btoa(`${user}:${pass}`);
+const encoded = btoa(unescape(encodeURIComponent(text.toWellFormed())));
+const decoded = decodeURIComponent(escape(atob(encoded)));
+```
+
+`toWellFormed()` turns half of a cut emoji into U+FFFD; without it,
+`encodeURIComponent` throws. When editing a function with its own base64
+helper, keep one that only wraps the built-in or produces non-standard output,
+such as base64url. For a hand-written standard encoder, check its padding:
+input of 3n+1 bytes must end in `==`, and 3n+2 bytes in `=`. If it is wrong,
+replace it with the matching built-in form, and say so alongside the requested
+change.
 
 Voiceflow's modified fetch exposes parsed response properties:
 `const data = (await fetch(url)).json`, not `response.json()`. Inspect the

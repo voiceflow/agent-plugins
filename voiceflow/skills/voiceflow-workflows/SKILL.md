@@ -56,11 +56,30 @@ used across the project, see the "Find text and owners" section of the
 
 ## Editing
 
+- An End step, or an End exit action, ends the whole conversation, also inside
+  a workflow the agent runs, the Initialization workflow, or a workflow another
+  workflow calls. Nothing after it runs, the agent does not answer, and a later
+  message starts the conversation over. Use End only where the user wants the
+  conversation to stop.
+- To hand back to the agent, leave the last port unlinked. When a path reaches
+  an unlinked port on the last step of a block, or an unlinked `else`, the
+  workflow finishes there and the conversation returns to what started it: the
+  agent, or the Workflow step that called it, which goes on to its next step.
+  This is how greeting buttons in an Initialization workflow hand over to the
+  agent. A read shows such a port or button with `to: null`; that is not an
+  error. A Handoff's fail or return port can likewise stay unlinked when the
+  agent should take over then.
+- A step that links back to its own block repeats forever. Point it at a block
+  that does what the user wants next: hand back, hand off, or end. Unlinking
+  the looping port also stops the loop, but on a step that is not last, an
+  unlinked button port continues to the next step: check that step, because an
+  End there ends the conversation. A retry loop also needs a counter, raised in
+  a Code step, and a Condition that leaves it.
 - To say something and end, use a Message step with its own message, then an
   End step. Never give a new End step a message.
 - When the user wants a Message step's words gone, delete the step; do not
   keep it silent. A speaking End step is the exception, because deleting it
-  leaves the path with no ending: keep it and send
+  stops ending the conversation there: keep it and send
   `"content": {"messageID": null, "responseEnabled": false}` with
   `vf_workflow_update_step`. An update keeps every field you leave out.
 - `vf_workflow_add_blocks` adds up to 20 blocks with their steps, links
@@ -99,7 +118,9 @@ Do not name the workflow in instructions either: a workflow name there resolves
 only for workflows in the agent's `workflows` list. To undo it, delete the tool
 with the ID the create returned.
 
-Verification starts with read-back topology and reference checks. A runtime
+Verification starts with read-back topology and reference checks. When you
+report a workflow with buttons, say for each button whether its path ends the
+conversation, hands off, or hands back to the agent. A runtime
 test can invoke real integrations; scope it with the `voiceflow-evaluations`
 skill only when the user requested testing.
 

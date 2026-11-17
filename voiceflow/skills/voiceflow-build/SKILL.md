@@ -76,7 +76,11 @@ settings. Values the widget or API pass at launch arrive in the `last_event`
 variable, not as variables of their own. To use one, add a Code step to that
 workflow that copies it from `last_event.payload` into a variable. A project
 with no Initialization setting refuses the set: then give the user the Code
-step's code and tell them where it goes.
+step's code and tell them where it goes. On every path after which the agent
+should take over, leave the last port unlinked: an End step there ends the
+whole conversation before the agent says a word. Keep End on a path that should
+close the conversation, such as out of hours, and a Handoff on one that goes to
+a person.
 
 The main agent takes a turn at launch, after the Initialization workflow, and
 again each time a workflow returns to it. Put the greeting in one place: fixed

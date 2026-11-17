@@ -44,7 +44,8 @@ one more model call, and a turn allows at most 10.
 When the user asks only to optimize, condense, and say in the plan whether a
 split would help. When they ask to split, condense and move each separate job
 that passes the split test. The main job, the one most rules serve, stays where
-it is. Never leave the main agent with only routing.
+it is; if every job seems to pass the test, the one with the most rules stays.
+Never leave the main agent with only routing.
 
 ## Read everything first
 
@@ -57,12 +58,16 @@ Change nothing until the user answers the plan.
 2. What the playbook owns: `vf_playbook_get` for its settings and system tools,
    `vf_tool_list` with its `playbookID` for its tools, and
    `vf_playbook_list_paths` for its exit paths with their `requiredVariables`
-   and `messages`. For the main agent, call `vf_tool_list` with `global: true`.
+   and `messages`. For the main agent, call `vf_tool_list` with `global: true`
+   before you judge the split test: a tool its text names only in plain words
+   can still be one of its own tools.
 3. The routing list: `vf_agent_get`. Its `playbooks` list holds each entry's
    `condition`, `description` and `requiredVariables`.
 4. The links into it: `vf_environment_search_text` with `pattern` set to the
    playbook's ID. While `hasMore` is true, call again with `offset` set to
-   `nextOffset`. A `workflow` hit with a `stepID` is a workflow step that runs
+   `nextOffset`. An `agent` hit is the playbook's entry in the routing list,
+   and an `agent_tool` hit is one of its own tools or exit paths, not a link
+   into it. A `workflow` hit with a `stepID` is a workflow step that runs
    or lists the playbook. A `test` hit is a routing check. A `canvas` or
    `initialization_workflow` hit is a step the workflow tools cannot change, so
    name it in the plan and condense instead of splitting. Search once more with
