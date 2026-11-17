@@ -178,3 +178,20 @@ to call it.
 
 After saying goodbye, end the call right away. Do not wait for a reply.
 ```
+
+## 11. Duplicate replies after a model fallback
+
+Symptoms: the agent now and then sends the same reply twice, or a short extra
+line follows a tool call.
+
+Check: read the full trace of a turn that doubled with
+`vf_transcript_query_logs` and that turn. Look between the two copies for a
+line saying the model on the fallback chain had an outage and the runtime fell
+back to another model. When that line is there, the model call failed part way
+and the runtime retried it on a fallback model, which sent the reply again. No
+prompt change fixes it.
+
+Fix: quote that trace line to the user, say a prompt edit will not fix it, and
+stop changing the prompt. Suggest switching the agent's model if it keeps
+happening. With no fallback line, treat it as a prompt or routing problem, and
+run the scenario three times after the fix before calling it fixed.

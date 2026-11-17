@@ -78,7 +78,9 @@ overwrites Main's newer release.
 
 Publish, merge, deletion, and traffic changes require scope from the user.
 Read the current diff/state and explain the concrete effect before an approval
-when authorization is missing. Protected environments may restrict these actions
+when authorization is missing. Before a publish or merge, say what goes live
+and which of those changes no test has run on yet: they go live untested.
+Protected environments may restrict these actions
 to admins/owners. Do not bypass protection.
 
 After an authorized release action, verify the resulting status/version and

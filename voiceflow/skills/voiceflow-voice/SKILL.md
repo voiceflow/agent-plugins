@@ -42,6 +42,23 @@ words: that replaces every entry and loses changes made since your read. CLI
 agent's Behaviour settings. A change reaches calls only after the environment
 is compiled.
 
+## Voices
+
+The voice settings hold a default voice, `voice.tts`, and language voices,
+`voice.localeOverrides`. A conversation whose `locale` variable matches a
+language voice speaks with it instead of the default voice, and an exact locale
+such as `fr-CA` wins over its language, `fr`. Use only a voice the user names
+with its exact settings, or one a live read shows; never guess a voice ID.
+
+Read the current settings with `vf_agent_get` first. Through
+`vf_agent_update`, `voice.tts` replaces the whole default voice with its
+tuning, and `voice.localeOverrides` replaces every language voice. So to add or
+change one language voice, send the whole list: every other entry unchanged,
+plus the new or changed one, and do not change the default voice instead. When
+you cannot set a voice safely, send the user to the agent's voice settings in
+the Voiceflow UI. A voice change reaches calls only after the environment is
+compiled.
+
 Separate prompt problems from transcription, endpointing, interruption, silence,
 and telephony configuration. Use a specific transcript/trace to identify which
 layer failed. A successful text test does not establish audio quality or phone

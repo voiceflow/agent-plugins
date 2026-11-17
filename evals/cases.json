@@ -536,6 +536,95 @@
       ]
     },
     {
+      "id": "workflow-buttons-hand-back",
+      "category": "product",
+      "fixture": "Synthetic Initialization workflow that greets with two buttons, Track order and Talk to the agent, each path ending in an End step.",
+      "prompt": "After the greeting buttons, the agent never answers. Fix it.",
+      "required": [
+        "Explain that an End step ends the whole conversation",
+        "Leave the last port unlinked on paths where the agent should take over",
+        "Say for each button whether its path ends, hands off, or hands back to the agent"
+      ],
+      "forbidden": [
+        "Add an End step where the agent should take over",
+        "Report a null button link as an error"
+      ]
+    },
+    {
+      "id": "debug-model-fallback",
+      "category": "product",
+      "fixture": "Synthetic transcript T3 where one reply appears twice and the trace between the copies shows a fallback to another model after an outage.",
+      "prompt": "Our agent answered twice in conversation T3. Fix the prompt.",
+      "required": [
+        "Read the full trace of the doubled turn",
+        "Quote the fallback trace line",
+        "Say a prompt edit will not fix it"
+      ],
+      "forbidden": [
+        "Change the prompt to stop the duplicate",
+        "Name a cause without quoting evidence"
+      ]
+    },
+    {
+      "id": "function-base64-utf8",
+      "category": "product",
+      "fixture": "Synthetic project; the requested function base64-encodes a customer note that may hold accents.",
+      "prompt": "Write a function that base64-encodes the customer's note before sending it.",
+      "required": [
+        "Use the built-in btoa with the UTF-8 form for the note"
+      ],
+      "forbidden": [
+        "Hand-write a base64 encoder",
+        "Call plain btoa on text that may hold accents",
+        "Use Buffer or TextEncoder"
+      ]
+    },
+    {
+      "id": "voice-language-override",
+      "category": "product",
+      "fixture": "Synthetic voice agent with a default voice and two language voices, for es and de; the user gives the exact settings of a French voice.",
+      "prompt": "Use this French voice for French callers.",
+      "required": [
+        "Read the current voice settings first",
+        "Send the whole language voice list with the es and de entries unchanged plus the French one",
+        "Compile before a test call"
+      ],
+      "forbidden": [
+        "Change the default voice",
+        "Invent a voice ID",
+        "Send only the French entry as the language voice list"
+      ]
+    },
+    {
+      "id": "integration-no-disconnect-fix",
+      "category": "product",
+      "fixture": "Synthetic project whose connected integration returns an expired sign-in error; account MCP connected.",
+      "prompt": "The CRM tool keeps failing, please fix it.",
+      "required": [
+        "Tell the user what failed and let them decide"
+      ],
+      "forbidden": [
+        "Disconnect the integration to force a fresh sign-in",
+        "Ask for credentials in chat"
+      ]
+    },
+    {
+      "id": "script-run-button",
+      "category": "product",
+      "fixture": "Synthetic draft agent whose greeting offers a Track order button and whose order lookup tool only reads; account MCP connected.",
+      "prompt": "Quickly check that pressing Track order and giving order 1234 works, without saving a test.",
+      "required": [
+        "Compile the draft before the script run",
+        "Send the button press as a button message in one script run",
+        "Read the turn's tool calls, warnings and errors"
+      ],
+      "forbidden": [
+        "Save a test",
+        "Write the conversation state to reach the step",
+        "Treat a reply as proof the tool worked"
+      ]
+    },
+    {
       "id": "phone-number-texts",
       "category": "product",
       "fixture": "Synthetic workspace with one Twilio number whose sms side is unassigned; account MCP connected.",

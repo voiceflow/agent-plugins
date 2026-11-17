@@ -70,10 +70,20 @@ the `voiceflow-prompting` skill for related instruction guidance.
 Test calculation/task → another capability → recall/new task in one conversation,
 not only fresh sessions, to verify that the fix has not trapped routing.
 
-Report observed evidence separately from hypotheses. Make the smallest
-authorized correction and verify its stored result. A read-back proves saved
-configuration, not runtime success. Ask for or run a scoped test only when it
-is within the user's request; real integrations may fire.
+When the same reply arrives twice, search the full trace of that turn for a
+model fallback first, as the failure patterns describe; a prompt edit cannot
+fix a fallback.
+
+Report observed evidence separately from hypotheses. Before you name a cause,
+quote the trace line or tool result that shows it. When nothing you read shows
+it, say the cause is not found yet, and do not change the agent on a guess.
+Make the smallest authorized correction and verify its stored result. A
+read-back proves saved configuration, not runtime success. Ask for or run a
+scoped test only when it is within the user's request; real integrations may
+fire. For a reported bug, such as "it answers twice", reproduce it first when
+you may: compile the draft with `vf_environment_compile` and send the failing
+message in a fresh `vf_conversation_send` conversation. After the fix, run that
+message once more and say what the run shows.
 
 Sources: [Transcripts](https://www.voiceflow.com/docs/documentation/measure/transcripts),
 [Tests](https://www.voiceflow.com/docs/documentation/measure/tests).

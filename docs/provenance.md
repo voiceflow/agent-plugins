@@ -60,7 +60,7 @@ Later changes to the Creator skill library are adapted by a scheduled sync.
 Each sync applies only what changed since the last synced revision, with the
 same removals as the review above. Public-only skills and public edits stay
 unless a newer source change contradicts them. The last sync covered revision
-`da3aa8b2a244987908dfbac77182f5c19a0ba2a3` from 2026-10-28;
+`d9dbc4459ec058ebe13333b1b167a483716b0296` from 2026-11-17;
 [creator-sync.json](creator-sync.json) holds the sync state.
 
 ## Packaging references

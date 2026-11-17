@@ -64,7 +64,10 @@ uses the message. Delete only after the user confirms that none does.
 Clear or repoint each owner before deleting the message. For an End step that
 speaks, keep the End and clear its message with `vf_workflow_update_step`
 and `"content": {"messageID": null, "responseEnabled": false}`. Deleting the End
-leaves the path with no ending, so do that only when the user asks.
+stops ending the conversation there, so do that only when the user asks. The
+step above it becomes last: the path hands the conversation back to the agent,
+unless that step has a stored link that now runs. The delete result lists those
+in `linksNowRunning`. Tell the user where the path goes now.
 
 Deleting a prompt does not check owners: an owner keeps the ID and sends nothing
 at runtime. A message variant can hold a prompt ID in a condition, and every
