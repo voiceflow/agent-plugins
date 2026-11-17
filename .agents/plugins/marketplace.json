@@ -1,5 +1,6 @@
 {
   "name": "voiceflow-plugins", "interface": { "displayName": "Voiceflow" },
   "plugins": [{ "name": "voiceflow", "source": { "source": "local", "path": "./voiceflow" },
-    "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" } }]
+    "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+    "category": "Developer Tools" }]
 }

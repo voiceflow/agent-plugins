@@ -1,10 +1,21 @@
 {
   "name": "voiceflow",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Connect to Voiceflow, then build and improve agents with shared product guidance.",
   "author": {
     "name": "Voiceflow, Inc."
   },
-  "skills": "./skills/",
-  "license": "MIT"
+  "homepage": "https://www.voiceflow.com/docs",
+  "repository": "https://github.com/voiceflow/agent-plugins",
+  "license": "MIT",
+  "keywords": [
+    "voiceflow",
+    "agents",
+    "ai-agents",
+    "chatbots",
+    "voice",
+    "workflows",
+    "mcp"
+  ],
+  "skills": "./skills/"
 }

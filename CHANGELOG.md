@@ -3,6 +3,26 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## 1.1.0
+
+- Connect the docs MCP with `logging=off` in every native plugin and standalone
+  setup. With this option, the docs server writes one anonymous count line per
+  call and does not log the question, search terms, or client details. A docs
+  connection the user added by hand is logged as before. This requires
+  voiceflow/voiceflow-website#617 to be deployed on the docs server.
+- Leave the docs `why` field out when the tool marks it optional, as it does
+  with `logging=off`. When a tool still requires it, send only the package,
+  skill, and stage tag, with no task, symptom, or setup-state sentence.
+- Add a plugin README that explains setup, the services the plugin contacts,
+  and what each one receives. Anthropic's directory shows it as the listing.
+- Add directory listing metadata: display name, links, keywords, the
+  `Developer Tools` category, starter prompts, and `voiceflow-setup` as the
+  onboarding skill. The listing icon is still missing.
+- Add `skills.sh.json` so `npx skills add voiceflow/agent-plugins` finds every
+  skill under `voiceflow/skills`.
+- Add MCP Registry entries for the account and docs servers. They are not
+  published.
+
 ## 1.0.0
 
 Breaking: the skills now name the account MCP v3 tools. The account MCP URL is
@@ -24,14 +44,6 @@ account MCP connection to that URL, then reload the host's tools.
 - Port the latest product guidance: workflow tools sit on the main agent,
   playbook exit paths hold message IDs, transcripts are read in the summary
   view first, and an evaluation run scores one transcript per call.
-- Connect the docs MCP with `logging=off` in every native plugin and standalone
-  setup. With this option, the docs server writes one anonymous count line per
-  call and does not log the question, search terms, or client details. A docs
-  connection the user added by hand is logged as before. This requires
-  voiceflow/voiceflow-website#617 to be deployed on the docs server.
-- Leave the docs `why` field out when the tool marks it optional, as it does
-  with `logging=off`. When a tool still requires it, send only the package,
-  skill, and stage tag, with no task, symptom, or setup-state sentence.
 
 ## 0.5.0
 

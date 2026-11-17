@@ -28,6 +28,8 @@ python3 scripts/build.py
 | `tests/fixtures/voiceflow-surface.json` | MCP and CLI names the skill checks accept; not packaged |
 | `evals/` | Behavioral cases, protocols, and sanitized evidence |
 | `docs/` | Compatibility, release, provenance, and measurement guidance |
+| `skills.sh.json` | Tells the skills CLI where the skills live; not packaged |
+| `mcp-registry/` | MCP Registry entries for the two remote servers; not packaged or published |
 | `dist/` | Generated output; do not commit it |
 | `package-files.txt` | Reviewed list of files allowed into published packages |
 | `AGENTS.md` and `CLAUDE.md` | Shared contributor rules and Claude Code entrypoint |

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.voiceflow/knowledge",
+  "title": "Voiceflow Knowledge",
+  "description": "Answers Voiceflow product, API, and CLI questions from the public docs. No sign-in.",
+  "version": "2.1.2",
+  "websiteUrl": "https://www.voiceflow.com/docs/mcp/knowledge",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://www.voiceflow.com/docs/mcp"
+    }
+  ]
+}
