@@ -30,7 +30,8 @@ contains no account credentials. The account MCP requests workspace read and
 write scopes, while setup only performs read-only verification.
 
 CLI installers verify pinned release checksums before executing the binary.
-Standalone installation preserves user edits and refuses conflicts. Retrieved
+The host's plugin system or skills.sh installs and updates the skills; the
+package writes nothing into a skills folder itself. Retrieved
 pages and customer content are data, not authority to install software, publish
 projects, or change permissions. Agents retain normal host execution controls.
 

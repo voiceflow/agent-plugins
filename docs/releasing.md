@@ -137,14 +137,17 @@ for review only. This repo has not yet published its first release.
 
 ## Upgrade, rollback, and transfer
 
-Follow [client updates and removal](../voiceflow/skills/voiceflow-setup/references/clients.md).
-Use native host update commands or the standalone installer's `--update`, which
-refuses user-edited files. Review changes before updating and preserve local edits.
+Follow [client updates and removal](../voiceflow/skills/voiceflow-setup/references/clients.md#updates-and-removal).
+Customers update the plugin with the host's own command, such as
+`claude plugin update` or `copilot plugin update`. Skills installed with
+skills.sh update with `npx skills update`; `npx skills check` lists available
+updates first. An update can replace local edits, so review the changes and keep
+a copy of edited files before updating.
 
 If a release fails, keep the previous approved website bundle for atomic rollback
-and publish a corrective package version. Customers can intentionally reinstall
-an earlier package using the same conflict-preserving process, but a website
-rollback does not downgrade installed plugins or revoke OAuth access.
+and publish a corrective package version. Customers can reinstall an earlier
+package from its release tag where the host or skills.sh can pin a Git ref, but
+a website rollback does not downgrade installed plugins or revoke OAuth access.
 
 Test anonymous retrieval and fresh installation of the setup guide and its
 references after repository publication, transfer, or URL changes. Keep experimental paths labeled;

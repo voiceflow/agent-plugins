@@ -21,8 +21,13 @@ In Claude Code 2.1.275 or later, run:
 /plugin install voiceflow --marketplace voiceflow/agent-plugins
 ```
 
-For Codex, Cursor, other Claude Code versions, and standalone skills, follow
-the [client guide](skills/voiceflow-setup/references/clients.md).
+For Codex, GitHub Copilot CLI, Cursor, and other Claude Code versions, follow
+the [client guide](skills/voiceflow-setup/references/clients.md). A host without
+a plugin system can install the skills alone with skills.sh, which needs Node.js:
+
+```text
+npx skills add voiceflow/agent-plugins
+```
 
 ## How setup works
 
@@ -41,10 +46,6 @@ checks what your assistant can do, then takes one of two paths.
 Setup is done when one account read works and one docs question gets an answer.
 Setup does not create a project or publish anything. After that, the assistant
 asks what you want to build or improve.
-
-If you ask for a standalone install, a setup script copies the skills into your
-assistant's skills folder. It records the files it manages and refuses to
-overwrite files you have edited.
 
 ## Data and services
 
