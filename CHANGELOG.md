@@ -3,6 +3,34 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## 1.2.1
+
+- Codex now connects the account MCP at
+  `https://mcp.voiceflow.com/mcp?version=3`, without `dynamic=true`. Codex
+  limits tool list size only for MCP servers bundled inside a plugin, and setup
+  adds the account server to Codex's own configuration, `~/.codex/config.toml`.
+  OpenAI's plugin guidelines also forbid a generic executor for operations that
+  are not listed as tools.
+- On Codex, setup changes a saved URL with `dynamic=true` back to the plain
+  URL. Version 1.2.0 gave Codex the dynamic URL.
+- When the account server came bundled with an installed plugin, such as the
+  Voiceflow plugin from the ChatGPT or Codex directory, setup leaves that
+  server's URL alone. It does not add a second account connection.
+- Cursor and GitHub Copilot keep
+  `https://mcp.voiceflow.com/mcp?version=3&dynamic=true`. Claude Code, Claude,
+  ChatGPT, and other hosts keep the plain URL.
+- The OpenAI listing description no longer says that setup adds the public
+  docs server. In ChatGPT, docs answers come from the account server's docs
+  tools. The description now says you sign in to your Voiceflow account in
+  your browser, and the assistant answers product questions from current
+  Voiceflow documentation.
+- Validation now fails when a line gives Codex the dynamic URL, or gives Cursor
+  or GitHub Copilot the plain URL.
+- Two new acceptance cases: `setup-mcp-codex-plain` and
+  `setup-mcp-plugin-bundled`. The cases `setup-mcp-dynamic-host` and
+  `dynamic-operation-by-name` now use Cursor. The two version-repair cases
+  expect the dynamic URL only in Cursor and GitHub Copilot.
+
 ## 1.2.0
 
 This guidance needs voiceflow/creator-app#24625 deployed on the account MCP.

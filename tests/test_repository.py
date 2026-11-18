@@ -227,15 +227,18 @@ class RepositoryTests(unittest.TestCase):
             root = Path(temporary)
             guide = root / validator.ACCOUNT_URL_GUIDE
             guide.parent.mkdir(parents=True)
-            guide.write_text(f"| Codex | `{dynamic}` |\n| Claude Code | `{plain}` |\n| Other hosts | `{plain}` |\n"
-                             f"Not `{bare}?version=2` or `{bare}`.\nIn Cursor, use `{plain}`.\n"
-                             f"In ChatGPT, use `{dynamic}`.\nCodex and Claude Code: `{dynamic}`.\n", encoding="utf-8")
+            guide.write_text(f"| Cursor | `{dynamic}` |\n| Codex | `{plain}` |\n| Other hosts | `{plain}` |\n"
+                             f"Not `{bare}?version=2` or `{bare}`.\nIn Copilot, use `{plain}`.\n"
+                             f"In ChatGPT, use `{dynamic}`.\nIn Codex, use `{dynamic}`.\n"
+                             f"Cursor and Claude Code: `{dynamic}`.\nCodex and Claude Code: `{plain}`.\n",
+                             encoding="utf-8")
             label = guide.relative_to(root).as_posix()
             allowed = f"account MCP URL must be {plain} or {dynamic}"
             self.assertEqual(validator.account_url_problems(root), [
                 f"{label}:4: {allowed}, not {bare}", f"{label}:4: {allowed}, not {bare}?version=2",
-                f"{label}:5: Cursor uses {dynamic}", f"{label}:6: ChatGPT uses {plain}",
-                f"{label}:7: name Codex and Claude on separate lines, because they use different account MCP URLs"])
+                f"{label}:5: Copilot uses {dynamic}", f"{label}:6: ChatGPT uses {plain}",
+                f"{label}:7: Codex uses {plain}",
+                f"{label}:8: name Cursor and Claude on separate lines, because they use different account MCP URLs"])
             guide.write_text(f"Use `{plain}`.\n", encoding="utf-8")
             self.assertEqual(validator.account_url_problems(root), [
                 f"{validator.ACCOUNT_URL_GUIDE}: setup must give the account MCP URL {dynamic}"])

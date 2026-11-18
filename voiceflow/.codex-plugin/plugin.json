@@ -1,6 +1,6 @@
 {
   "name": "voiceflow",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Connect to Voiceflow, then build and improve agents with shared product guidance.",
   "author": {
     "name": "Voiceflow, Inc."
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Voiceflow",
     "shortDescription": "Build with Voiceflow",
-    "longDescription": "Connect to Voiceflow, then build, debug, and improve agents using portable product skills. Setup connects your Voiceflow account through the Voiceflow CLI or the hosted Voiceflow MCP server, with browser sign-in, and adds the public Voiceflow docs server. Eighteen skills cover building agents, prompts and playbooks, workflows, functions, integrations, knowledge bases, messages, voice, phone numbers, the web chat widget, debugging, transcripts, evaluations, and environments. Changes to your account follow your requests and your assistant's approval prompts. You need a Voiceflow account, and your plan's limits apply.",
+    "longDescription": "Connect to Voiceflow, then build, debug, and improve agents using portable product skills. You sign in to your Voiceflow account in your browser, and the assistant answers product questions from current Voiceflow documentation. Eighteen skills cover building agents, prompts and playbooks, workflows, functions, integrations, knowledge bases, messages, voice, phone numbers, the web chat widget, debugging, transcripts, evaluations, and environments. Changes to your account follow your requests and your assistant's approval prompts. You need a Voiceflow account, and your plan's limits apply.",
     "developerName": "Voiceflow, Inc.",
     "logo": "./assets/icon.png",
     "composerIcon": "./assets/icon.png",

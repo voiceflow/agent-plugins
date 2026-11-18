@@ -25,16 +25,18 @@ LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 DOCS_MCP_URL = "https://www.voiceflow.com/docs/mcp?logging=off"
 DOCS_MCP_ENDPOINT = re.compile(r"https://www\.voiceflow\.com/docs/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/*.py", "tests/*.py")
-# The account MCP has two accepted URLs. Hosts that cap or trim long tool lists add `dynamic=true`, so the
-# server lists about a dozen tools and runs the rest by name. This needs voiceflow/creator-app#24625 deployed.
-# A package line that names a host and an account MCP URL must give that host's URL. The changelog and the
-# eval fixtures keep older URLs on purpose, so only the package is checked. The registry entry keeps the
-# full-list URL.
+# The account MCP has two accepted URLs. Cursor and GitHub Copilot cap or trim long tool lists, so they add
+# `dynamic=true`: the server lists about a dozen tools and runs the rest by name. This needs
+# voiceflow/creator-app#24625 deployed. Codex, Claude, ChatGPT, and other hosts use the plain URL. Codex limits
+# tool list size only for servers bundled inside a plugin, and OpenAI's plugin guidelines forbid a generic
+# executor for operations that are not listed as tools. A package line that names a host and an account MCP
+# URL must give that host's URL. The changelog and the eval fixtures keep older URLs on purpose, so only the
+# package is checked. The registry entry keeps the full-list URL.
 ACCOUNT_MCP_URL = "https://mcp.voiceflow.com/mcp?version=3"
 ACCOUNT_MCP_DYNAMIC_URL = ACCOUNT_MCP_URL + "&dynamic=true"
 ACCOUNT_MCP_ENDPOINT = re.compile(r"https://mcp\.voiceflow\.com/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
-CAPPED_HOSTS = re.compile(r"\b(?:Codex|Cursor|Copilot)\b")
-FULL_LIST_HOSTS = re.compile(r"\b(?:Claude|ChatGPT)\b")
+DYNAMIC_URL_HOSTS = re.compile(r"\b(?:Cursor|Copilot)\b")
+PLAIN_URL_HOSTS = re.compile(r"\b(?:Codex|Claude|ChatGPT)\b")
 ACCOUNT_URL_GUIDE = "voiceflow/skills/voiceflow-setup/references/mcp.md"
 REGISTRY_SCHEMA = "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
 SKILLS_SH_SCHEMA = "https://skills.sh/schemas/skills.sh.schema.json"
@@ -80,14 +82,14 @@ def account_url_problems(root):
             for url in sorted(urls - {ACCOUNT_MCP_URL, ACCOUNT_MCP_DYNAMIC_URL}):
                 problems.append(f"{label}:{number}: account MCP URL must be {ACCOUNT_MCP_URL} "
                                 f"or {ACCOUNT_MCP_DYNAMIC_URL}, not {url}")
-            capped, full = CAPPED_HOSTS.search(line), FULL_LIST_HOSTS.search(line)
-            if urls and capped and full:
-                problems.append(f"{label}:{number}: name {capped.group()} and {full.group()} on separate lines, "
+            dynamic, plain = DYNAMIC_URL_HOSTS.search(line), PLAIN_URL_HOSTS.search(line)
+            if urls and dynamic and plain:
+                problems.append(f"{label}:{number}: name {dynamic.group()} and {plain.group()} on separate lines, "
                                 "because they use different account MCP URLs")
-            elif capped and ACCOUNT_MCP_URL in urls:
-                problems.append(f"{label}:{number}: {capped.group()} uses {ACCOUNT_MCP_DYNAMIC_URL}")
-            elif full and ACCOUNT_MCP_DYNAMIC_URL in urls:
-                problems.append(f"{label}:{number}: {full.group()} uses {ACCOUNT_MCP_URL}")
+            elif dynamic and ACCOUNT_MCP_URL in urls:
+                problems.append(f"{label}:{number}: {dynamic.group()} uses {ACCOUNT_MCP_DYNAMIC_URL}")
+            elif plain and ACCOUNT_MCP_DYNAMIC_URL in urls:
+                problems.append(f"{label}:{number}: {plain.group()} uses {ACCOUNT_MCP_URL}")
     guide = root / ACCOUNT_URL_GUIDE
     text = guide.read_text(encoding="utf-8") if guide.is_file() else ""
     for url in (ACCOUNT_MCP_URL, ACCOUNT_MCP_DYNAMIC_URL):
