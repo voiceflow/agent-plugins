@@ -43,6 +43,8 @@ user-selected project. Use the actual tool name and arguments, never guess them.
 A valid account response, including an empty list, verifies the connection.
 Skip a new connector, CLI install, and sign-in, and continue to step 3.
 For a failed MCP read, use [MCP recovery](mcp.md#verification-and-recovery).
+If a saved account MCP URL differs from this host's URL in the
+[account connection](mcp.md#account-connection) table, repair it first.
 
 ## 2. Choose the supported connection path
 
@@ -100,8 +102,9 @@ installed or that the account is connected. If resource reads are unavailable,
 use available documentation tools or web pages; do not require resource support.
 See [chat guidance alternatives](mcp.md#guidance-without-a-filesystem) when the
 linked files cannot be read. Reuse an existing docs connection rather than
-adding duplicates. If the host cannot expose docs MCP, verify the public-docs
-or CLI-docs fallback and accurately describe that limitation; do not block
+adding duplicates. If the host cannot expose docs MCP, verify the account MCP's
+`vf_docs_ask` when it is listed, or the public-docs or CLI-docs fallback, and
+accurately describe that limitation; do not block
 otherwise usable account access or claim the docs MCP is connected.
 
 Repository access can fail independently of Voiceflow sign-in. Use an
@@ -118,7 +121,8 @@ Setup is ready for this conversation when:
 2. Guidance is readable now: load this package's entry/operation instructions
    when accessible, and verify a real docs MCP tool response (for example, how
    draft and published environments differ). If docs MCP is unsupported or
-   unavailable, verify the public-docs/CLI-docs fallback and state the limitation.
+   unavailable, verify the account MCP's `vf_docs_ask` when it is listed, or
+   the public-docs/CLI-docs fallback, and state the limitation.
    Readable packaged skills alone do not verify live documentation access.
 3. Persistence is stated accurately: installed where supported, or available
    in this chat with future discovery dependent on the host. Do not promise

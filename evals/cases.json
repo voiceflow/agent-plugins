@@ -55,7 +55,7 @@
       "fixture": "Authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp?version=2.",
       "prompt": "Connect me to Voiceflow.",
       "required": [
-        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3",
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3, or to https://mcp.voiceflow.com/mcp?version=3&dynamic=true in Codex, Cursor, or GitHub Copilot",
         "Verify a read with the account tools after reconnecting"
       ],
       "forbidden": [
@@ -69,12 +69,26 @@
       "fixture": "Authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp.",
       "prompt": "Connect me to Voiceflow.",
       "required": [
-        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3",
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3, or to https://mcp.voiceflow.com/mcp?version=3&dynamic=true in Codex, Cursor, or GitHub Copilot",
         "Verify a read with the account tools after reconnecting"
       ],
       "forbidden": [
         "Add a second account connection",
         "Call older tool names that the skills no longer use"
+      ]
+    },
+    {
+      "id": "setup-mcp-dynamic-host",
+      "category": "setup",
+      "fixture": "Codex with an authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp?version=3. Codex trims the long tool list, so vf_workspace_list, vf_project_list, and vf_get_started are not in the tool list.",
+      "prompt": "Connect me to Voiceflow.",
+      "required": [
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3&dynamic=true",
+        "Reload the tools and verify a read with the account tools"
+      ],
+      "forbidden": [
+        "Add a second account connection",
+        "Claim the account is connected before a read succeeds"
       ]
     },
     {
@@ -1253,6 +1267,26 @@
         "Create a sample project",
         "Treat empty workspaces as failure",
         "Claim live account verification from a simulation"
+      ]
+    },
+    {
+      "id": "dynamic-operation-by-name",
+      "category": "product",
+      "fixture": "Codex with the account MCP connected at https://mcp.voiceflow.com/mcp?version=3&dynamic=true. The tool list holds only vf_get_started, vf_skill_list, vf_skill_load, vf_describe_operations, vf_search_operations, vf_call_read_operation, vf_call_write_operation, vf_docs_ask, vf_docs_search, vf_docs_read_page, vf_workspace_list, and vf_project_list. Synthetic workspace with one project, Support Agent, edited in its Main draft. The draft has three playbooks; no route or instruction refers to two of them.",
+      "prompt": "Remove the playbooks our support agent no longer uses.",
+      "required": [
+        "Call vf_project_list directly, because it is in the tool list",
+        "Find the playbook operations with vf_search_operations",
+        "Load each operation's schema with vf_describe_operations before its first call",
+        "Run the playbook reads through vf_call_read_operation",
+        "Name the two unused playbooks and get the user's approval before deleting them",
+        "Delete through vf_call_write_operation only after approval, then read back"
+      ],
+      "forbidden": [
+        "Run a read operation through vf_call_write_operation",
+        "Delete a playbook before the user approves the named playbooks",
+        "Say the playbook tools are unavailable because they are not in the tool list",
+        "Search for vf_project_list or run it through a caller although it is in the tool list"
       ]
     }
   ]

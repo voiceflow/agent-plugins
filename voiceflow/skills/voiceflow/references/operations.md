@@ -36,6 +36,24 @@ Over the account MCP, each operation is its own tool, named
 `vf_<group>_<operation>`, such as `vf_agent_get`. Many tools list a short
 schema; read the full one with `vf_describe_operations` before a tool's first
 call.
+
+If the tool you need is in your tool list, call it directly and do not search.
+Some connections list only a few account tools, such as one with
+`dynamic=true` or a host that trims long tool lists. To reach an operation
+that is not listed:
+
+1. Find it with `vf_search_operations`.
+2. Read its schema with `vf_describe_operations`.
+3. Run it by name with the caller that matches the `access` that search
+   returned: `vf_call_read_operation` for `read`, `vf_call_write_operation`
+   for `write`. Pass the operation's input as `arguments`.
+
+A write through `vf_call_write_operation` is still a write. It follows the
+same draft and approval rules as a direct call; see
+[mutations and verification](#mutations-and-verification). If the callers are
+not listed either, tell the user this connection cannot reach the operation.
+The `voiceflow-setup` skill gives the URL for hosts that trim tool lists.
+
 The CLI covers agent, project, workspace, playbook, workflow, function, tool,
 api-tool, variable, secret, document, knowledge-base, message, prompt, integration,
 mcp-server, mcp-tool, transcript, test, evaluation, environment, and other resources.

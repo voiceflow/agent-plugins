@@ -252,8 +252,18 @@ class CheckTests(unittest.TestCase):
             "Call `vf_agent_get`, then vf_agent_update with `body`.\n"
             "List with `vf_transcript_property_list`; create a secret with `vf_secret_create` and a name only.\n"
             "Read a schema with `vf_describe_operations`; start with vf_get_started, vf_skill_list or vf_skill_load.\n"
-            "The `vf_agent_*` tools read and write the agent, and `vf_*_get` reads. `{vf_now}` is a variable.\n\n"
+            "The `vf_agent_*` tools read and write the agent, and `vf_*_get` reads. `{vf_now}` is a variable.\n"
+            "Find one with `vf_search_operations`, run it with `vf_call_read_operation` or vf_call_write_operation.\n"
+            "Ask `vf_docs_ask`, `vf_docs_search` or `vf_docs_read_page`; the `vf_docs_*` tools need no account.\n\n"
             "```json\n{\"tool\": \"vf_transcript_get\"}\n```\n", [])
+
+    def test_meta_tools_are_served_and_near_misses_are_not(self):
+        self.assertTrue({"vf_search_operations", "vf_call_read_operation", "vf_call_write_operation",
+                         "vf_docs_ask", "vf_docs_search", "vf_docs_read_page"} <= references.v3_names(SURFACE))
+        self.assertProblems(
+            "Call `vf_call_operation`, `vf_search_operation` or `vf_docs_changelog`.\n",
+            [(1, "unknown MCP tool \"vf_call_operation\""), (1, "unknown MCP tool \"vf_search_operation\""),
+             (1, "unknown MCP tool \"vf_docs_changelog\"")])
 
     def test_v3_names_the_mcp_does_not_serve(self):
         self.assertProblems(

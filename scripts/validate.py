@@ -25,7 +25,17 @@ LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 DOCS_MCP_URL = "https://www.voiceflow.com/docs/mcp?logging=off"
 DOCS_MCP_ENDPOINT = re.compile(r"https://www\.voiceflow\.com/docs/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/*.py", "tests/*.py")
+# The account MCP has two accepted URLs. Hosts that cap or trim long tool lists add `dynamic=true`, so the
+# server lists about a dozen tools and runs the rest by name. This needs voiceflow/creator-app#24625 deployed.
+# A package line that names a host and an account MCP URL must give that host's URL. The changelog and the
+# eval fixtures keep older URLs on purpose, so only the package is checked. The registry entry keeps the
+# full-list URL.
 ACCOUNT_MCP_URL = "https://mcp.voiceflow.com/mcp?version=3"
+ACCOUNT_MCP_DYNAMIC_URL = ACCOUNT_MCP_URL + "&dynamic=true"
+ACCOUNT_MCP_ENDPOINT = re.compile(r"https://mcp\.voiceflow\.com/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
+CAPPED_HOSTS = re.compile(r"\b(?:Codex|Cursor|Copilot)\b")
+FULL_LIST_HOSTS = re.compile(r"\b(?:Claude|ChatGPT)\b")
+ACCOUNT_URL_GUIDE = "voiceflow/skills/voiceflow-setup/references/mcp.md"
 REGISTRY_SCHEMA = "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
 SKILLS_SH_SCHEMA = "https://skills.sh/schemas/skills.sh.schema.json"
 KEYWORD = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
@@ -54,12 +64,42 @@ def markdown_links(text):
             yield from LINK.findall(line)
 
 
+def text_files(root, patterns):
+    return sorted({path for pattern in patterns for path in root.glob(pattern) if path.is_file()
+                   and "__pycache__" not in path.parts and path.suffix not in {".pyc", ".png"}})
+
+
+def account_url_problems(root):
+    """Report each account MCP URL in the package that is not one of the two accepted URLs or not the URL of
+    the host its line names, and a setup guide that does not give both URLs."""
+    problems = []
+    for path in text_files(root, ("voiceflow/**/*",)):
+        label = path.relative_to(root).as_posix()
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            urls = {match.group() for match in ACCOUNT_MCP_ENDPOINT.finditer(line)}
+            for url in sorted(urls - {ACCOUNT_MCP_URL, ACCOUNT_MCP_DYNAMIC_URL}):
+                problems.append(f"{label}:{number}: account MCP URL must be {ACCOUNT_MCP_URL} "
+                                f"or {ACCOUNT_MCP_DYNAMIC_URL}, not {url}")
+            capped, full = CAPPED_HOSTS.search(line), FULL_LIST_HOSTS.search(line)
+            if urls and capped and full:
+                problems.append(f"{label}:{number}: name {capped.group()} and {full.group()} on separate lines, "
+                                "because they use different account MCP URLs")
+            elif capped and ACCOUNT_MCP_URL in urls:
+                problems.append(f"{label}:{number}: {capped.group()} uses {ACCOUNT_MCP_DYNAMIC_URL}")
+            elif full and ACCOUNT_MCP_DYNAMIC_URL in urls:
+                problems.append(f"{label}:{number}: {full.group()} uses {ACCOUNT_MCP_URL}")
+    guide = root / ACCOUNT_URL_GUIDE
+    text = guide.read_text(encoding="utf-8") if guide.is_file() else ""
+    for url in (ACCOUNT_MCP_URL, ACCOUNT_MCP_DYNAMIC_URL):
+        if f"`{url}`" not in text:
+            problems.append(f"{ACCOUNT_URL_GUIDE}: setup must give the account MCP URL {url}")
+    return problems
+
+
 def docs_url_problems(root):
     """Report each docs MCP server URL that is not DOCS_MCP_URL; dated eval reports stay as recorded."""
-    paths = sorted({path for pattern in DOCS_URL_SCOPE for path in root.glob(pattern) if path.is_file()
-                    and "__pycache__" not in path.parts and path.suffix not in {".pyc", ".png"}})
     problems = []
-    for path in paths:
+    for path in text_files(root, DOCS_URL_SCOPE):
         for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
             for match in DOCS_MCP_ENDPOINT.finditer(line):
                 if match.group() != DOCS_MCP_URL:
@@ -189,7 +229,7 @@ def validate(root=ROOT):
     for case in cases:
         assert case["required"] and case["forbidden"] and case["fixture"] and case["prompt"]
         assert case["category"] in ("setup", "product")
-    problems = drift_problems(root) + check_references(root) + docs_url_problems(root)
+    problems = drift_problems(root) + check_references(root) + docs_url_problems(root) + account_url_problems(root)
     if problems:
         raise ReferenceProblems(problems)
     return len(SKILL_NAMES)

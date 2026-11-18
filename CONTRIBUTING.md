@@ -86,8 +86,9 @@ Write an MCP tool by its v3 name, `` `vf_<group>_<operation>` ``, such as
 The accepted names live in `tests/fixtures/voiceflow-surface.json`. MCP tools
 come from the latest voiceflow/cli release, because that release tracks the
 hosted MCP. The operation `<operation>` of the snapshot tool `voiceflow_<group>`
-is the v3 tool `vf_<group>_<operation>`. The v3 tools `vf_get_started`,
-`vf_skill_list`, `vf_skill_load` and `vf_describe_operations` are accepted too. CLI commands come from the pinned CLI version. Refresh the file
+is the v3 tool `vf_<group>_<operation>`. The v3 tools in `V3_META_TOOLS` in
+`scripts/skill_references.py` are accepted too, such as `vf_get_started` and
+`vf_search_operations`. CLI commands come from the pinned CLI version. Refresh the file
 when either changes, then review the diff:
 
 ```sh
