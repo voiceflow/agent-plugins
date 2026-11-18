@@ -32,10 +32,11 @@ python3 scripts/sync_shared_references.py
 
 | Location | Purpose |
 | --- | --- |
-| `voiceflow/skills/` | Customer instructions, linked references, and installers |
+| `voiceflow/skills/` | Customer instructions, linked references, and the pinned CLI version and checksums |
 | `voiceflow/skills/voiceflow/references/` | Shared references; other skills get generated copies |
 | `voiceflow/skills/voiceflow-setup/references/setup.md` | Canonical setup guide; edit this before generating website content |
 | `scripts/` and `tests/` | Package validation, build, release preparation, and offline tests |
+| `scripts/cli/` | CLI installers and connection check that CI and maintainers run; not packaged |
 | `tests/fixtures/voiceflow-surface.json` | MCP and CLI names the skill checks accept; not packaged |
 | `evals/` | Behavioral cases, protocols, and sanitized evidence |
 | `docs/` | Compatibility, release, provenance, and measurement guidance |
@@ -57,6 +58,18 @@ Use short skill entrypoints and conditional references. Preserve relative links,
 normal host permissions, user edits, and the shared skill tree. Do not add private
 repository dependencies, internal helpers, or approval-bypass hooks.
 Keep the Voiceflow, Inc. MIT notice in every distributed skill and package.
+
+The plugin folder ships no scripts. Anthropic's plugin directory accepts only
+Markdown, text, JSON, YAML, and PNG, JPEG, GIF, WebP, or ICO images from
+organizations that are not Verified. `python3 scripts/validate.py` fails on any
+other file in `package-files.txt`, on a file that starts with `#!`, and on text
+that is not UTF-8. Put scripts for CI and maintainers under `scripts/`.
+
+The setup skill gives the CLI install steps as Markdown blocks in
+`references/installation.md`. CI runs the same lines from `scripts/cli/install-vf.sh`
+and `scripts/cli/install-vf.ps1`. Validation fails when a block and its script
+differ, so change both together.
+
 When adding a packaged file, review it and add its exact path to
 `package-files.txt`. Unexpected local files must fail packaging, even if ignored
 by Git. Do not regenerate this inventory just to bypass that failure.

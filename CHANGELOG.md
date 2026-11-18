@@ -30,6 +30,21 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
   `setup-mcp-plugin-bundled`. The cases `setup-mcp-dynamic-host` and
   `dynamic-operation-by-name` now use Cursor. The two version-repair cases
   expect the dynamic URL only in Cursor and GitHub Copilot.
+- The plugin no longer ships scripts. Anthropic's plugin directory accepts only
+  text, data, and image files from organizations that are not Verified. The two
+  CLI installers and the connection checker moved to `scripts/cli/` in this
+  repository, where CI and maintainers still run them.
+- Setup installs the CLI with the same checksum check, through steps written in
+  the setup skill. The steps read the pinned version and checksums from the
+  skill, check the download's SHA-256, and install nothing on a mismatch. They
+  match the installers in `scripts/cli/` line for line, and validation fails
+  when they differ.
+- The CLI guide now says what a passing JSON workspace read looks like. The
+  connection checker used to decide this.
+- A new validation rule keeps the plugin folder to Markdown, text, JSON, YAML,
+  and PNG, JPEG, GIF, WebP, or ICO images, plus the license, readme, and
+  `.gitignore`. It also fails on a file that starts with `#!` or is not UTF-8
+  text.
 
 ## 1.2.0
 

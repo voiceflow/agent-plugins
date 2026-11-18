@@ -10,8 +10,8 @@ The tested baseline is **0.287.0**, with `--agent-mode`, `--no-browser`,
 If an existing version lacks these capabilities, explain the needed upgrade;
 preserve its location and do not overwrite an unrelated executable.
 
-If absent, use [the verified CLI installer](installation.md). Use its returned
-absolute binary path for the rest of this session if it is not on PATH.
+If absent, follow [the verified CLI install steps](installation.md). Use the
+absolute path they print for the rest of this session if it is not on PATH.
 
 Make this live read:
 
@@ -34,12 +34,33 @@ uses the fully decoded response. Empty output is not an empty workspace list.
 - Invalid response or missing command: inspect help and the failure; do not
   claim connected.
 
-The optional [connection checker](../scripts/check_connection.py) makes this
-read without printing its body when Python 3.10+ is already available. It parses
-the complete JSON response on stdout and bounds the entire subprocess to 25
-seconds, omitting the CLI's inner timeout to avoid the body-cancellation issue.
-Truncated, malformed, or stderr-only responses never count as connected.
-It does not install, log in, or repair anything.
+To decide the result from parsed output, run the read as JSON instead:
+
+```sh
+vf workspace list --agent-mode --no-interactive --color never -o json
+```
+
+Leave out `--timeout` here. Stop the whole command after 25 seconds with the
+host's command timeout instead, which avoids the body-cancellation issue. The
+read passes only when all of these hold:
+
+- The command exits with status 0.
+- Standard output is one complete JSON object, with nothing after it.
+- Its `workspaces` value is a list, and each item has a non-empty string `id`.
+  An empty list passes.
+- Neither standard output nor standard error is a JSON object with an
+  `error_type` or `error` field.
+
+A truncated, malformed, or empty response does not pass. Neither does JSON that
+appears only on standard error. A JSON failure names its kind in `error_type`:
+
+- `authentication_error`: continue to browser sign-in.
+- `authorization_error`: explain insufficient access.
+- `connection_error`, `rate_limit_error`, or `server_error`: a temporary
+  failure; retry once as above.
+- Any other `error_type`, or an `error` field: the request failed.
+
+This check does not install, sign in, or repair anything.
 
 ## Sign in only if needed
 

@@ -38,8 +38,9 @@ workflow carries the new version. Update the changelog and compatibility matrix;
 never rewrite old evaluation reports to imply a rerun.
 
 For a CLI baseline change, review release notes and auth changes, update all six
-pinned checksums from the official release, and rerun installers and localhost
-contracts. Do not replace checksums merely to bypass a failed download.
+pinned checksums from the official release, and rerun the installers in
+`scripts/cli/` and localhost contracts. Do not replace checksums merely to
+bypass a failed download.
 
 ## Public repository protections
 
@@ -165,6 +166,9 @@ Directory listings read the plugin manifests and `voiceflow/README.md`.
 category, and onboarding skill. The listing icon lives at
 `voiceflow/assets/icon.png`. Do not change it before the first Anthropic
 submission, because the portal may lock the icon at the first save.
+Anthropic's directory accepts only Markdown, text, JSON, YAML, and image files
+from organizations that are not Verified. `scripts/validate.py` keeps the
+plugin folder to those types.
 Submitting to a directory is an owner decision, like publishing a release.
 
 Package docs connections send `logging=off`, so the Knowledge MCP keeps only

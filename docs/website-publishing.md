@@ -13,7 +13,8 @@ Run `python3 scripts/build.py` from a clean, approved commit. The generated
 - The guide routes by available capabilities; chat assistants read individual
   Markdown files without downloading the plugin archive. CLI and hosted MCP
   procedures are linked references in the same versioned payload.
-- `voiceflow/`: the complete plugin and all linked skills, references, and installers.
+- `voiceflow/`: the complete plugin and all linked skills and references, including
+  the pinned CLI version and checksums.
 - `voiceflow.zip`: the same plugin in a reproducible archive.
 - `manifest.json`: version, source commit, dirty status, per-file hashes, and a
   content digest. The archive hash is `files["voiceflow.zip"]`.

@@ -1,4 +1,8 @@
-"""Read-only connection probe. Never echo service output or credentials."""
+"""Read-only connection probe. Never echo service output or credentials.
+
+classify() is the pass rule that voiceflow-setup/references/cli.md gives for a JSON workspace read.
+scripts/verify_cli.py runs it against the pinned CLI and localhost fixtures. It is not shipped.
+"""
 import argparse
 import json
 import subprocess

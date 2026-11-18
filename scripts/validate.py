@@ -49,6 +49,24 @@ INTERFACE_LIMITS = {"displayName": 30, "shortDescription": 30, "longDescription"
 # Anthropic's directory reads these from .claude-plugin/plugin.json; each matches an OpenAI interface field.
 CLAUDE_LISTING = {"supportUrl": "supportURL", "privacyPolicyUrl": "privacyPolicyURL",
                   "termsOfServiceUrl": "termsOfServiceURL"}
+# Anthropic's plugin directory takes only these file types from organizations that are not Verified. It judges
+# a file by its content, whatever its name, so text must be UTF-8 and must not start with #!, and an image must
+# start with its format's signature. A license, a readme, and .gitignore may have no extension.
+PACKAGE_TEXT = {".md", ".txt", ".json", ".yaml", ".yml"}
+PACKAGE_NAMES = {"LICENSE", "README", ".gitignore"}
+PACKAGE_IMAGES = {".png": (b"\x89PNG\r\n\x1a\n",), ".jpg": (b"\xff\xd8\xff",), ".jpeg": (b"\xff\xd8\xff",),
+                  ".gif": (b"GIF87a", b"GIF89a"), ".webp": (b"RIFF",), ".ico": (b"\x00\x00\x01\x00",)}
+PACKAGE_TYPES = "Markdown, text, JSON, YAML, or a PNG, JPEG, GIF, WebP, or ICO image"
+# Customers' assistants run the install blocks in this guide. CI runs the same lines from the scripts in
+# scripts/cli/. Each block's first line sets the skill folder; the lines after it must equal the script's
+# lines after its own skill folder line. Both read the version and checksums from the skill's files.
+INSTALL_GUIDE = "voiceflow/skills/voiceflow-setup/references/installation.md"
+CLI_DATA = "voiceflow/skills/voiceflow-setup/scripts"
+INSTALL_BLOCKS = {"sh": ("scripts/cli/install-vf.sh", "skill_dir="),
+                  "powershell": ("scripts/cli/install-vf.ps1", "$skillDir = ")}
+RELEASE_URL = "https://github.com/voiceflow/cli/releases/download/v$version/$asset"
+SHA256_HEX = re.compile(r"(?<![0-9A-Fa-f])[0-9A-Fa-f]{64}(?![0-9A-Fa-f])")
+OPEN_FENCE = re.compile(r"(`{3,}|~{3,})[ \t]*([\w-]*)")
 
 
 class ReferenceProblems(AssertionError):
@@ -68,7 +86,7 @@ def markdown_links(text):
 
 def text_files(root, patterns):
     return sorted({path for pattern in patterns for path in root.glob(pattern) if path.is_file()
-                   and "__pycache__" not in path.parts and path.suffix not in {".pyc", ".png"}})
+                   and "__pycache__" not in path.parts and path.suffix.lower() not in {".pyc", *PACKAGE_IMAGES}})
 
 
 def account_url_problems(root):
@@ -107,6 +125,90 @@ def docs_url_problems(root):
                 if match.group() != DOCS_MCP_URL:
                     label = path.relative_to(root).as_posix()
                     problems.append(f"{label}:{number}: docs MCP URL must be {DOCS_MCP_URL}")
+    return problems
+
+
+def package_type_problems(root=ROOT):
+    """Report each plugin file in package-files.txt that Anthropic's directory would refuse from an
+    organization that is not Verified."""
+    problems = []
+    for name in (root / "package-files.txt").read_text(encoding="utf-8").splitlines():
+        if not name.startswith("voiceflow/"):
+            continue
+        path, file_name = root / name, name.rsplit("/", 1)[-1]
+        suffix = Path(file_name).suffix.lower()
+        if not path.is_file():
+            problems.append(f"{name}: listed in package-files.txt but missing")
+            continue
+        data = path.read_bytes()
+        if suffix in PACKAGE_IMAGES:
+            signature = data.startswith(PACKAGE_IMAGES[suffix]) and (suffix != ".webp" or data[8:12] == b"WEBP")
+            if not signature:
+                problems.append(f"{name}: content is not a {suffix[1:].upper()} image")
+            continue
+        if suffix not in PACKAGE_TEXT and file_name not in PACKAGE_NAMES:
+            problems.append(f"{name}: the plugin folder takes only {PACKAGE_TYPES}")
+            continue
+        if data.startswith(b"#!"):
+            problems.append(f"{name}: starts with #!")
+        try:
+            text = data.decode("utf-8")
+        except UnicodeDecodeError:
+            text = None
+        if text is None or "\x00" in text:
+            problems.append(f"{name}: not UTF-8 text")
+        elif suffix == ".json":
+            try:
+                json.loads(text)
+            except ValueError:
+                problems.append(f"{name}: not valid JSON")
+    return problems
+
+
+def fenced_blocks(text):
+    """Yield (language, lines) for each fenced code block."""
+    fence, language, lines = None, None, []
+    for line in text.splitlines():
+        if fence is None:
+            match = OPEN_FENCE.fullmatch(line)
+            if match:
+                fence, language, lines = match.group(1), match.group(2), []
+        elif line.strip() == fence:
+            yield language, lines
+            fence = None
+        else:
+            lines.append(line)
+
+
+def install_step_problems(root=ROOT):
+    """Report install steps that type a version or checksum, or that differ from the installers CI runs."""
+    problems = []
+    text = (root / INSTALL_GUIDE).read_text(encoding="utf-8")
+    version = (root / CLI_DATA / "cli-version.txt").read_text(encoding="utf-8").strip()
+    if SHA256_HEX.search(text):
+        problems.append(f"{INSTALL_GUIDE}: read checksums from {CLI_DATA}/checksums.txt instead of writing one")
+    if version in text:
+        problems.append(f"{INSTALL_GUIDE}: read the version from {CLI_DATA}/cli-version.txt instead of writing {version}")
+    blocks = list(fenced_blocks(text))
+    for language, (installer, start) in INSTALL_BLOCKS.items():
+        found = [lines for kind, lines in blocks if kind == language]
+        if len(found) != 1:
+            problems.append(f"{INSTALL_GUIDE}: give exactly one {language} install block, not {len(found)}")
+            continue
+        steps = found[0]
+        if not steps or not steps[0].startswith(start):
+            problems.append(f"{INSTALL_GUIDE}: the {language} block must start by setting the skill folder "
+                            f"with {start.strip()}")
+            continue
+        body = "\n".join(steps[1:])
+        for needed in ("scripts/cli-version.txt", "scripts/checksums.txt", RELEASE_URL):
+            if needed not in body:
+                problems.append(f"{INSTALL_GUIDE}: the {language} block must use {needed}")
+        script = (root / installer).read_text(encoding="utf-8").splitlines()
+        index = next((number for number, line in enumerate(script) if line.startswith(start)), None)
+        if index is None or script[index + 1:] != steps[1:]:
+            problems.append(f"{INSTALL_GUIDE}: the {language} block differs from {installer} after the line "
+                            "that sets the skill folder; change both together")
     return problems
 
 
@@ -216,7 +318,11 @@ def validate(root=ROOT):
         assert len(text.splitlines()) < 160, f"Skill too large: {path}"
     for path in plugin.rglob("*"):
         assert not path.is_symlink(), f"Symlink in package: {path}"
-    scripts = skills / "voiceflow-setup/scripts"
+    # Later checks read every package file as text, so report file types first.
+    types = package_type_problems(root)
+    if types:
+        raise ReferenceProblems(types)
+    scripts = root / CLI_DATA
     version = (scripts / "cli-version.txt").read_text(encoding="utf-8").strip()
     assert version == "0.287.0", "Update CLI contract fixtures when changing baseline"
     checksums = (scripts / "checksums.txt").read_text(encoding="utf-8").splitlines()
@@ -231,7 +337,8 @@ def validate(root=ROOT):
     for case in cases:
         assert case["required"] and case["forbidden"] and case["fixture"] and case["prompt"]
         assert case["category"] in ("setup", "product")
-    problems = drift_problems(root) + check_references(root) + docs_url_problems(root) + account_url_problems(root)
+    problems = (drift_problems(root) + check_references(root) + docs_url_problems(root) + account_url_problems(root)
+                + install_step_problems(root))
     if problems:
         raise ReferenceProblems(problems)
     return len(SKILL_NAMES)
@@ -243,5 +350,5 @@ if __name__ == "__main__":
     except ReferenceProblems as error:
         print("\n".join(error.problems), file=sys.stderr)
         sys.exit(1)
-    print(f"Validated {count} skills, manifests, checksums, shared reference copies, local references, "
-          "and MCP and CLI names.")
+    print(f"Validated {count} skills, manifests, package file types, checksums, CLI install steps, "
+          "shared reference copies, local references, and MCP and CLI names.")
