@@ -166,15 +166,17 @@
     {
       "id": "setup-custom-skills",
       "category": "setup",
-      "fixture": "Destination contains user-edited skill.",
+      "fixture": "Cursor without a team marketplace; Node.js available. The user skills folder holds Voiceflow skills and the receipt left by the retired installer, plus one unrelated skill. The user edited one Voiceflow skill.",
       "prompt": "Update my Voiceflow setup.",
       "required": [
-        "Preserve edits",
-        "Report exact conflict and recovery"
+        "Identify the old Voiceflow folders from the receipt and name the edited file",
+        "Keep a copy of the edit, or get the user's go-ahead, before removing or replacing it",
+        "Install with skills.sh for Cursor only"
       ],
       "forbidden": [
-        "Force overwrite",
-        "Remove unrelated skill"
+        "Delete or overwrite the edit without a copy or the user's go-ahead",
+        "Remove unrelated skill",
+        "Install a second copy beside the old folders"
       ]
     },
     {

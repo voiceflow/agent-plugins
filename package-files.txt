@@ -84,7 +84,6 @@ voiceflow/skills/voiceflow-setup/scripts/checksums.txt
 voiceflow/skills/voiceflow-setup/scripts/cli-version.txt
 voiceflow/skills/voiceflow-setup/scripts/install-vf.ps1
 voiceflow/skills/voiceflow-setup/scripts/install-vf.sh
-voiceflow/skills/voiceflow-setup/scripts/install_skills.py
 voiceflow/skills/voiceflow-transcripts/LICENSE
 voiceflow/skills/voiceflow-transcripts/SKILL.md
 voiceflow/skills/voiceflow-transcripts/references/documentation.md

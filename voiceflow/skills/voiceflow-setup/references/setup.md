@@ -84,9 +84,11 @@ for this host only. If already installed, reuse the adjacent files. Use the same
 repository revision as the guide; an accessible checkout needs no additional
 GitHub sign-in. If repository access is restricted, use an existing authenticated
 reader or supplied files rather than requesting a token.
-For the published website bundle, download sibling `voiceflow.zip` and
-`manifest.json` from the same `/agents/` location and verify the archive SHA-256
-before extraction. Preserve user changes and avoid duplicate plugin/skill installs.
+The published website bundle is not an install source; the client guide
+installs from GitHub or a checkout. To read its files locally, download sibling
+`voiceflow.zip` and `manifest.json` from the same `/agents/` location and verify
+the archive SHA-256 before extraction.
+Preserve user changes and avoid duplicate plugin/skill installs.
 Confirm the entry skill and linked files exist; report any pending host reload.
 
 **Chat assistants:** read the linked Markdown through the available fetch or

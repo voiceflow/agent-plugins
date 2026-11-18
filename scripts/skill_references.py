@@ -53,9 +53,6 @@ OUTSIDE_SKILL_ALLOWED = {
     # loader and reach the entry skill only through this link, which the build rewrites to a bundle
     # path. Where the entry skill is not installed, the guide still works through its own links.
     ("voiceflow-setup/references/setup.md", "../../voiceflow/SKILL.md"),
-    # The standalone installer copies the whole skill tree and refuses a tree without the entry
-    # skill. This is a name in its own file list; it reads nothing outside the copied tree.
-    ("voiceflow-setup/scripts/install_skills.py", "voiceflow/SKILL.md"),
 }
 HEADING = re.compile(r" {0,3}(#{1,6})(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*")
 HTML_ANCHOR = re.compile(r"<a\s+(?:[^>]*?\s)?(?:id|name)=\"([^\"]+)\"", re.I)

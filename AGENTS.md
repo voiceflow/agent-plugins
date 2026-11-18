@@ -12,7 +12,10 @@ Keep one shared skill tree. Every relative reference must ship with the package.
 Each skill must also work alone, so skills name other skills instead of linking
 to them. Shared references have one source in the `voiceflow` skill: after you
 edit one, run `python3 scripts/sync_shared_references.py`. Never edit a copy.
-Preserve user-edited skills; update conflicts must fail before changing files.
+Nothing here writes into a user's skills folder; hosts and skills.sh install
+and update the skills. Guidance must still tell the assistant to keep a user's
+skill edits before an update. The sync script must keep refusing, before it
+writes anything, to replace a hand-written file where a copy goes.
 Run `python3 scripts/validate.py`, `python3 -m unittest discover -s tests -v`,
 and `python3 scripts/build.py`. Schema checks do not prove model behavior.
 Work on a feature branch; do not publish, transfer, or merge without approval.

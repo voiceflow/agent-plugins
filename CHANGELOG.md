@@ -5,6 +5,20 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
 
 ## 1.1.1
 
+- Removed: the standalone skill installer, `install_skills.py`. Hosts now
+  install the plugin through their own plugin systems. Claude Code, Codex, and
+  GitHub Copilot CLI use their plugin commands, and Cursor uses a team
+  marketplace. A host without a plugin system installs the skills with
+  skills.sh, `npx skills add voiceflow/agent-plugins`, which needs Node.js.
+  Add `--skill <name>` to install one skill.
+- If you used the installer, its skill folders and its `.voiceflow-skills.json`
+  receipt stay where it put them, and nothing updates them. Look in
+  `~/.claude/skills/` (or `$CLAUDE_CONFIG_DIR/skills/`), `~/.codex/skills/`
+  (or `$CODEX_HOME/skills/`), `~/.cursor/skills/`, or the folder you passed
+  with `--target`. The receipt sits in that folder and lists every file the
+  installer copied. To move, keep a copy of any skill you edited. Then delete
+  the `voiceflow` and `voiceflow-*` folders the receipt lists, and the receipt.
+  Then install through the host's plugin system or skills.sh.
 - Each skill now works when it is installed alone. Before, most skills linked
   files in other skill folders. A single-skill install, such as
   `npx skills add voiceflow/agent-plugins --skill <name>`, copies one folder, so

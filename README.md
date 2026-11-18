@@ -48,7 +48,7 @@ acceptance. Later account changes follow your request and normal host approvals.
 
 | Your assistant can… | Setup uses… |
 | --- | --- |
-| Run tools in your persistent local environment | Voiceflow CLI and browser OAuth; native plugins or standalone skills |
+| Run tools in your persistent local environment | Voiceflow CLI and browser OAuth; the host's plugin system or skills.sh |
 | Connect remote MCP servers | Voiceflow account MCP and browser OAuth; readable skills in the current conversation |
 | Only read web pages | Guided setup instructions; no claim of account access |
 
@@ -58,6 +58,8 @@ for unresolved how-tos and every new troubleshooting issue.
 
 For manual installation, updates, and removal, use the
 [client guide](voiceflow/skills/voiceflow-setup/references/clients.md).
+Hosts without a plugin system install the skills with skills.sh, which needs
+Node.js: `npx skills add voiceflow/agent-plugins`.
 [Compatibility](docs/compatibility.md) separates package installation, model
 behavior, and real client onboarding. Cursor and live widget-platform paths
 remain experimental.

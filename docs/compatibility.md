@@ -8,20 +8,22 @@ file installation, observed agent behavior, and real host onboarding.
 | --- | --- | --- |
 | Claude Code | Isolated native plugin installation, all sixteen skills, references, license notices, and docs MCP configuration | Packaging verified; full fresh-account OAuth and next-chat acceptance still required |
 | Codex CLI | Isolated native plugin installation, all sixteen skills, references, license notices, and docs MCP configuration | Packaging verified; full fresh-account OAuth and next-chat acceptance still required |
-| Cursor | Manifest checks and standalone skill installation | Experimental; interactive discovery not verified locally |
+| GitHub Copilot CLI | None recorded | Untested; the install commands follow GitHub's plugin documentation |
+| Cursor | Manifest checks. The earlier skill-folder test used the installer removed in 1.1.1 | Experimental; team marketplace install, skills.sh, and interactive discovery not verified locally |
 | Chat assistants with remote MCP | Capability-based setup guide and offline routing evaluations | Experimental; no named chat application's end-to-end onboarding is certified by these simulations |
 | macOS arm64, Linux x86_64, Windows x86_64 | Checksum-verified installers and CLI contracts in local/three-OS CI checks | Installer evidence; not a guarantee for every host or architecture |
 | Other pinned CLI architectures | Release checksums available | Not exercised by the recorded platform runs |
 | CLI 0.287.0 | Account-read and widget request contracts exercised with a localhost fixture | Tested baseline; retain newer compatible installations |
-| Standalone skills | Install, update, conflict preservation, removal, rollback, relative references, and license coverage | File installation verified; host-native discovery is a separate check |
+| skills.sh | Unit tests copy each skill folder alone, as `--skill` does, and check that its references resolve | The skills CLI itself is not run by these checks |
+| Standalone installer | Removed in 1.1.1. Earlier tests covered install, update, conflict preservation, removal, and rollback | No longer shipped |
 | Product building and debugging | Authorized live CLI/MCP tasks and independent conversation checks | Task-specific evidence with failures and retests retained, not a universal success rate |
 | Widget guides across eight platforms | Documentation review, package checks, and CLI fixtures | Experimental; live website and model acceptance cases remain unrun |
 | Docs MCP use | Eight focused final runs on 0.4.1 with live public docs and simulated account state | Consultation/attribution evidence; not real OAuth or customer-resolution evidence |
 
 The latest recorded native host versions were Claude Code **2.1.124** and Codex
 CLI **0.162.0-alpha.2**. Minimum supported client versions are not established;
-older clients may need the standalone path. Python **3.10+** is required for the
-repository tools and standalone installer, not native plugin use or the CLI.
+older clients may need skills.sh, which needs Node.js. Python **3.10+** is
+required for the repository tools, not native plugin use or the CLI.
 
 ## Evidence and remaining acceptance
 
