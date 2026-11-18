@@ -20,7 +20,13 @@ import re
 import unicodedata
 
 SURFACE = Path("tests/fixtures/voiceflow-surface.json")
-V3_META_TOOLS = frozenset({"vf_describe_operations", "vf_get_started", "vf_skill_list", "vf_skill_load"})
+# Tools v3 serves that are not operations of the snapshot. Search, the two callers, and the docs tools came
+# with voiceflow/creator-app#24625 and COR-16000. The callers are listed only on a `dynamic=true` connection.
+V3_META_TOOLS = frozenset({
+    "vf_describe_operations", "vf_get_started", "vf_skill_list", "vf_skill_load",
+    "vf_search_operations", "vf_call_read_operation", "vf_call_write_operation",
+    "vf_docs_ask", "vf_docs_search", "vf_docs_read_page",
+})
 V3_TOKEN = re.compile(r"(?<![\w{])vf_[a-z0-9_*]*[a-z0-9*]")
 INTERNAL_NAMES = re.compile(
     r"\b(?:describe_operations|audit_wiring|propose_test|skill_read"

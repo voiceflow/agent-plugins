@@ -1,7 +1,7 @@
 <!-- Generated copy. Edit the source in the `voiceflow` skill's references folder, then run python3 scripts/sync_shared_references.py. -->
 ---
 package: voiceflow
-version: 1.1.1
+version: 1.2.0
 ---
 
 # Answer product questions with the docs MCP
@@ -29,12 +29,18 @@ count of each call and does not log the question. Host prefixes vary. Prefer
 this server over general web search or remembered product behavior whenever it
 is available.
 
-| Question | First tool |
-| --- | --- |
-| How do I do this? What does this setting mean? How does this API/CLI behavior work? Why this error? | `ask_voiceflow` |
-| Find candidate pages, compare approaches, or refine a weak answer | `search_voiceflow` |
-| Need the exact example, configuration fields, table, or a cited section | `read_voiceflow_page` |
-| What's new, deprecated, removed, or replaced? | `get_voiceflow_changelog` |
+Some hosts connect only the account MCP, such as ChatGPT. The account MCP has
+its own docs tools, named in the last column below. They forward each question
+to the docs server above with `logging=off`. Use them only when that docs
+server is not connected. They take only the question, search terms, or page
+URL, so send nothing else.
+
+| Question | First tool | On the account MCP |
+| --- | --- | --- |
+| How do I do this? What does this setting mean? How does this API/CLI behavior work? Why this error? | `ask_voiceflow` | `vf_docs_ask` |
+| Find candidate pages, compare approaches, or refine a weak answer | `search_voiceflow` | `vf_docs_search` |
+| Need the exact example, configuration fields, table, or a cited section | `read_voiceflow_page` | `vf_docs_read_page` |
+| What's new, deprecated, removed, or replaced? | `get_voiceflow_changelog` | `vf_docs_ask` |
 
 Fill required arguments from the live schema. Current tools take `initiator`
 (`human` for the user's question, `agent` for your own implementation question)
@@ -100,7 +106,8 @@ actual runtime/browser check. A docs response never establishes task completion.
 - **Skills:** task workflow, preserved state, verification, and scope.
 - **Docs MCP:** current product behavior and how-to guidance, including the
   widget, API, CLI, and account MCP. Resources such as `voiceflow://skill` can
-  supplement guidance if advertised; resource access is not required.
+  supplement guidance if advertised; resource access is not required. The
+  account MCP's `vf_docs_*` tools answer from the same docs.
 - **Account MCP / CLI:** the user's actual state and exact operation schemas.
   Inspect live schemas or installed CLI help for arguments before executing.
 
@@ -114,8 +121,10 @@ discrepancy; do not guess fields or use failed writes to discover a contract.
 
 Check discovery first. Reuse it, or connect it through the host-supported docs
 connection path that the `voiceflow-setup` skill describes, when available;
-never require OAuth for this public server. If the host cannot
-expose it, or the service fails, use the public Voiceflow website docs or
+never require OAuth for this public server. If the host cannot expose it but
+the account MCP lists `vf_docs_ask`, use the account MCP's docs tools. They
+reach the same docs server, so they fail when that server fails. If neither
+works, use the public Voiceflow website docs or
 `vf docs search "<question>" -o json` / `vf docs get <page>` through an available
 CLI. Inspect that CLI's help; do not install it solely to answer a docs question.
 For temporary failure, allow one bounded retry, respecting retry hints, then

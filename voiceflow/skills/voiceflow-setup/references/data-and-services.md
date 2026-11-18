@@ -53,6 +53,17 @@ the package version, active skill, and setup/troubleshooting/usage stage, and no
 task, symptom, or setup state. There are no separate progress events or fake
 questions for analytics.
 
+The account MCP also has docs tools: `vf_docs_ask`, `vf_docs_search`, and
+`vf_docs_read_page`. The skills use them only when the docs server is not
+connected, as in a host that has only the account MCP. The question then goes
+over the signed-in account connection to Voiceflow's server. That server sends
+the docs server one call with `logging=off`. The call holds the question,
+search terms, or page URL, and a fixed `initiator` and `purpose`. It can also
+hold a key that identifies the account MCP for the docs server's rate limit.
+It holds no user, workspace, token, or session, and it comes from Voiceflow's
+server, not from the user's device. The log lines these docs tools write hold
+the tool name, the docs server's status, and the duration, not the question.
+
 This package does not set server-side retention. Public web/CLI documentation
 is a fallback when docs MCP is unavailable, not a promise that those services
 are unlogged. Use the

@@ -9,18 +9,32 @@ without a customer terminal. It does not require local software installation.
 | Setting | Value |
 | --- | --- |
 | Suggested name | Voiceflow |
-| Server URL | `https://mcp.voiceflow.com/mcp?version=3` |
+| Server URL | This host's URL from the next table |
 | Transport | Streamable HTTP |
 | Authentication | Browser OAuth |
 
-This URL pins MCP version 3, which serves the tools that these skills name,
+| Host | Server URL |
+| --- | --- |
+| Codex | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
+| Cursor, including Cursor CLI | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
+| GitHub Copilot CLI and Copilot in VS Code | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
+| Claude Code, Claude Desktop, and claude.ai | `https://mcp.voiceflow.com/mcp?version=3` |
+| ChatGPT and every other host | `https://mcp.voiceflow.com/mcp?version=3` |
+
+Codex, Cursor, and GitHub Copilot cap or trim long tool lists, so `dynamic=true`
+lists about a dozen tools and the skills run the rest by name. On that
+connection, the host's per-tool approval settings see two tools that run the
+other operations: one for reads and one for writes.
+
+Both URLs pin MCP version 3, which serves the tools that these skills name,
 such as `vf_project_list`. Each plugin release pairs with one MCP server
 version. The server default can move to a later version without breaking this
 plugin. A later plugin release moves the pin.
 
 A saved connection whose URL has no `version`, or a version other than `3`,
-must be changed to `https://mcp.voiceflow.com/mcp?version=3`. Then reload the
-host's tools.
+must be changed to this host's URL. On Codex, Cursor, or GitHub Copilot, a
+saved URL without `dynamic=true` must be changed too, because the host hides
+part of the full tool list. Then reload the host's tools.
 
 The host must support this transport and interactive OAuth, including a callback
 accepted by Voiceflow. Voiceflow's account MCP requires both workspace read and
@@ -98,8 +112,9 @@ from the account server and answers product/how-to questions without signing in.
    question, or an equivalent advertised docs tool. A saved URL or connected
    badge is not enough; inspect the response for actual documentation evidence.
 4. If blocked by host support, policy, reload, or service failure, state that
-   distinction and use a verified public-docs/CLI-docs fallback. Do not restart
-   working account auth or require a terminal just to retrieve documentation.
+   distinction. Use the account MCP's `vf_docs_ask` when it is listed, or a
+   verified public-docs/CLI-docs fallback. Do not restart working account auth
+   or require a terminal just to retrieve documentation.
 
 Follow the [documentation workflow](documentation.md)
 for question routing, source use, and bounded recovery. Account verification

@@ -3,6 +3,33 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## 1.2.0
+
+This guidance needs voiceflow/creator-app#24625 deployed on the account MCP.
+Until it is, the dynamic URL below serves the full tool list without the two
+caller tools, as the plain URL does.
+
+- Codex, Cursor, and GitHub Copilot now connect the account MCP at
+  `https://mcp.voiceflow.com/mcp?version=3&dynamic=true`. These hosts cap or
+  trim long tool lists. In Codex, the full list hid tools such as
+  `vf_project_list`. This URL lists about a dozen tools. Claude Code, Claude, ChatGPT, and other
+  hosts keep `https://mcp.voiceflow.com/mcp?version=3`. On Codex, Cursor, or
+  GitHub Copilot, setup changes a saved URL that lacks `dynamic=true`.
+- The skills reach an operation that is not in the tool list in three steps.
+  They find it with `vf_search_operations`, read its schema with
+  `vf_describe_operations`, then run it with `vf_call_read_operation` or
+  `vf_call_write_operation`. A listed tool is still called directly. A write
+  through the caller follows the same draft and approval rules as a direct
+  call.
+- When the docs MCP is not connected, as in a host with only the account MCP,
+  the skills use the account MCP's docs tools, such as `vf_docs_ask`. The data
+  notes say what those calls send to the docs server.
+- The reference checks accept the new tool names. Validation accepts only the
+  two account MCP URLs, and fails when a line gives a host the other one.
+- Two new acceptance cases: `setup-mcp-dynamic-host` and
+  `dynamic-operation-by-name`. The two version-repair cases now expect the
+  dynamic URL in Codex, Cursor, and GitHub Copilot.
+
 ## 1.1.1
 
 - Removed: the standalone skill installer, `install_skills.py`. Hosts now
