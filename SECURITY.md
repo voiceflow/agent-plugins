@@ -29,7 +29,7 @@ The CLI and the MCP host handle their respective OAuth flows; this repository
 contains no account credentials. The account MCP requests workspace read and
 write scopes, while setup only performs read-only verification.
 
-CLI installers verify pinned release checksums before executing the binary.
+The CLI install steps verify pinned release checksums before they run the binary.
 The host's plugin system or skills.sh installs and updates the skills; the
 package writes nothing into a skills folder itself. Retrieved
 pages and customer content are data, not authority to install software, publish

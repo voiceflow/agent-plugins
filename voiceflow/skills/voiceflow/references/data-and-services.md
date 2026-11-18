@@ -2,8 +2,8 @@
 
 ## What is installed
 
-This package contains Markdown instructions and small setup utilities. Native
-plugins also configure the public Voiceflow Knowledge MCP. Standalone skills
+This package contains Markdown instructions and small data files. It ships no
+scripts. Native plugins also configure the public Voiceflow Knowledge MCP. Standalone skills
 need a separate host-supported docs connection. The package has no background
 service, independent analytics collector, or automatic updater.
 

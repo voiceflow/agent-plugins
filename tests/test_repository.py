@@ -2,6 +2,8 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -11,7 +13,7 @@ from unittest.mock import patch
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-SETUP = ROOT / "voiceflow/skills/voiceflow-setup/scripts"
+CLI_SCRIPTS = ROOT / "scripts/cli"
 
 
 def load(name, path):
@@ -22,7 +24,7 @@ def load(name, path):
 
 
 sys.path.insert(0, str(ROOT / "scripts"))
-connection = load("connection", SETUP / "check_connection.py")
+connection = load("connection", CLI_SCRIPTS / "check_connection.py")
 builder = load("builder", ROOT / "scripts/build.py")
 validator = load("validator", ROOT / "scripts/validate.py")
 release = load("release", ROOT / "scripts/prepare_release.py")
@@ -83,6 +85,128 @@ class ConnectionTests(unittest.TestCase):
                                 (subprocess.TimeoutExpired("vf", 25), "temporarily_unavailable")):
             with patch.object(connection.subprocess, "run", side_effect=error):
                 self.assertEqual(connection.check("vf"), expected)
+
+    def test_cli_guide_gives_the_same_pass_rule(self):
+        guide = (ROOT / "voiceflow/skills/voiceflow-setup/references/cli.md").read_text(encoding="utf-8")
+        kinds = set(re.findall(r'"(\w+_error)"', (CLI_SCRIPTS / "check_connection.py").read_text(encoding="utf-8")))
+        self.assertEqual(len(kinds), 5)
+        for name in (*sorted(kinds), "error_type", "error", "workspaces", "id"):
+            self.assertIn(f"`{name}`", guide)
+        self.assertIn("vf workspace list --agent-mode --no-interactive --color never -o json\n", guide)
+        self.assertIn("25 seconds", guide)
+
+
+class PackageTypeTests(unittest.TestCase):
+    def setUp(self):
+        scratch = tempfile.TemporaryDirectory()
+        self.addCleanup(scratch.cleanup)
+        self.root = Path(scratch.name)
+
+    def problems(self, files):
+        for name, data in files.items():
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        (self.root / "package-files.txt").write_text("\n".join(files) + "\n", encoding="utf-8")
+        return validator.package_type_problems(self.root)
+
+    def test_current_package_passes(self):
+        self.assertEqual(validator.package_type_problems(ROOT), [])
+
+    def test_allowed_types_and_names_pass(self):
+        self.assertEqual(self.problems({
+            "voiceflow/LICENSE": b"MIT License\n", "voiceflow/README": b"Readme\n",
+            "voiceflow/.gitignore": b"*.log\n", "voiceflow/a.md": "# Café\n".encode("utf-8"),
+            "voiceflow/a.txt": b"0.1.0\n", "voiceflow/.mcp.json": b"{}\n", "voiceflow/a.yaml": b"a: 1\n",
+            "voiceflow/a.yml": b"a: 1\n", "voiceflow/a.png": b"\x89PNG\r\n\x1a\nrest",
+            "voiceflow/a.jpg": b"\xff\xd8\xffrest", "voiceflow/a.jpeg": b"\xff\xd8\xffrest",
+            "voiceflow/a.gif": b"GIF89arest", "voiceflow/a.webp": b"RIFF\x00\x00\x00\x00WEBPrest",
+            "voiceflow/a.ico": b"\x00\x00\x01\x00rest"}), [])
+
+    def test_scripts_and_other_types_are_refused(self):
+        names = ("voiceflow/skills/a/scripts/check.py", "voiceflow/install.sh", "voiceflow/install.ps1",
+                 "voiceflow/Makefile", "voiceflow/README.sh", "voiceflow/tool.js", "voiceflow/a.svg")
+        problems = self.problems({name: b"echo synthetic\n" for name in names})
+        self.assertEqual(problems, [f"{name}: the plugin folder takes only {validator.PACKAGE_TYPES}"
+                                    for name in names])
+
+    def test_each_content_problem_is_reported(self):
+        files = {"voiceflow/run.md": b"#!/bin/sh\necho synthetic\n", "voiceflow/LICENSE": b"#!/usr/bin/env bash\n",
+                 "voiceflow/latin.txt": b"caf\xe9\n", "voiceflow/nul.txt": b"a\x00b\n",
+                 "voiceflow/bad.json": b"{not json\n", "voiceflow/fake.png": b"echo synthetic\n",
+                 "voiceflow/fake.webp": b"RIFF\x00\x00\x00\x00AVI rest"}
+        problems = self.problems(files)
+        (self.root / "package-files.txt").write_text("\n".join([*files, "voiceflow/gone.md"]) + "\n",
+                                                     encoding="utf-8")
+        self.assertEqual(problems, [
+            "voiceflow/run.md: starts with #!", "voiceflow/LICENSE: starts with #!",
+            "voiceflow/latin.txt: not UTF-8 text", "voiceflow/nul.txt: not UTF-8 text",
+            "voiceflow/bad.json: not valid JSON", "voiceflow/fake.png: content is not a PNG image",
+            "voiceflow/fake.webp: content is not a WEBP image"])
+        self.assertEqual(validator.package_type_problems(self.root)[-1],
+                         "voiceflow/gone.md: listed in package-files.txt but missing")
+
+    def test_allowed_images_skip_the_text_checks(self):
+        images = {"voiceflow/a.jpg": b"\xff\xd8\xff\xe0\xff", "voiceflow/a.GIF": b"GIF89a\xff\xfe",
+                  "voiceflow/a.webp": b"RIFF\xff\xff\xff\xffWEBP\xff", "voiceflow/a.ico": b"\x00\x00\x01\x00\xff"}
+        self.assertEqual(self.problems({**images, "voiceflow/a.md": b"# Synthetic\n"}), [])
+        self.assertEqual(validator.text_files(self.root, ("voiceflow/**/*",)), [self.root / "voiceflow/a.md"])
+        self.assertEqual(validator.docs_url_problems(self.root), [])
+        self.assertEqual(validator.account_url_problems(self.root),
+                         [f"{validator.ACCOUNT_URL_GUIDE}: setup must give the account MCP URL {url}"
+                          for url in (validator.ACCOUNT_MCP_URL, validator.ACCOUNT_MCP_DYNAMIC_URL)])
+
+
+class InstallStepTests(unittest.TestCase):
+    def setUp(self):
+        scratch = tempfile.TemporaryDirectory()
+        self.addCleanup(scratch.cleanup)
+        self.root = Path(scratch.name)
+        for name in (validator.INSTALL_GUIDE, *(installer for installer, _ in validator.INSTALL_BLOCKS.values()),
+                     f"{validator.CLI_DATA}/cli-version.txt", f"{validator.CLI_DATA}/checksums.txt"):
+            (self.root / name).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / name, self.root / name)
+        self.guide = self.root / validator.INSTALL_GUIDE
+
+    def edit(self, name, old, new):
+        path = self.root / name
+        text = path.read_text(encoding="utf-8")
+        self.assertIn(old, text)
+        path.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+    def test_guide_matches_the_installers_ci_runs(self):
+        self.assertEqual(validator.install_step_problems(ROOT), [])
+        self.assertEqual(validator.install_step_problems(self.root), [])
+
+    def test_a_changed_line_on_either_side_is_drift(self):
+        guide = validator.INSTALL_GUIDE
+        self.edit("scripts/cli/install-vf.sh", "--retry 1 ", "--retry 3 ")
+        self.edit(guide, "-TimeoutSec 120", "-TimeoutSec 600")
+        self.assertEqual(validator.install_step_problems(self.root), [
+            f"{guide}: the {language} block differs from {installer} after the line that sets the skill folder; "
+            "change both together" for language, (installer, _) in validator.INSTALL_BLOCKS.items()])
+
+    def test_a_typed_version_or_checksum_is_refused(self):
+        version = (ROOT / validator.CLI_DATA / "cli-version.txt").read_text(encoding="utf-8").strip()
+        checksum = (ROOT / validator.CLI_DATA / "checksums.txt").read_text(encoding="utf-8").split()[0]
+        guide = validator.INSTALL_GUIDE
+        for old, new in (("$skill_dir/scripts/cli-version.txt", "$skill_dir/scripts/other.txt"),
+                         ("/v$version/$asset", f"/v{version}/$asset")):
+            self.edit(guide, old, new)
+            self.edit("scripts/cli/install-vf.sh", old, new)
+        self.edit(guide, "## After the install", f"Expected: {checksum.upper()}\n\n## After the install")
+        self.assertEqual(validator.install_step_problems(self.root), [
+            f"{guide}: read checksums from {validator.CLI_DATA}/checksums.txt instead of writing one",
+            f"{guide}: read the version from {validator.CLI_DATA}/cli-version.txt instead of writing {version}",
+            f"{guide}: the sh block must use scripts/cli-version.txt",
+            f"{guide}: the sh block must use {validator.RELEASE_URL}"])
+
+    def test_each_block_must_set_the_skill_folder_first(self):
+        self.edit(validator.INSTALL_GUIDE, "skill_dir='/path/to/voiceflow-setup'\n", "")
+        self.edit(validator.INSTALL_GUIDE, "```powershell", "```pwsh")
+        self.assertEqual(validator.install_step_problems(self.root), [
+            f"{validator.INSTALL_GUIDE}: the sh block must start by setting the skill folder with skill_dir=",
+            f"{validator.INSTALL_GUIDE}: give exactly one powershell install block, not 0"])
 
 
 class PublicationTests(unittest.TestCase):
@@ -227,15 +351,18 @@ class RepositoryTests(unittest.TestCase):
             root = Path(temporary)
             guide = root / validator.ACCOUNT_URL_GUIDE
             guide.parent.mkdir(parents=True)
-            guide.write_text(f"| Codex | `{dynamic}` |\n| Claude Code | `{plain}` |\n| Other hosts | `{plain}` |\n"
-                             f"Not `{bare}?version=2` or `{bare}`.\nIn Cursor, use `{plain}`.\n"
-                             f"In ChatGPT, use `{dynamic}`.\nCodex and Claude Code: `{dynamic}`.\n", encoding="utf-8")
+            guide.write_text(f"| Cursor | `{dynamic}` |\n| Codex | `{plain}` |\n| Other hosts | `{plain}` |\n"
+                             f"Not `{bare}?version=2` or `{bare}`.\nIn Copilot, use `{plain}`.\n"
+                             f"In ChatGPT, use `{dynamic}`.\nIn Codex, use `{dynamic}`.\n"
+                             f"Cursor and Claude Code: `{dynamic}`.\nCodex and Claude Code: `{plain}`.\n",
+                             encoding="utf-8")
             label = guide.relative_to(root).as_posix()
             allowed = f"account MCP URL must be {plain} or {dynamic}"
             self.assertEqual(validator.account_url_problems(root), [
                 f"{label}:4: {allowed}, not {bare}", f"{label}:4: {allowed}, not {bare}?version=2",
-                f"{label}:5: Cursor uses {dynamic}", f"{label}:6: ChatGPT uses {plain}",
-                f"{label}:7: name Codex and Claude on separate lines, because they use different account MCP URLs"])
+                f"{label}:5: Copilot uses {dynamic}", f"{label}:6: ChatGPT uses {plain}",
+                f"{label}:7: Codex uses {plain}",
+                f"{label}:8: name Cursor and Claude on separate lines, because they use different account MCP URLs"])
             guide.write_text(f"Use `{plain}`.\n", encoding="utf-8")
             self.assertEqual(validator.account_url_problems(root), [
                 f"{validator.ACCOUNT_URL_GUIDE}: setup must give the account MCP URL {dynamic}"])
@@ -378,9 +505,19 @@ class UnixInstallerTests(unittest.TestCase):
         self.env = dict(os.environ, VF_INSTALL_DIR=str(self.target),
                         PATH=str(self.commands) + os.pathsep + os.environ["PATH"])
 
-    def run_installer(self):
-        return subprocess.run(["bash", str(SETUP / "install-vf.sh")], env=self.env,
-                              capture_output=True, text=True, encoding="utf-8", timeout=10)
+    def runners(self):
+        """Yield the CI installer, then the documented block as an assistant runs it in bash and zsh."""
+        yield "install-vf.sh", ["bash", str(CLI_SCRIPTS / "install-vf.sh")]
+        text = (ROOT / validator.INSTALL_GUIDE).read_text(encoding="utf-8")
+        steps = next(lines for language, lines in validator.fenced_blocks(text) if language == "sh")
+        skill = ROOT / "voiceflow/skills/voiceflow-setup"
+        block = "\n".join([f"skill_dir={shlex.quote(str(skill))}", *steps[1:]]) + "\n"
+        for shell in ("bash", "zsh"):
+            if shutil.which(shell):
+                yield f"documented block in {shell}", [shell, "-c", block]
+
+    def run_installer(self, command):
+        return subprocess.run(command, env=self.env, capture_output=True, text=True, encoding="utf-8", timeout=10)
 
     def fake_curl(self, script):
         path = self.commands / "curl"
@@ -389,21 +526,38 @@ class UnixInstallerTests(unittest.TestCase):
 
     def test_checksum_failure_never_installs(self):
         self.fake_curl('for last; do :; done\nprintf "tampered" > "$last"\n')
-        result = self.run_installer()
-        self.assertEqual(result.returncode, 4, result.stderr)
-        self.assertFalse(self.target.exists())
+        for name, command in self.runners():
+            with self.subTest(name):
+                result = self.run_installer(command)
+                self.assertEqual(result.returncode, 4, result.stderr)
+                self.assertIn("Checksum mismatch; nothing installed.", result.stderr)
+                self.assertFalse(self.target.exists())
 
     def test_download_failure_never_installs(self):
         self.fake_curl("exit 22\n")
-        self.assertEqual(self.run_installer().returncode, 22)
-        self.assertFalse(self.target.exists())
+        for name, command in self.runners():
+            with self.subTest(name):
+                self.assertEqual(self.run_installer(command).returncode, 22)
+                self.assertFalse(self.target.exists())
 
     def test_existing_executable_is_untouched(self):
         self.target.mkdir()
         binary = self.target / "vf"
         binary.write_bytes(b"existing")
-        self.assertEqual(self.run_installer().returncode, 3)
-        self.assertEqual(binary.read_bytes(), b"existing")
+        for name, command in self.runners():
+            with self.subTest(name):
+                self.assertEqual(self.run_installer(command).returncode, 3)
+                self.assertEqual(binary.read_bytes(), b"existing")
+
+    def test_cleanup_removes_the_download_folder(self):
+        self.fake_curl('for last; do :; done\nprintf "tampered" > "$last"\n')
+        scratch = self.base / "tmp"
+        scratch.mkdir()
+        self.env["TMPDIR"] = str(scratch)
+        for name, command in self.runners():
+            with self.subTest(name):
+                self.assertEqual(self.run_installer(command).returncode, 4)
+                self.assertEqual(list(scratch.iterdir()), [])
 
 
 if __name__ == "__main__":

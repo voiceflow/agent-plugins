@@ -46,7 +46,7 @@ jobs:
         env:
           VF_INSTALL_DIR: ${{ runner.temp }}/voiceflow-bin
         run: |
-          bash voiceflow/skills/voiceflow-setup/scripts/install-vf.sh
+          bash scripts/cli/install-vf.sh
           python scripts/verify_cli.py --vf "$VF_INSTALL_DIR/vf"
       - name: Install verified CLI on Windows
         if: runner.os == 'Windows'
@@ -54,7 +54,7 @@ jobs:
         env:
           VF_INSTALL_DIR: ${{ runner.temp }}/voiceflow-bin
         run: |
-          & ./voiceflow/skills/voiceflow-setup/scripts/install-vf.ps1
+          & ./scripts/cli/install-vf.ps1
           python scripts/verify_cli.py --vf (Join-Path $env:VF_INSTALL_DIR 'vf.exe')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

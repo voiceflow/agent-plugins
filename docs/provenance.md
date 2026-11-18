@@ -77,7 +77,8 @@ permission-granting hooks are included.
 
 ## CLI supply chain
 
-The native installers use assets from the public Voiceflow CLI v0.287.0 release.
+The setup skill's install steps, and the matching installers in `scripts/cli/`,
+use assets from the public Voiceflow CLI v0.287.0 release.
 All six SHA-256 values are pinned in the skill bundle, rather than trusting an
 unversioned latest installer. The binary remains a separately distributed
 Voiceflow component under its own licensing; it is not included in this repo

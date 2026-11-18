@@ -61,7 +61,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--vf", required=True)
     args = parser.parse_args()
-    module_path = ROOT / "voiceflow/skills/voiceflow-setup/scripts/check_connection.py"
+    module_path = ROOT / "scripts/cli/check_connection.py"
     spec = importlib.util.spec_from_file_location("probe", module_path)
     probe = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(probe)

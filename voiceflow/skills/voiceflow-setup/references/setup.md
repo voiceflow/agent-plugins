@@ -45,6 +45,8 @@ Skip a new connector, CLI install, and sign-in, and continue to step 3.
 For a failed MCP read, use [MCP recovery](mcp.md#verification-and-recovery).
 If a saved account MCP URL differs from this host's URL in the
 [account connection](mcp.md#account-connection) table, repair it first.
+The exception is an account server bundled with an installed plugin. Keep its
+URL as the plugin set it, and do not add a second account connection.
 
 ## 2. Choose the supported connection path
 

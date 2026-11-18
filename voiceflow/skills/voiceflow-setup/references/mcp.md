@@ -15,16 +15,21 @@ without a customer terminal. It does not require local software installation.
 
 | Host | Server URL |
 | --- | --- |
-| Codex | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
 | Cursor, including Cursor CLI | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
 | GitHub Copilot CLI and Copilot in VS Code | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
+| Codex | `https://mcp.voiceflow.com/mcp?version=3` |
 | Claude Code, Claude Desktop, and claude.ai | `https://mcp.voiceflow.com/mcp?version=3` |
 | ChatGPT and every other host | `https://mcp.voiceflow.com/mcp?version=3` |
 
-Codex, Cursor, and GitHub Copilot cap or trim long tool lists, so `dynamic=true`
+Cursor and GitHub Copilot cap or trim long tool lists, so `dynamic=true`
 lists about a dozen tools and the skills run the rest by name. On that
 connection, the host's per-tool approval settings see two tools that run the
 other operations: one for reads and one for writes.
+
+Codex uses the plain URL. Its limit on tool list size applies only to servers
+bundled inside a plugin, not to a server in Codex's own configuration. OpenAI's
+plugin rules also do not allow a generic caller for operations that are not
+listed as tools.
 
 Both URLs pin MCP version 3, which serves the tools that these skills name,
 such as `vf_project_list`. Each plugin release pairs with one MCP server
@@ -32,9 +37,17 @@ version. The server default can move to a later version without breaking this
 plugin. A later plugin release moves the pin.
 
 A saved connection whose URL has no `version`, or a version other than `3`,
-must be changed to this host's URL. On Codex, Cursor, or GitHub Copilot, a
-saved URL without `dynamic=true` must be changed too, because the host hides
-part of the full tool list. Then reload the host's tools.
+must be changed to this host's URL. On Cursor or GitHub Copilot, a saved URL
+without `dynamic=true` must be changed too, because the host hides part of the
+full tool list. On Codex, a saved URL with `dynamic=true` must be changed to
+the plain URL. Version 1.2.0 of this plugin gave Codex that URL. Then reload
+the host's tools.
+
+An account server can come bundled with an installed plugin, such as the
+Voiceflow plugin from the ChatGPT or Codex directory. That plugin's own MCP
+configuration points at the account server. Leave that server's URL as the
+plugin set it, even when it differs from the table above. Do not add a second
+account connection beside it. Verify it with a read like any other connection.
 
 The host must support this transport and interactive OAuth, including a callback
 accepted by Voiceflow. Voiceflow's account MCP requires both workspace read and

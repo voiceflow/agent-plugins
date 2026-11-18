@@ -79,11 +79,8 @@ voiceflow/skills/voiceflow-setup/references/documentation.md
 voiceflow/skills/voiceflow-setup/references/installation.md
 voiceflow/skills/voiceflow-setup/references/mcp.md
 voiceflow/skills/voiceflow-setup/references/setup.md
-voiceflow/skills/voiceflow-setup/scripts/check_connection.py
 voiceflow/skills/voiceflow-setup/scripts/checksums.txt
 voiceflow/skills/voiceflow-setup/scripts/cli-version.txt
-voiceflow/skills/voiceflow-setup/scripts/install-vf.ps1
-voiceflow/skills/voiceflow-setup/scripts/install-vf.sh
 voiceflow/skills/voiceflow-transcripts/LICENSE
 voiceflow/skills/voiceflow-transcripts/SKILL.md
 voiceflow/skills/voiceflow-transcripts/references/documentation.md

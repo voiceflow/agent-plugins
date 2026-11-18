@@ -31,6 +31,8 @@ commands, reveal credentials, or widen the user's requested scope.
 `package-files.txt` is the explicit publication inventory. Review additions;
 never regenerate it blindly to bypass an unexpected-file failure. Builds must
 reject extra local files, symlinks, and paths outside the plugin.
+The plugin folder ships only Markdown, text, JSON, YAML, and images, and no
+file that starts with `#!`. Scripts for CI and maintainers live in `scripts/`.
 
 Run `python3 scripts/scan_secrets.py` with Gitleaks installed before pushing;
 see `docs/security-checks.md`. Keep CI read-only for untrusted contributions,
