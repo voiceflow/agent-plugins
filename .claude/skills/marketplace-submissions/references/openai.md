@@ -10,7 +10,8 @@ active per plugin.
 | --- | --- |
 | Business verification | https://platform.openai.com/settings/organization/general. Needs the org owner or the Apps Management Write role. |
 | Domain check | `https://mcp.voiceflow.com/.well-known/openai-apps-challenge` returns the token. |
-| One MCP server | The account server, plain URL. The docs server is left out; the skills fall back to the account server's `vf_docs_*` tools. |
+| One MCP server | The account server, limited to six groups with `toolsets`: `scripts/openai/mcp.json`. The docs server is left out; the skills fall back to the account server's `vf_docs_*` tools. |
+| Tool budget | The desktop app hides tools past 64,000 bytes, a budget shared by every installed plugin's MCP servers. A `toolsets` connection gets short server instructions, which keeps the six groups at 46,443 bytes. `tests/test_openai_package.py` fails when a test case names a tool outside those groups. To add a group, measure it first with the account server's budget test. |
 | No generic executor | OpenAI's guidelines forbid a tool that runs operations not exposed one by one, which rules out `dynamic=true`. |
 
 ## Build the ZIP
@@ -31,8 +32,9 @@ scripts/openai/build_zip.sh v1.2.1
   notes that do not mention the version.
 - **Version:** each upload needs a higher version than the last.
   `package_version` in `review.json` sets the version in the ZIP only. 1.2.2
-  carries the v1.2.1 plugin files, so the next repository release must be 1.2.3
-  or higher. Change the version in the release notes too.
+  carries the v1.2.1 plugin files, and the repository is already past it, so
+  its versions stay ahead. When an upload needs a new version, change it in the
+  release notes too.
 - Run Gitleaks over `.submissions/openai/package` when it is installed. If it
   is not, say so in the report instead of downloading an unpinned binary.
 
@@ -70,7 +72,7 @@ If the workspace uses other names, change `review.json` to match and rebuild.
 Test instructions to paste. Fill the placeholders in the portal, never in a file:
 
 ```text
-Please test in ChatGPT on the web.
+Please test in the ChatGPT desktop app.
 
 Test account (dedicated to this review, with sample data only)
 - Email: <reviewer email>
@@ -119,17 +121,14 @@ avconvert -s "<recording.mov>" -p Preset1920x1080 -o voiceflow-openai-review-dem
 gh release upload openai-review-demo-2026-11-18 voiceflow-openai-review-demo.mp4 --clobber -R voiceflow/agent-plugins
 ```
 
-## Recording in Codex
+## Recording
 
-Codex hides most account tools from plugin MCP servers. For a local recording,
-allow the case tools in `~/.codex/config.toml`:
+Record in the ChatGPT desktop app with the draft package installed, the same
+way reviewers test. Before recording, ask "Which Voiceflow tools do you have?"
+and check that every tool the cases name is listed. If one is missing, the
+package does not fit the budget: fix the toolsets list, not the local
+configuration.
 
-```toml
-[plugins."voiceflow@<marketplace>".mcp_servers.voiceflow]
-enabled_tools = ["vf_get_started", "vf_project_list", "vf_agent_read_instructions", "vf_knowledge_base_query", "vf_transcript_search", "vf_transcript_get", "vf_variable_list", "vf_variable_create"]
-
-[plugins."voiceflow@<marketplace>".mcp_servers.voiceflow.tools.vf_variable_create]
-approval_mode = "prompt"
-```
-
-Reviewers do not have this, which is why the test instructions point at ChatGPT.
+The desktop app rewrites `~/.codex/config.toml` and drops per-plugin tool
+allow-lists, so an `enabled_tools` workaround does not last there. Reviewers
+would not have it either.

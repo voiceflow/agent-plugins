@@ -3,7 +3,7 @@
   "mcpServers": {
     "voiceflow": {
       "type": "streamable-http",
-      "url": "https://mcp.voiceflow.com/mcp?version=3"
+      "url": "https://mcp.voiceflow.com/mcp?version=3&toolsets=project,agent,knowledge_base,transcript,variable,workspace"
     }
   }
 }

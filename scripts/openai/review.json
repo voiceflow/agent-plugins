@@ -6,31 +6,31 @@
         {
           "description": "List the agents in the reviewer's workspace. Read-only. Sign in with the reviewer account first; the steps are in Review details.",
           "prompt": "Which Voiceflow agents do I have?",
-          "tools_triggered": "vf_project_list (vf_get_started may run first)",
+          "tools_triggered": "vf_workspace_list, vf_project_list (vf_get_started may run first)",
           "expected_behavior": "Lists the agents in the review workspace by name: Acme Support Demo and Acme Sales Demo. Nothing is changed."
         },
         {
           "description": "Read the main instructions of one agent. Read-only.",
           "prompt": "Show me the main instructions of my Acme Support Demo agent.",
-          "tools_triggered": "vf_project_list, vf_agent_read_instructions",
+          "tools_triggered": "vf_workspace_list, vf_project_list, vf_agent_read_instructions",
           "expected_behavior": "Shows the main instructions of Acme Support Demo: \"You help Acme customers with orders and returns. Be brief. Use the knowledge base for policy questions.\" Nothing is changed."
         },
         {
           "description": "Answer a question from an agent's knowledge base. Read-only.",
           "prompt": "What does the Acme Support Demo knowledge base say about returns?",
-          "tools_triggered": "vf_project_list, vf_knowledge_base_query",
+          "tools_triggered": "vf_workspace_list, vf_project_list, vf_knowledge_base_query",
           "expected_behavior": "Answers from the document named Returns policy: unused items can be returned within 30 days of delivery, and refunds go to the original payment method within 5 business days. Names Returns policy as the source. Nothing is changed."
         },
         {
           "description": "Find a failed conversation in the agent's transcripts and explain it. Read-only.",
           "prompt": "Find recent conversations in Acme Support Demo where a customer asked about a refund, and tell me what went wrong.",
-          "tools_triggered": "vf_project_list, vf_transcript_search, vf_transcript_get",
+          "tools_triggered": "vf_workspace_list, vf_project_list, vf_transcript_search, vf_transcript_get",
           "expected_behavior": "Finds the conversation where a customer asked \"Can I get a refund for order 1042?\" and explains that the agent replied that it did not know the refund policy. It may suggest a fix, but it changes nothing."
         },
         {
           "description": "Make one small additive change after the user confirms it. This is the only write case.",
           "prompt": "Add a variable called order_id to Acme Support Demo.",
-          "tools_triggered": "vf_project_list, vf_variable_list, vf_variable_create",
+          "tools_triggered": "vf_workspace_list, vf_project_list, vf_variable_list, vf_variable_create",
           "expected_behavior": "ChatGPT asks for confirmation before vf_variable_create runs. After you confirm, Acme Support Demo has a variable named order_id and nothing else changed. If order_id already exists from an earlier review, the assistant says so and does not create a second one; that is also a pass."
         }
       ],

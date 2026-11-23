@@ -8,8 +8,8 @@
 - A maintainer approves it and opens the pull request. Nothing to do until then.
 - When a release changes the plugin, update the tag in the issue and check that
   intake passes again: `gh issue view 6477 -R github/awesome-copilot`.
-- Copilot connects the account server with `dynamic=true`, because VS Code
-  Copilot caps tools at 128.
+- GitHub Copilot connects the account server with `dynamic=true`, because
+  GitHub Copilot in VS Code caps tools at 128.
 
 ## skills.sh
 
