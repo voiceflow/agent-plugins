@@ -19,3 +19,6 @@ test-results/
 .claude/settings.local.json
 CLAUDE.local.md
 gitleaks-report.*
+
+# Marketplace submission output and private submission notes (see .claude/skills/marketplace-submissions).
+.submissions/

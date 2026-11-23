@@ -170,6 +170,10 @@ Anthropic's directory accepts only Markdown, text, JSON, YAML, and image files
 from organizations that are not Verified. `scripts/validate.py` keeps the
 plugin folder to those types.
 Submitting to a directory is an owner decision, like publishing a release.
+The `marketplace-submissions` skill in `.claude/skills/` holds the steps and
+field values for each directory. `scripts/openai/build_zip.sh <tag>` builds the
+OpenAI package into `.submissions/`, which git ignores. Reviewer credentials go
+only into each portal's private fields.
 
 Package docs connections send `logging=off`, so the Knowledge MCP keeps only
 anonymous counts for them. See [measurement](measurement.md). Releases do not
