@@ -42,6 +42,9 @@ python3 scripts/sync_shared_references.py
 | `docs/` | Compatibility, release, provenance, and measurement guidance |
 | `skills.sh.json` | Tells the skills CLI where the skills live; not packaged |
 | `mcp-registry/` | MCP Registry entries for the two remote servers; not packaged or published |
+| `scripts/openai/` | OpenAI directory package: test cases, MCP config, build, and checks; not packaged |
+| `.claude/skills/marketplace-submissions/` | Maintainer steps and field values for each directory listing |
+| `.submissions/` | Git-ignored submission output and private notes; never commit it |
 | `dist/` | Generated output; do not commit it |
 | `package-files.txt` | Reviewed list of files allowed into published packages |
 | `AGENTS.md` and `CLAUDE.md` | Shared contributor rules and Claude Code entrypoint |
