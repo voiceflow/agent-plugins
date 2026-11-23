@@ -55,9 +55,12 @@ needs another capability. Do not unconditionally return immediately after an
 answer: main can repeat it or route the same request back. If main owns the
 answer, the playbook should hand off its result without also answering.
 
-Read the complete existing routing registry before updating it: a supplied
-playbooks/workflows list replaces the list. Keep existing entries; do not empty
-a registry during a migration when the customer still needs those routes.
+Add, change or remove one workflow with `vf_agent_add_workflow`,
+`vf_agent_update_workflow` or `vf_agent_remove_workflow`. Each changes one
+entry and keeps every other. A playbooks or workflows list sent with
+`vf_agent_update` replaces the whole list. Before you send one, read the
+complete existing routing registry and keep its entries. Do not empty a
+registry during a migration when the customer still needs those routes.
 
 A workflow runs when it is in the main agent's `workflows` list, reached from
 another workflow, or set as the Initialization workflow. The main agent and

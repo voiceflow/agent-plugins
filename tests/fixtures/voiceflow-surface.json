@@ -321,6 +321,7 @@
     "tools": {
       "voiceflow_agent": [
         "add_tool_message",
+        "add_workflow",
         "delete_tool_message",
         "get",
         "get_initialization_workflow",
@@ -330,12 +331,14 @@
         "patch_voices",
         "read_instructions",
         "read_prompt",
+        "remove_workflow",
         "search_instructions",
         "search_prompt",
         "search_voices",
         "set_initialization_workflow",
         "update",
-        "update_tool_message"
+        "update_tool_message",
+        "update_workflow"
       ],
       "voiceflow_analytics": [
         "query_api_tool_usage",

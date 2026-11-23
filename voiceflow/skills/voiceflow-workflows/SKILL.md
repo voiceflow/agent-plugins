@@ -94,23 +94,32 @@ used across the project, see the "Find text and owners" section of the
   every block moves, including ones the user placed by hand.
 - `vf_workflow_duplicate` copies a workflow with its own messages, prompts,
   and playbooks, and maps each original ID to the copy's. Edit the copy through
-  those IDs. When the main agent should route to the copy, send every workflow
-  already in the agent's `workflows` list plus the copy; the copy alone
-  replaces the list.
-- A new workflow needs a way in. Add it to the agent's `workflows` list when
-  the main agent or a playbook should call it. Skip that when it runs another
-  way: as the Initialization workflow or from a Workflow or Go to block step in
-  another workflow.
+  those IDs. When the main agent should route to the copy, add the copy with
+  `vf_agent_add_workflow`.
+- A new workflow needs a way in. Add it to the main agent's `workflows` list
+  with `vf_agent_add_workflow` when the main agent or a playbook should call
+  it. Skip that when it runs another way: as the Initialization workflow or
+  from a Workflow or Go to block step in another workflow.
 
 ## Workflow tools
 
 A workflow is never a tool. To make a workflow available, add it to the main
-agent's `workflows` list with `vf_agent_update`. Send every workflow already in
-the list plus the new one, because the array replaces the list. Give each item
-a `workflowID` and a `description` that says when to run it. The main agent and
+agent's `workflows` list with `vf_agent_add_workflow`. Give the entry a
+`workflowID` and a `description` that says when to run it. The main agent and
 every playbook can then call the workflow, and the description tells them
 when. Add a routing rule with `vf_agent_patch_instructions` only when the main
 agent itself should hand off to the workflow at a set point.
+
+Change one entry with `vf_agent_update_workflow`, and send only the fields
+that change. Take a workflow off the list with `vf_agent_remove_workflow`. The
+workflow itself stays. Each of these three tools changes one entry and keeps
+every other. Adding a workflow that is already listed fails. Changing or
+removing one that is not listed fails too. Deleting a workflow with
+`vf_workflow_delete` leaves its entry in the list, so remove the entry as well.
+
+`vf_agent_update` with `workflows` replaces the whole list. Use it only when
+the user wants to replace the list. Read the list first and send every entry
+you keep, because an entry you leave out is removed.
 
 Never create a tool of type `workflow` with `vf_tool_create`. The server
 refuses it and writes nothing. If the user asks for a "workflow tool", explain
@@ -121,10 +130,10 @@ list. Do not create another workflow tool, and do not copy that one.
 
 An older project can also carry a workflow tool on a playbook. It runs until
 someone opens the project in Voiceflow, which deletes it without moving it. If
-the playbook still needs that workflow, add the workflow to the main agent's
-`workflows` list first: every playbook can call a listed workflow. Until the
-project is opened, `vf_tool_list` shows the old tool and `vf_tool_delete`
-removes it. Nothing can create or update one.
+the playbook still needs that workflow, add it to the main agent's `workflows`
+list with `vf_agent_add_workflow` first: every playbook can call a listed
+workflow. Until the project is opened, `vf_tool_list` shows the old tool and
+`vf_tool_delete` removes it. Nothing can create or update one.
 
 Verification starts with read-back topology and reference checks. When you
 report a workflow with buttons, say for each button whether its path ends the
