@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "voiceflow": {
+      "type": "http",
+      "url": "https://mcp.voiceflow.com/mcp?version=3"
+    },
     "voiceflow-knowledge": {
       "type": "http",
       "url": "https://www.voiceflow.com/docs/mcp?logging=off"

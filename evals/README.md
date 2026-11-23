@@ -101,6 +101,11 @@ assistant runs each hidden operation with the CLI and keeps the MCP connection.
 These cases are specifications. No run is recorded yet, and `chat_eval.py` does
 not execute them.
 
+The `setup-claude-plugin-*` cases cover Claude Code with the plugin, which
+bundles the account server. The assistant signs in to that server through the
+host and never adds it with `claude mcp add`. These cases are specifications.
+No run is recorded yet, and `chat_eval.py` does not execute them.
+
 The [adversarial safety protocol](safety-protocol.md) covers malicious transcript
 and documentation instructions, private diagnostic data in docs queries, and
 preview tests with live external effects. The [safety report](reports/2026-10-16-adversarial-safety.md)

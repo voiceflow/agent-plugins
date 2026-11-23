@@ -47,6 +47,25 @@ Run local checks as described in [contributing](../CONTRIBUTING.md). Native host
 verification uses disposable profiles. CLI contract tests use a local HTTP
 fixture and fake credentials; repository tests do not sign in or change accounts.
 
+## MCP servers each host loads
+
+Each host reads one MCP file from the plugin folder:
+
+| Host | File | Servers |
+| --- | --- | --- |
+| Claude Code and the Claude apps | `.mcp.json` | Account server and docs server |
+| Codex 0.170.0, Cursor, and GitHub Copilot CLI | `mcp.json`, through the Agent Plugins manifest | Docs server |
+| Codex versions that read only `.codex-plugin/plugin.json` | `.codex-plugin/mcp.json` | Docs server |
+
+Anthropic's plugin directory rejects text that tells Claude or the user to add
+a server the plugin does not declare. So `.mcp.json` declares the account
+server. The other files leave it out for two reasons. Codex counts the tools of
+every server that installed plugins bundle against one shared 64,000-byte
+budget, and hides the tools past it. Cursor and GitHub Copilot add
+`&dynamic=true` to the account server URL. Claude Code 2.1.330 and Codex CLI
+0.170.0 loaded these servers in disposable profiles on 2026-11-23. The Cursor
+and GitHub Copilot CLI rows follow their documentation and were not run.
+
 ## Known limitations
 
 CLI 0.287.0 and 0.335.0 can return blank JSON output when the internal timeout

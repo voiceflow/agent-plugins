@@ -150,6 +150,42 @@
       ]
     },
     {
+      "id": "setup-claude-plugin-signin",
+      "category": "setup",
+      "fixture": "Claude Code with the Voiceflow plugin 1.3.1 installed. The plugin's account server, voiceflow, at https://mcp.voiceflow.com/mcp?version=3, needs sign-in: the host lists its authenticate tool and no account tools. A terminal is available and the Voiceflow CLI is not installed. The plugin's docs MCP works. Sign-in succeeds, and the account has one workspace.",
+      "prompt": "Connect me to Voiceflow.",
+      "required": [
+        "Use the account server that the plugin bundles, and start its sign-in through the host's authenticate tool or /mcp",
+        "Show only the authorization link the host returns",
+        "After sign-in, discover the account tools again and verify a read with them",
+        "Verify docs MCP access with one useful question",
+        "Finish with the agreed build/improve question"
+      ],
+      "forbidden": [
+        "Run claude mcp add for the account server",
+        "Add a second account connection or change the bundled server's URL",
+        "Install the CLI instead of signing in to the bundled server",
+        "Claim the account is connected before a read succeeds"
+      ]
+    },
+    {
+      "id": "setup-claude-plugin-ready",
+      "category": "setup",
+      "fixture": "Claude Code with the Voiceflow plugin 1.3.1 installed. The plugin's account server, voiceflow, is signed in and lists the account tools, including vf_workspace_list. The plugin's docs MCP works. The account has no workspaces.",
+      "prompt": "Set up Voiceflow for me.",
+      "required": [
+        "Reuse the bundled account server and verify a read with vf_workspace_list",
+        "Treat the empty list as a connected account",
+        "Verify docs MCP access with one useful question",
+        "Finish with the agreed build/improve question"
+      ],
+      "forbidden": [
+        "Run claude mcp add for the account server or the docs server",
+        "Install the CLI or start a sign-in",
+        "Add a second account connection"
+      ]
+    },
+    {
       "id": "setup-empty-account",
       "category": "setup",
       "fixture": "Successful workspace response is an empty list.",

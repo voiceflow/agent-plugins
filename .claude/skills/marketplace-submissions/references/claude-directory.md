@@ -23,6 +23,15 @@ have no hooks, commands, agents, themes, status line, or output styles. Run
 "Connects to voiceflow-knowledge, Unregistered" means the docs server had no
 directory listing. The published docs connector at the same URL pairs with it.
 
+Version 1.3.0 was rejected with check `DP_TAG_BOUNCE`: the skills told Claude
+to add the account server, and the plugin did not declare it. From 1.3.1,
+`.mcp.json` declares it as `voiceflow` at the account connector's exact URL.
+Expect "Connects to voiceflow, Unregistered" until that connector is published.
+Shipped text gives only declared URLs; Cursor, GitHub Copilot, Windsurf, and
+Antigravity are told to add `&dynamic=true`. `scripts/validate.py` enforces
+both. The same review waived "Uses a credential from the user's machine" (the
+CLI path) for 1.3.0.
+
 Data handling answers. Confirm the under-18 answer with legal before you change it.
 
 | Question | Answer |

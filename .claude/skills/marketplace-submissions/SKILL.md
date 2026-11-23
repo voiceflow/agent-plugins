@@ -49,7 +49,8 @@ Status on 2026-11-23. Check the live state before acting on it.
 | Listing | Status | Reference |
 | --- | --- | --- |
 | Claude: docs connector | Published at https://claude.ai/directory/voiceflow-docs | [claude-directory.md](references/claude-directory.md) |
-| Claude: account connector and plugin bundle | In Anthropic review | [claude-directory.md](references/claude-directory.md) |
+| Claude: account connector | In Anthropic review | [claude-directory.md](references/claude-directory.md) |
+| Claude: plugin bundle | 1.3.0 rejected because the plugin did not declare the account server. 1.3.1 declares it; resubmit from its tag. | [claude-directory.md](references/claude-directory.md) |
 | OpenAI: plugin for ChatGPT and Codex | 1.2.1 rejected for its testing instructions. 1.2.2 was uploaded as a draft with the plain URL and showed only 32 tools in the desktop app. The package now uses the `toolsets` URL and waits on the account server's short-instructions change and a reviewer account. | [openai.md](references/openai.md) |
 | Cursor Marketplace | Local test, then submit | [cursor.md](references/cursor.md) |
 | MCP Registry | Waits on a DNS record and the owner's approval of the server names | [mcp-registry.md](references/mcp-registry.md) |
@@ -71,5 +72,7 @@ Status on 2026-11-23. Check the live state before acting on it.
   Markdown, text, JSON, YAML, and images, no file that starts with `#!`, and no
   hooks, commands, agents, or other mods. `scripts/validate.py` enforces this.
   The icon locks at the first save.
+- **Claude, undeclared servers.** Plugin text may tell Claude or the user to
+  add only MCP servers that `.mcp.json` declares. 1.3.0 failed this check.
 - **OpenAI packages** connect one MCP server, and each upload needs a higher
   version than the last.

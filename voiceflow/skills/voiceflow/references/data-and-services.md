@@ -3,8 +3,10 @@
 ## What is installed
 
 This package contains Markdown instructions and small data files. It ships no
-scripts. Native plugins also configure the public Voiceflow Knowledge MCP. Standalone skills
-need a separate host-supported docs connection. The package has no background
+scripts. Native plugins also configure the public Voiceflow Knowledge MCP. In
+Claude Code and the Claude apps, the plugin also configures the account MCP,
+and the user signs in to it before its first use. Standalone skills need a
+separate host-supported docs connection. The package has no background
 service, independent analytics collector, or automatic updater.
 
 The CLI is downloaded separately from Voiceflow's release distribution and

@@ -53,7 +53,8 @@ A write through `vf_call_write_operation` is still a write. It follows the
 same draft and approval rules as a direct call; see
 [mutations and verification](#mutations-and-verification). If the callers are
 not listed either, [use the CLI for that tool](#use-the-cli-for-a-hidden-tool).
-The `voiceflow-setup` skill gives the URL for hosts that trim tool lists.
+The `voiceflow-setup` skill names the hosts that trim tool lists and add
+`dynamic=true` to the account server URL.
 
 The CLI covers agent, project, workspace, playbook, workflow, function, tool,
 api-tool, variable, secret, document, knowledge-base, message, prompt, integration,

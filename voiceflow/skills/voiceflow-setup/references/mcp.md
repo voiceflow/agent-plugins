@@ -1,57 +1,87 @@
 # Connect through hosted MCP
 
 Use this path from the [setup guide](setup.md) when a working connection can be
-reused, a configured MCP needs repair, or the host supports remote connections
-without a customer terminal. It does not require local software installation.
+reused, a configured MCP needs repair, an installed plugin includes the account
+server, or the host supports remote connections without a customer terminal.
+It does not require local software installation.
 
 ## Account connection
 
 | Setting | Value |
 | --- | --- |
 | Suggested name | Voiceflow |
-| Server URL | This host's URL from the next table |
+| Server URL | `https://mcp.voiceflow.com/mcp?version=3` |
 | Transport | Streamable HTTP |
 | Authentication | Browser OAuth |
 
+There is one account server, at the URL above. The Voiceflow plugin declares
+it with that URL. Most hosts use the URL as it is. Cursor, GitHub Copilot,
+Windsurf, and Antigravity add one query parameter, `&dynamic=true`, to the end
+of the same URL.
+
 | Host | Server URL |
 | --- | --- |
-| Cursor, including Cursor CLI | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
-| GitHub Copilot CLI and GitHub Copilot in VS Code | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
-| Windsurf | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
-| Antigravity | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
+| Claude Code, Claude Desktop, and claude.ai | `https://mcp.voiceflow.com/mcp?version=3`. When the Voiceflow plugin is installed, it already includes the server; see [account server from the plugin](#account-server-from-the-plugin) |
 | Codex | `https://mcp.voiceflow.com/mcp?version=3` |
-| Claude Code, Claude Desktop, and claude.ai | `https://mcp.voiceflow.com/mcp?version=3` |
 | ChatGPT and every other host | `https://mcp.voiceflow.com/mcp?version=3` |
+| Cursor, including Cursor CLI | `https://mcp.voiceflow.com/mcp?version=3` with `&dynamic=true` added to the end |
+| GitHub Copilot CLI and GitHub Copilot in VS Code | `https://mcp.voiceflow.com/mcp?version=3` with `&dynamic=true` added to the end |
+| Windsurf | `https://mcp.voiceflow.com/mcp?version=3` with `&dynamic=true` added to the end |
+| Antigravity | `https://mcp.voiceflow.com/mcp?version=3` with `&dynamic=true` added to the end |
 
 Cursor, GitHub Copilot, Windsurf, and Antigravity cap or trim long tool
 lists. With `dynamic=true`, the server lists about a dozen tools, and the skills
 run the rest by name. On that connection, the host's per-tool approval settings
 see two tools that run the other operations: one for reads and one for writes.
 
-Codex uses the plain URL. Its limit on tool list size applies only to servers
-bundled inside a plugin, not to a server in Codex's own configuration. OpenAI's
-plugin rules also do not allow a generic caller for operations that are not
-listed as tools.
+Codex uses the plain URL, without `dynamic=true`. Codex has one size limit
+for the tools of every MCP server that installed plugins bundle, shared by all
+of those servers. A server in Codex's own configuration does not count against
+it. OpenAI's plugin rules also do not allow a generic caller for operations
+that are not listed as tools.
 
-Both URLs pin MCP version 3, which serves the tools that these skills name,
-such as `vf_project_list`. Each plugin release pairs with one MCP server
-version. The server default can move to a later version without breaking this
-plugin. A later plugin release moves the pin.
+The URL pins MCP version 3, with or without `dynamic=true`. Version 3 serves
+the tools that these skills name, such as `vf_project_list`. Each plugin
+release pairs with one MCP server version. The server default can move to a
+later version without breaking this plugin. A later plugin release moves the
+pin.
 
 A saved connection whose URL has no `version`, or a version other than `3`,
 must be changed to this host's URL. On Cursor, GitHub Copilot, Windsurf, or
 Antigravity, a saved URL without `dynamic=true` must be changed too, because
 the host hides part of the full tool list. On Codex, a saved URL with
 `dynamic=true` must be changed to the plain URL. Version 1.2.0 of this plugin
-gave Codex that URL. Then reload the host's tools.
+gave Codex that URL. Then reload the host's tools. A server that an installed
+plugin includes is the exception; see the next section.
 
-An account server can come bundled with an installed plugin, such as the
-Voiceflow plugin from the ChatGPT or Codex directory. That plugin's own MCP
-configuration points at the account server. Leave that server's URL as the
-plugin set it, even when it differs from the table above. Do not add a second
-account connection beside it. Verify it with a read like any other connection.
+### Account server from the plugin
+
+An installed plugin can include the account server. The host then adds the
+connection itself, and setup only signs in and verifies it.
+
+- When the Voiceflow plugin is installed in Claude Code or a Claude app, it
+  includes the server. The server is named `voiceflow` and uses the URL above.
+- The Voiceflow plugin from the ChatGPT or Codex directory includes it too.
+
+Use that server. Leave its URL as the plugin set it, even when it differs from
+the table above. Do not add a second account connection beside it. In Claude
+Code, do not run `claude mcp add` for the account server.
+
+If the server's account tools are not listed, it usually needs sign-in:
+
+1. If the host lists a sign-in tool for that server, such as one whose name
+   ends in `authenticate`, call it. Show only the real authorization link it
+   returns.
+2. Otherwise ask the user to sign in through the host. In Claude Code, they
+   run `/mcp`, select the `voiceflow` server, and authenticate. For another
+   host, read its current instructions; do not invent a menu path.
+3. After sign-in, discover the account tools again and verify a read, as step 4
+   below says.
+
 When the host hides its list tools, verify with the CLI as the
 [setup guide](setup.md#1-inspect-capabilities-and-reuse-connections) says.
+
+### Connect and verify
 
 The host must support this transport and interactive OAuth, including a callback
 accepted by Voiceflow. Voiceflow's account MCP requires both workspace read and
@@ -61,10 +91,12 @@ server. See the current [setup](https://www.voiceflow.com/docs/mcp/setup) and
 [authentication docs](https://www.voiceflow.com/docs/mcp/authentication).
 
 1. Inspect existing connections and available host connection tools. Repair or
-   reuse a matching account connection before adding one.
+   reuse a matching account connection before adding one. A server that an
+   installed plugin includes is an existing connection.
 2. If the host exposes a supported add/connect tool, inspect its schema and use
-   it with the URL above. Use its native authentication flow. Show only a real
-   authorization link returned by that flow; never construct OAuth URLs.
+   it with this host's URL from the table above. Use its native authentication
+   flow. Show only a real authorization link returned by that flow; never
+   construct OAuth URLs.
 3. If connection requires user settings, read the host's current official
    instructions or use an actual settings link returned by the host. Give the
    exact server URL, OAuth, and the smallest required action. Do not invent a
