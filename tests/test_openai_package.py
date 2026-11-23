@@ -6,10 +6,14 @@ from contextlib import redirect_stdout
 from pathlib import Path
 import tempfile
 import unittest
+from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 OPENAI = ROOT / "scripts/openai"
 SURFACE = ROOT / "tests/fixtures/voiceflow-surface.json"
+# Tools the account MCP lists whatever the toolsets value (realtime agent-tools-options.util.ts).
+ALWAYS_LISTED = {"vf_describe_operations", "vf_search_operations", "vf_get_started", "vf_skill_list",
+                 "vf_skill_load", "vf_docs_ask", "vf_docs_search", "vf_docs_read_page"}
 
 spec = importlib.util.spec_from_file_location("package_tools", OPENAI / "package_tools.py")
 tools = importlib.util.module_from_spec(spec)
@@ -50,10 +54,33 @@ class OpenAIReviewDataTest(unittest.TestCase):
         report = review_report(self.review, "9.9.9")
         self.assertTrue(any("9.9.9" in blocker for blocker in report.blockers))
 
-    def test_mcp_config_connects_only_the_plain_account_server(self):
+    def test_mcp_config_connects_one_account_server_without_dynamic_mode(self):
         config = json.loads((OPENAI / "mcp.json").read_text(encoding="utf-8"))
         urls = [server["url"] for server in config["mcpServers"].values()]
-        self.assertEqual(urls, ["https://mcp.voiceflow.com/mcp?version=3"])
+        self.assertEqual(len(urls), 1)
+        url = urlparse(urls[0])
+        self.assertEqual((url.scheme, url.netloc, url.path), ("https", "mcp.voiceflow.com", "/mcp"))
+        query = parse_qs(url.query)
+        self.assertEqual(query["version"], ["3"])
+        # OpenAI forbids a generic executor, and dynamic mode adds one.
+        self.assertNotIn("dynamic", query)
+
+    def test_every_case_tool_is_in_a_listed_toolset(self):
+        # The desktop app hides tools past its budget, so the URL lists only some groups.
+        # A case that names a tool outside them would fail for the reviewer.
+        config = json.loads((OPENAI / "mcp.json").read_text(encoding="utf-8"))
+        url = next(iter(config["mcpServers"].values()))["url"]
+        toolsets = parse_qs(urlparse(url).query)["toolsets"][0].split(",")
+        surface = json.loads(SURFACE.read_text(encoding="utf-8"))["mcp"]["tools"]
+        group_of = {f"vf_{group.removeprefix('voiceflow_')}_{operation}": group.removeprefix("voiceflow_")
+                    for group, operations in surface.items() for operation in operations}
+        for group in toolsets:
+            self.assertIn(f"voiceflow_{group}", surface)
+        for case in self.review["review"]["test_cases"]["positive"]:
+            for name in tools.VF_TOOL.findall(case["tools_triggered"]):
+                if name in ALWAYS_LISTED:
+                    continue
+                self.assertIn(group_of.get(name), toolsets, f"{name} is outside the toolsets in mcp.json")
 
 
 class OpenAIMergeTest(unittest.TestCase):
