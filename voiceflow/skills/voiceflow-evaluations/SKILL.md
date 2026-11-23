@@ -56,7 +56,7 @@ first. To test a step deep in a workflow, send the messages that reach it; do
 not write the conversation state. It does not compile: compile first after an
 edit, and when the result says `needsRecompile: true`, compile and run it
 again. Use `vf_conversation_send` only when the next message depends on the
-reply. CLI 0.287.0 has no command for the script run. A reply is not proof a
+reply. A reply is not proof a
 tool worked; read the turn's tool calls, warnings, and errors. For the full
 logs, query them with `vf_transcript_query_logs` and the transcript ID the run
 returns.
@@ -93,7 +93,7 @@ Read a run with `vf_test_get_run` about every 15 seconds, at most 20
 times. A run goes from idle through pending and running to passed,
 failed, or canceled. If it is still running at the deadline, say so and offer
 to stop it with `vf_test_cancel_runs`: a run that has not started never
-starts, and a finished run keeps its result. CLI 0.287.0 has no cancel command.
+starts, and a finished run keeps its result.
 
 When the agent under test can reach a tool that writes to an outside system,
 list each finished run's tool calls with `vf_test_query_run_logs` and

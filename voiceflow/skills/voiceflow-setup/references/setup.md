@@ -48,17 +48,36 @@ If a saved account MCP URL differs from this host's URL in the
 The exception is an account server bundled with an installed plugin. Keep its
 URL as the plugin set it, and do not add a second account connection.
 
+Some hosts list only part of a plugin's account tools. The ChatGPT desktop app
+and Codex may show only `vf_agent_*` and `vf_analytics_*` tools, with no list
+tool such as `vf_project_list`. A missing list tool is not a failed connection.
+Keep the account connection as it is, and add the Voiceflow CLI beside it for
+the tools the host hides:
+
+- If `vf` is installed, verify the account with the live read in the
+  [CLI guide](cli.md). It signs in only when that read needs it. Skip a new
+  connector.
+- If `vf` is missing and a persistent terminal is available, follow the
+  [CLI path](cli.md) to install it and sign in.
+- If no terminal is available, tell the user that this host hides the account
+  tools that list workspaces and projects. Setup cannot verify the account here.
+
+The CLI signs in on its own. Ask the user to sign in with the same Voiceflow
+account that the MCP connection uses.
+
 ## 2. Choose the supported connection path
 
 | Observed capability | Next step |
 | --- | --- |
 | A working account connection | Reuse it; go to step 3 |
+| An account connection that hides the list tools; a persistent customer terminal is available | Keep the connection and add the [CLI path](cli.md) for the hidden tools |
 | No account connection; a persistent customer terminal is available | Follow the [CLI path](cli.md), unless the user requested MCP or this host already has a configured Voiceflow MCP connection to repair |
 | No usable terminal; remote MCP can be connected by a tool or host settings | Follow the [MCP path](mcp.md) |
 | Only web/docs access; host connection support is unknown | Check the host's current official connection instructions if accessible; ask which app the user is using only if that is the missing fact |
 | Host cannot connect account tools or run the CLI | Explain that this chat can offer guidance but cannot connect to or act on their account; give the smallest supported next step |
 
-Follow only the chosen path. Do not download an archive or provide shell
+Follow only the chosen path. The one addition is the CLI beside an account
+connection that hides tools. Do not download an archive or provide shell
 commands to a chat-only assistant. A successful public docs request, saved
 configuration, sign-in badge, or user saying "done" is not account verification.
 If the user must change a host setting or sign in, wait for that action, then

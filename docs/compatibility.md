@@ -13,7 +13,8 @@ file installation, observed agent behavior, and real host onboarding.
 | Chat assistants with remote MCP | Capability-based setup guide and offline routing evaluations | Experimental; no named chat application's end-to-end onboarding is certified by these simulations |
 | macOS arm64, Linux x86_64, Windows x86_64 | Checksum-verified installers in `scripts/cli/`, which run the setup skill's install steps line for line, and CLI contracts in local/three-OS CI checks | Installer evidence; not a guarantee for every host or architecture |
 | Other pinned CLI architectures | Release checksums available | Not exercised by the recorded platform runs |
-| CLI 0.287.0 | Account-read and widget request contracts exercised with a localhost fixture | Tested baseline; retain newer compatible installations |
+| CLI 0.335.0 | Help for every command the skills name, and the account-read and widget request contracts, exercised with a localhost fixture on macOS arm64 on 2026-11-23 | Tested baseline; retain newer compatible installations. CLI 0.287.0 passed the earlier contracts on 2026-10-16 |
+| Account tools a host hides | A generated table maps each MCP tool to its CLI command; validation and the CLI contract check cover every row | The CLI fallback in Codex and the ChatGPT desktop app is not yet verified with a live model run |
 | skills.sh | Unit tests copy each skill folder alone, as `--skill` does, and check that its references resolve | The skills CLI itself is not run by these checks |
 | Standalone installer | Removed in 1.1.1. Earlier tests covered install, update, conflict preservation, removal, and rollback | No longer shipped |
 | Product building and debugging | Authorized live CLI/MCP tasks and independent conversation checks | Task-specific evidence with failures and retests retained, not a universal success rate |
@@ -48,13 +49,21 @@ fixture and fake credentials; repository tests do not sign in or change accounts
 
 ## Known limitations
 
-CLI 0.287.0 can return blank JSON output when its internal timeout cancels a
-response between headers and body. Manual reads use typed TOON output. The
+CLI 0.287.0 and 0.335.0 can return blank JSON output when the internal timeout
+cancels a response between headers and body. Manual reads use typed TOON output. The
 JSON check in the setup skill's CLI guide leaves out that inner timeout and
 stops the whole command after 25 seconds. A malformed, truncated, or
 stderr-only response does not pass. `scripts/verify_cli.py` runs the same rule,
 from `scripts/cli/check_connection.py`, against localhost fixtures with split
 responses and invalid bodies. This package does not patch the CLI.
+
+The ChatGPT desktop app and Codex cap the size of a plugin's tool list, so they
+can hide most account tools, including the list tools and the account server's
+docs tools. The skills then run hidden operations with the CLI. A host without
+a terminal cannot do that, and setup cannot verify the account there. Through
+CLI 0.335.0, `vf docs search` sends questions to the docs server without
+`logging=off`, so the server logs them. The skills keep the docs MCP and the
+account server's docs tools ahead of it.
 
 Chat-only guidance may be session-scoped. A saved connector, sign-in badge, or
 public docs response is not proof of working account access. Setup only claims

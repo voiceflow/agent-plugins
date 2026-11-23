@@ -43,6 +43,6 @@ only the specialist skill relevant to the task:
 Product knowledge comes from the [Voiceflow docs](https://www.voiceflow.com/docs).
 Use the live CLI help or available MCP schemas for exact operation fields.
 Skills provide the workflow; they do not imply that every client exposes every
-operation. An account tool missing from your tool list may still run by name,
-as the operation contract describes. Say when a capability is unavailable
+operation. An account tool missing from your tool list may still run by name
+or through the Voiceflow CLI, as the operation contract describes. Say when a capability is unavailable
 rather than inventing a tool.

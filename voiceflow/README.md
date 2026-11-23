@@ -35,13 +35,18 @@ Ask your assistant to connect you to Voiceflow. The `voiceflow-setup` skill
 checks what your assistant can do, then takes one of two paths.
 
 - **An assistant with a terminal** uses the Voiceflow CLI. If the CLI is
-  missing, setup can download version 0.287.0 from the official release at
+  missing, setup can download version 0.335.0 from the official release at
   [github.com/voiceflow/cli](https://github.com/voiceflow/cli/releases). Before
   it installs anything, it checks the download against SHA-256 checksums pinned
   in this plugin. It never replaces a CLI that is already installed. You then
   sign in through your browser.
 - **An assistant with remote MCP** connects the hosted Voiceflow MCP server.
   You sign in through your browser.
+
+Some hosts show only part of the MCP server's tools, such as the ChatGPT
+desktop app and Codex. There, the assistant keeps the MCP connection and runs
+each hidden operation with the Voiceflow CLI, if the CLI is installed and
+signed in. It asks you before each change it makes through the CLI.
 
 Setup is done when one account read works and one docs question gets an answer.
 Setup does not create a project or publish anything. After that, the assistant

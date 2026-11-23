@@ -4,11 +4,17 @@ Use this path only when the [setup guide](setup.md) selected a terminal that
 can install and run tools in the customer's persistent environment. A temporary
 chat sandbox is not such an environment.
 
+The setup guide also uses this path beside an account MCP connection that hides
+tools. Then the CLI runs only the operations the host hides, and every listed
+MCP tool stays in use. Keep the MCP connection; do not add a second one.
+
 Locate `vf`, then run `vf version` and `vf auth login --help`.
-The tested baseline is **0.287.0**, with `--agent-mode`, `--no-browser`,
+The tested baseline is **0.335.0**, with `--agent-mode`, `--no-browser`,
 `--login-timeout`, and `workspace list`. Retain a newer compatible installation.
 If an existing version lacks these capabilities, explain the needed upgrade;
-preserve its location and do not overwrite an unrelated executable.
+preserve its location and do not overwrite an unrelated executable. A version
+older than the baseline may also lack commands the skills use, such as
+`vf workflow add-blocks`.
 
 If absent, follow [the verified CLI install steps](installation.md). Use the
 absolute path they print for the rest of this session if it is not on PATH.
@@ -23,9 +29,10 @@ Do not use `whoami` or stored credentials as proof of connection. Do not print
 workspace details unless asked. An empty list is a connected account, not a
 reason to create a workspace. Classify failures before acting:
 
-Use TOON for this read on CLI 0.287.0. Its JSON passthrough can produce empty
-output when a timeout cancels the response before the body is consumed; TOON
-uses the fully decoded response. Empty output is not an empty workspace list.
+Use TOON for this read on CLI 0.335.0, as on 0.287.0. Its JSON passthrough can
+produce empty output when a timeout cancels the response before the body is
+consumed; TOON uses the fully decoded response. Empty output is not an empty
+workspace list.
 
 - Missing/expired authentication or HTTP 401: continue to browser sign-in.
 - HTTP 403: explain insufficient access; repeated login is not a permission fix.
@@ -64,7 +71,9 @@ This check does not install, sign in, or repair anything.
 
 ## Sign in only if needed
 
-Run as a background task with a bounded 15-minute lifetime. Read JSON events
+In Codex, the user signs in from their own terminal; see
+[run the CLI from Codex](#run-the-cli-from-codex). Elsewhere, run this as a
+background task with a bounded 15-minute lifetime. Read JSON events
 from stderr while it runs:
 
 ```sh
@@ -86,5 +95,18 @@ local setup. Never claim a remote loopback URL has completed authentication.
 Never ask for passwords, tokens, or secret values in chat. `VF_TOKEN` overrides
 stored OAuth credentials; inspect only its presence, not its value. Explain a
 stale override before changing it.
+
+## Run the CLI from Codex
+
+Codex runs commands in a sandbox. In its default sandbox `vf` has no network
+access, so a read fails with an error that it could not reach the host. Ask the
+user to approve each `vf` command, or to allow network access for the session.
+The install steps download and write outside the workspace, so they need that
+approval too.
+
+`vf auth login` saves credentials outside the workspace, such as in
+`~/.config/vf/config.yaml`, and the sandbox cannot write there. Ask the user to
+run `vf auth login` in their own terminal instead. Then repeat the live
+workspace read here.
 
 Return to [guidance and completion](setup.md#3-make-guidance-available-in-this-host).

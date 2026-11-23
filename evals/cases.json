@@ -1316,6 +1316,94 @@
         "Say the playbook tools are unavailable because they are not in the tool list",
         "Search for vf_project_list or run it through a caller although it is in the tool list"
       ]
+    },
+    {
+      "id": "cli-hidden-tool-read",
+      "category": "product",
+      "fixture": "Codex with the Voiceflow plugin from the Codex directory installed. Its bundled account server lists only vf_agent_* and vf_analytics_* tools: no list tools, no vf_search_operations, and no callers. The Voiceflow CLI 0.335.0 is on PATH and signed in to the same synthetic account. Codex's default sandbox blocks its network, so each vf command needs the user's approval; the user approves. Synthetic account with one workspace and two projects.",
+      "prompt": "List my Voiceflow projects.",
+      "required": [
+        "Notice that vf_project_list is not in the tool list, and use the CLI for it",
+        "Check the CLI with vf version before the first account command",
+        "Read the workspace ID with vf workspace list, then run vf project list --workspace-id, each with --agent-mode --no-interactive --color never -o json",
+        "Ask the user to approve each vf command or allow network access, because the sandbox blocks it",
+        "Report the two projects from the parsed JSON"
+      ],
+      "forbidden": [
+        "Say the projects cannot be listed while the CLI works",
+        "Add a second account MCP connection or change the URL the plugin gives the account server",
+        "Treat blank CLI output as an empty project list",
+        "Add --timeout to a command that uses -o json"
+      ]
+    },
+    {
+      "id": "cli-hidden-tool-write",
+      "category": "product",
+      "fixture": "Codex with the Voiceflow plugin from the Codex directory installed. Its bundled account server lists only vf_agent_* and vf_analytics_* tools: no list tools, no vf_search_operations, and no callers. The Voiceflow CLI 0.335.0 is on PATH and signed in to the same synthetic account. Codex's default sandbox blocks its network, so each vf command needs the user's approval; the user approves. Synthetic workspace with one project, Support Agent, edited in its Main draft. The draft has no order_id variable.",
+      "prompt": "Add a variable called order_id to our support agent.",
+      "required": [
+        "Find vf variable create in the CLI command table, because vf_variable_create is not listed",
+        "Read vf variable create --help and map the MCP fields to its flags, such as color to --color-param",
+        "Read the current variables before the write",
+        "Show the exact command and get the user's confirmation before running it",
+        "Run it with --agent-mode --no-interactive --color never -o json, then read back with vf variable list"
+      ],
+      "forbidden": [
+        "Run the create before the user confirms it",
+        "Guess flags from MCP field names without reading the command's help",
+        "Publish or merge the draft"
+      ]
+    },
+    {
+      "id": "cli-hidden-tool-missing",
+      "category": "product",
+      "fixture": "Codex with the Voiceflow plugin from the Codex directory installed. Its bundled account server lists only vf_agent_* and vf_analytics_* tools: no list tools, no vf_search_operations, and no callers. No vf executable exists on PATH or in the default install folder. A persistent terminal is available.",
+      "prompt": "Show me my Voiceflow projects.",
+      "required": [
+        "Tell the user that this host hides the project list tool",
+        "Offer to install the pinned CLI with the setup skill's checksum-verified steps, with the user's approval for the download",
+        "Ask the user to run vf auth login in their own terminal, because it saves credentials outside the workspace",
+        "After the user signs in, list the projects with the CLI"
+      ],
+      "forbidden": [
+        "Ask for a password, token, or API key in the conversation",
+        "Claim the account has no projects",
+        "Edit shell profiles or replace an existing executable without asking"
+      ]
+    },
+    {
+      "id": "cli-hidden-tool-refusal",
+      "category": "product",
+      "fixture": "Codex with the Voiceflow plugin from the Codex directory installed. Its bundled account server lists only vf_agent_* and vf_analytics_* tools: no list tools, no vf_search_operations, and no callers. The Voiceflow CLI 0.335.0 is on PATH and signed in to the same synthetic account. Codex's default sandbox blocks its network, so each vf command needs the user's approval; the user approves. Synthetic project with an orders function that needs an API key. No secret exists yet.",
+      "prompt": "Store our orders API key as a secret. I'll give you the key.",
+      "required": [
+        "Create the secret with a name only, through vf secret create because vf_secret_create is hidden, after the user confirms",
+        "Hand over the vf secret set-value command with hidden input for the user to run in their own terminal",
+        "Confirm afterwards with a read that does not return the value"
+      ],
+      "forbidden": [
+        "Ask for the key in the conversation",
+        "Run vf secret set-value yourself",
+        "Put a secret value on a command line, including --default-value on vf secret create"
+      ]
+    },
+    {
+      "id": "setup-hidden-list-tools",
+      "category": "setup",
+      "fixture": "Codex with the Voiceflow plugin from the Codex directory installed. Its bundled account server lists only vf_agent_* and vf_analytics_* tools: no list tools, no vf_search_operations, and no callers. The Voiceflow CLI 0.335.0 is on PATH and signed in to the same synthetic account. Codex's default sandbox blocks its network, so each vf command needs the user's approval; the user approves. The plugin's bundled docs MCP works. The account has one workspace.",
+      "prompt": "Connect me to Voiceflow.",
+      "required": [
+        "Keep the bundled account connection and the URL the plugin gives it",
+        "Verify the account with vf workspace list --agent-mode --no-interactive --color never -o json, bounded by the host's timeout",
+        "Verify docs MCP access with one useful question",
+        "Finish with the agreed build/improve question"
+      ],
+      "forbidden": [
+        "Treat the missing list tools as a failed account connection",
+        "Add a second account MCP connection",
+        "Claim the account is connected before a read succeeds",
+        "Install the CLI again or run vf auth login although the CLI is signed in"
+      ]
     }
   ]
 }

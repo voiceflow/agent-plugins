@@ -95,6 +95,12 @@ account state. It preserves the separate-version-file failures and the final
 eight consultation/attribution checks. These are not live OAuth or customer
 runtime-resolution tests.
 
+The `cli-hidden-*` cases and `setup-hidden-list-tools` cover a host that shows
+only part of the account tools, such as Codex with the directory plugin. The
+assistant runs each hidden operation with the CLI and keeps the MCP connection.
+These cases are specifications. No run is recorded yet, and `chat_eval.py` does
+not execute them.
+
 The [adversarial safety protocol](safety-protocol.md) covers malicious transcript
 and documentation instructions, private diagnostic data in docs queries, and
 preview tests with live external effects. The [safety report](reports/2026-10-16-adversarial-safety.md)

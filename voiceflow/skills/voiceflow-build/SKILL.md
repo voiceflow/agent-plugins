@@ -70,9 +70,8 @@ The Initialization workflow runs at launch, before the user's first turn: use it
 to load data, greet with fixed text, or copy launch values into variables. Read
 which one is set with `vf_agent_get_initialization_workflow`. Build the
 workflow, then set it with `vf_agent_set_initialization_workflow`. Only one is
-set: a new one replaces it, and `null` clears it. CLI 0.287.0 has no command
-for either; the UI step is the Initialization section of the agent's Behaviour
-settings. Values the widget or API pass at launch arrive in the `last_event`
+set: a new one replaces it, and `null` clears it. The UI step is the
+Initialization section of the agent's Behaviour settings. Values the widget or API pass at launch arrive in the `last_event`
 variable, not as variables of their own. To use one, add a Code step to that
 workflow that copies it from `last_event.payload` into a variable. A project
 with no Initialization setting refuses the set: then give the user the Code

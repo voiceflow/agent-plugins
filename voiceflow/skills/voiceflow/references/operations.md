@@ -51,7 +51,7 @@ that is not listed:
 A write through `vf_call_write_operation` is still a write. It follows the
 same draft and approval rules as a direct call; see
 [mutations and verification](#mutations-and-verification). If the callers are
-not listed either, tell the user this connection cannot reach the operation.
+not listed either, [use the CLI for that tool](#use-the-cli-for-a-hidden-tool).
 The `voiceflow-setup` skill gives the URL for hosts that trim tool lists.
 
 The CLI covers agent, project, workspace, playbook, workflow, function, tool,
@@ -66,12 +66,45 @@ inputs rather than every management operation. Use the verified shape and live
 read-back instead of repeated trial writes to discover fields.
 
 Use structured output for reads and supported file/stdin input for complex writes.
-On CLI 0.287.0, prefer `-o toon` with `--timeout`: JSON passthrough can return an
-empty body because of early timeout-context cancellation. Do not interpret blank
-output as successful verification. Use current CLI help when this is corrected.
+On CLI 0.335.0, as on 0.287.0, `-o json` with `--timeout` can return an empty
+body, because the timeout cancels the read of the response. Use `-o json`
+without `--timeout`, or `-o toon` with it. Blank output is never a successful
+result. Use current CLI help when this is corrected.
 Inspect help for the exact flag; do not assume every command accepts --data.
 Do not place secrets in command arguments or shell history. A --dry-run previews
 a request; it does not prove server validation or runtime correctness.
+
+## Use the CLI for a hidden tool
+
+Some hosts list only part of the account tools, and no callers. The ChatGPT
+desktop app and Codex cap the size of a plugin's tool list and drop the tools
+past the cap. They may show only `vf_agent_*` and `vf_analytics_*` tools.
+Keep calling every tool that is listed. For a tool that is not listed, run the
+same operation with the Voiceflow CLI:
+
+1. Check that `vf` runs with `vf version`. `vf auth whoami` shows whether it
+   has stored credentials. Only a real read proves that they work.
+2. Find the tool in the [table of CLI commands](cli-commands.md).
+3. Read `vf <command> --help` before the first call. MCP fields and CLI flags
+   differ. For example, the field `projectID` is the flag `--project-id`.
+4. Run the command with `--agent-mode --no-interactive --color never -o json`.
+   Leave out `--timeout`, and stop the command with the host's timeout instead.
+
+In Codex's default sandbox, `vf` has no network access. Ask the user to approve
+each command, or to allow network access for the session.
+
+The CLI does not change the rules:
+
+- A CLI write is still a write, and the host's approval settings for MCP tools
+  do not see it. Show the command and get the user's confirmation first.
+- Send only what the MCP would accept. When the MCP refuses an action, hand it
+  to the user. Never use the CLI to get around a refusal.
+- Never put a secret value on a command line.
+
+If `vf` is missing or not signed in, tell the user which tool this host hides.
+Where a terminal is available, the `voiceflow-setup` skill installs the CLI and
+signs in. Otherwise, give the step in the Voiceflow UI, or say that this host
+cannot run the operation.
 
 ## Mutations and verification
 

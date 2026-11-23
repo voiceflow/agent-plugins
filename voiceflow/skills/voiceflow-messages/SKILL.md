@@ -44,8 +44,7 @@ longer words, or `resourceTypes: ["prompt"]` to find a prompt by its words. Each
 hit names the resource, field, and line, and a hit on a message or prompt lists
 in `usedBy` the steps that hold its ID. Page with `offset` set to `nextOffset`.
 `incomplete: true` means the search did not read everything, and `notSearched`
-names what it never reads, such as knowledge documents and transcripts. CLI
-0.287.0 has no command for this search.
+names what it never reads, such as knowledge documents and transcripts.
 
 A playbook's exit paths hold message IDs too, under `messages`:
 `vf_playbook_list_paths` shows them, and `vf_playbook_create_path` and

@@ -5,6 +5,7 @@ import re
 import sys
 
 from skill_references import check_references
+from cli_commands import drift_problems as cli_table_problems
 from sync_shared_references import drift_problems
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -324,7 +325,7 @@ def validate(root=ROOT):
         raise ReferenceProblems(types)
     scripts = root / CLI_DATA
     version = (scripts / "cli-version.txt").read_text(encoding="utf-8").strip()
-    assert version == "0.287.0", "Update CLI contract fixtures when changing baseline"
+    assert version == "0.335.0", "Update CLI contract fixtures when changing baseline"
     checksums = (scripts / "checksums.txt").read_text(encoding="utf-8").splitlines()
     assert len(checksums) == 6
     assert all(re.fullmatch(r"[a-f0-9]{64}  vf_(Darwin|Linux|Windows)_(arm64|x86_64)\.(tar\.gz|zip)", line) for line in checksums)
@@ -337,8 +338,9 @@ def validate(root=ROOT):
     for case in cases:
         assert case["required"] and case["forbidden"] and case["fixture"] and case["prompt"]
         assert case["category"] in ("setup", "product")
-    problems = (drift_problems(root) + check_references(root) + docs_url_problems(root) + account_url_problems(root)
-                + install_step_problems(root))
+    # The CLI command table comes from the snapshot first; the sync check then compares its copies with it.
+    problems = (cli_table_problems(root) + drift_problems(root) + check_references(root) + docs_url_problems(root)
+                + account_url_problems(root) + install_step_problems(root))
     if problems:
         raise ReferenceProblems(problems)
     return len(SKILL_NAMES)
@@ -351,4 +353,4 @@ if __name__ == "__main__":
         print("\n".join(error.problems), file=sys.stderr)
         sys.exit(1)
     print(f"Validated {count} skills, manifests, package file types, checksums, CLI install steps, "
-          "shared reference copies, local references, and MCP and CLI names.")
+          "the CLI command table, shared reference copies, local references, and MCP and CLI names.")

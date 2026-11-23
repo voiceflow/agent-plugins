@@ -113,6 +113,17 @@ when it is set. Pass `--mcp-ref` or `--cli-ref` to choose other release tags, or
 `--mcp-spec` and `--cli-spec` to read a downloaded spec. A refresh with no
 upstream change leaves the file unchanged.
 
+The skills also ship a table that pairs each MCP tool with its `vf` command,
+for hosts that hide part of the tool list. A script writes it from the same
+file into the `voiceflow` skill's `references/cli-commands.md`. After a
+refresh, run it and then the sync script. Validation fails when the table
+differs from the file. Never edit the table by hand.
+
+```sh
+python3 scripts/cli_commands.py
+python3 scripts/sync_shared_references.py
+```
+
 ## Verify the right things
 
 The three commands above run offline tests with temporary directories and fake
