@@ -278,6 +278,9 @@ fails, the items created before it stay.
 
 | MCP tool | Instead |
 | --- | --- |
+| `vf_agent_add_workflow` | No CLI command |
+| `vf_agent_remove_workflow` | No CLI command |
+| `vf_agent_update_workflow` | No CLI command |
 | `vf_api_tool_create_many` | `vf api-tool create`, once per item |
 | `vf_api_tool_create_many_variables` | `vf api-tool variable create`, once per item |
 | `vf_environment_export` | No CLI command |

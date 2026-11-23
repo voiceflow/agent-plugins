@@ -3,6 +3,22 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## Unreleased
+
+- The skills now add a workflow to the main agent's `workflows` list with
+  `vf_agent_add_workflow`, where the main agent and every playbook can call it.
+  They never create a tool of type `workflow`, because the server no longer
+  accepts one. Old workflow tools on a playbook can still be listed and deleted.
+- The skills change or remove one entry in that list with
+  `vf_agent_update_workflow` or `vf_agent_remove_workflow`. Each of the three
+  tools changes one entry and keeps the others. Before, the skills sent the
+  whole list with `vf_agent_update`, which could drop an entry that was left
+  out. They now use `vf_agent_update` with `workflows` only to replace the
+  whole list.
+- The `workflow-tool-main-agent` acceptance case now expects the add tool. It
+  also fails a reply that replaces the list without the workflows already in
+  it. It has not been run.
+
 ## 1.3.0
 
 - The skills now use the Voiceflow CLI for an account tool that the host hides.

@@ -118,6 +118,19 @@ These arrays replace the existing arrays. Merge with their complete current
 contents rather than copying this example over existing routes. CLI accepts
 the corresponding arrays through `agent update --playbooks` and `--workflows`.
 
+To add, change or remove one workflow, do not send the `workflows` array.
+`vf_agent_add_workflow` takes one item in the same shape, with `projectID`
+and `environmentAlias` beside it:
+
+```json
+{"workflowID": "WORKFLOW_ID", "description": "Look up an order when the customer asks where it is."}
+```
+
+`vf_agent_update_workflow` takes the `workflowID` and only the fields that
+change, such as `description`. `vf_agent_remove_workflow` takes the
+`workflowID` and no body. Both also take `projectID` and `environmentAlias`.
+Each of the three keeps every other entry in the list.
+
 ## A message followed by End
 
 First create a message resource with `variants: [{"text":"Your request is ready for review."}]`

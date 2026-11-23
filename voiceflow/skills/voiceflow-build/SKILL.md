@@ -55,16 +55,20 @@ needs another capability. Do not unconditionally return immediately after an
 answer: main can repeat it or route the same request back. If main owns the
 answer, the playbook should hand off its result without also answering.
 
-Read the complete existing routing registry before updating it: a supplied
-playbooks/workflows list replaces the list. Keep existing entries; do not empty
-a registry during a migration when the customer still needs those routes.
+Add, change or remove one workflow with `vf_agent_add_workflow`,
+`vf_agent_update_workflow` or `vf_agent_remove_workflow`. Each changes one
+entry and keeps every other. A playbooks or workflows list sent with
+`vf_agent_update` replaces the whole list. Before you send one, read the
+complete existing routing registry and keep its entries. Do not empty a
+registry during a migration when the customer still needs those routes.
 
-A workflow runs when it is registered on the main agent, attached to the main
-agent as a workflow tool, which every playbook can call, reached from another
-workflow, or set as the Initialization workflow. The `voiceflow-workflows` skill
-describes workflow tools. Never attach a workflow tool to a playbook. Register a
-workflow on the main agent only for routing: doing so for a workflow that
-already runs another way changes routing.
+A workflow runs when it is in the main agent's `workflows` list, reached from
+another workflow, or set as the Initialization workflow. The main agent and
+every playbook can call a workflow in that list. A workflow is never a tool: do
+not create a tool of type `workflow`. The `voiceflow-workflows` skill explains
+how to add a workflow to the main agent. Adding one that already runs another
+way changes what the main agent can do, so add it only when the main agent or a
+playbook should call it.
 
 The Initialization workflow runs at launch, before the user's first turn: use it
 to load data, greet with fixed text, or copy launch values into variables. Read
