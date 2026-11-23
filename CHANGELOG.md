@@ -82,7 +82,7 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
 
 ## 1.2.0
 
-This guidance needs voiceflow/creator-app#24625 deployed on the account MCP.
+This guidance needs the dynamic tool mode of the account MCP to be deployed.
 Until it is, the dynamic URL below serves the full tool list without the two
 caller tools, as the plain URL does.
 
@@ -138,11 +138,11 @@ caller tools, as the plain URL does.
   install reports the real version in docs requests.
 - The setup guide keeps one link to the entry skill, because chat assistants
   that read the guide from the website follow it to find the skills.
-- Port the latest Atlas product guidance into ten skills: build, debug,
-  environments, evaluations, functions, integrations, messages,
-  optimize-playbooks, voice, and workflows. Debugging now covers duplicate
-  replies after a model fallback. Seven new acceptance cases cover these
-  changes.
+- Port the latest product guidance from Voiceflow's in-app assistant into ten
+  skills: build, debug, environments, evaluations, functions, integrations,
+  messages, optimize-playbooks, voice, and workflows. Debugging now covers
+  duplicate replies after a model fallback. Seven new acceptance cases cover
+  these changes.
 
 ## 1.1.0
 

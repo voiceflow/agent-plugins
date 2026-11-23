@@ -50,8 +50,8 @@ copilot plugin list
 ```
 
 Check `copilot plugin marketplace list` first; reuse a matching source.
-Copilot CLI reads this repository's Claude marketplace file, so the marketplace
-name is the same.
+GitHub Copilot CLI reads this repository's Claude marketplace file, so the
+marketplace name is the same.
 
 ## Cursor
 
