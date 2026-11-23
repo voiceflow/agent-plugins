@@ -26,18 +26,21 @@ LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 DOCS_MCP_URL = "https://www.voiceflow.com/docs/mcp?logging=off"
 DOCS_MCP_ENDPOINT = re.compile(r"https://www\.voiceflow\.com/docs/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/*.py", "tests/*.py")
-# The account MCP has two accepted URLs. Cursor and GitHub Copilot cap or trim long tool lists, so they add
+# The account MCP has two accepted URLs. The hosts in DYNAMIC_URL_HOST_NAMES cap or trim long tool lists, so they add
 # `dynamic=true`: the server lists about a dozen tools and runs the rest by name. This needs
 # voiceflow/creator-app#24625 deployed. Codex, Claude, ChatGPT, and other hosts use the plain URL. Codex limits
 # tool list size only for servers bundled inside a plugin, and OpenAI's plugin guidelines forbid a generic
 # executor for operations that are not listed as tools. A package line that names a host and an account MCP
 # URL must give that host's URL. The changelog and the eval fixtures keep older URLs on purpose, so only the
-# package is checked. The registry entry keeps the full-list URL.
+# package is checked. The registry entry keeps the full-list URL. The setup guide must name each host below on
+# a line that gives its URL, so a host cannot drop out of the table unnoticed.
 ACCOUNT_MCP_URL = "https://mcp.voiceflow.com/mcp?version=3"
 ACCOUNT_MCP_DYNAMIC_URL = ACCOUNT_MCP_URL + "&dynamic=true"
 ACCOUNT_MCP_ENDPOINT = re.compile(r"https://mcp\.voiceflow\.com/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
-DYNAMIC_URL_HOSTS = re.compile(r"\b(?:Cursor|Copilot)\b")
-PLAIN_URL_HOSTS = re.compile(r"\b(?:Codex|Claude|ChatGPT)\b")
+DYNAMIC_URL_HOST_NAMES = ("Cursor", "Copilot", "Windsurf", "Antigravity")
+PLAIN_URL_HOST_NAMES = ("Codex", "Claude", "ChatGPT")
+DYNAMIC_URL_HOSTS = re.compile(rf"\b(?:{'|'.join(DYNAMIC_URL_HOST_NAMES)})\b")
+PLAIN_URL_HOSTS = re.compile(rf"\b(?:{'|'.join(PLAIN_URL_HOST_NAMES)})\b")
 ACCOUNT_URL_GUIDE = "voiceflow/skills/voiceflow-setup/references/mcp.md"
 REGISTRY_SCHEMA = "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
 SKILLS_SH_SCHEMA = "https://skills.sh/schemas/skills.sh.schema.json"
@@ -92,7 +95,7 @@ def text_files(root, patterns):
 
 def account_url_problems(root):
     """Report each account MCP URL in the package that is not one of the two accepted URLs or not the URL of
-    the host its line names, and a setup guide that does not give both URLs."""
+    the host its line names, and each host that no line of the setup guide names with its URL."""
     problems = []
     for path in text_files(root, ("voiceflow/**/*",)):
         label = path.relative_to(root).as_posix()
@@ -110,10 +113,11 @@ def account_url_problems(root):
             elif plain and ACCOUNT_MCP_DYNAMIC_URL in urls:
                 problems.append(f"{label}:{number}: {plain.group()} uses {ACCOUNT_MCP_URL}")
     guide = root / ACCOUNT_URL_GUIDE
-    text = guide.read_text(encoding="utf-8") if guide.is_file() else ""
-    for url in (ACCOUNT_MCP_URL, ACCOUNT_MCP_DYNAMIC_URL):
-        if f"`{url}`" not in text:
-            problems.append(f"{ACCOUNT_URL_GUIDE}: setup must give the account MCP URL {url}")
+    lines = guide.read_text(encoding="utf-8").splitlines() if guide.is_file() else []
+    for hosts, url in ((DYNAMIC_URL_HOST_NAMES, ACCOUNT_MCP_DYNAMIC_URL), (PLAIN_URL_HOST_NAMES, ACCOUNT_MCP_URL)):
+        for host in hosts:
+            if not any(re.search(rf"\b{host}\b", line) and f"`{url}`" in line for line in lines):
+                problems.append(f"{ACCOUNT_URL_GUIDE}: setup must give {host} the account MCP URL {url}")
     return problems
 
 

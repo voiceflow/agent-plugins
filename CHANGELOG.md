@@ -36,6 +36,20 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
 - Five new acceptance cases: `cli-hidden-tool-read`, `cli-hidden-tool-write`,
   `cli-hidden-tool-missing`, `cli-hidden-tool-refusal`, and
   `setup-hidden-list-tools`. They have not been run.
+- Windsurf and Antigravity now connect the account MCP at
+  `https://mcp.voiceflow.com/mcp?version=3&dynamic=true`, like Cursor and
+  GitHub Copilot. Both hosts cap how many MCP tools they list. Before, setup
+  gave them the plain URL, which lists every account tool, so the host could
+  hide tools the skills need. On these hosts, setup changes a saved URL that
+  lacks `dynamic=true`.
+- Validation now fails when a line gives Windsurf or Antigravity the plain
+  URL. It also fails when the setup guide does not name each of these seven
+  hosts with its URL: Cursor, GitHub Copilot, Windsurf, Antigravity, Codex,
+  Claude, and ChatGPT.
+- Two new acceptance cases: `setup-mcp-windsurf-dynamic` and
+  `setup-mcp-antigravity-dynamic`. They have not been run. The two
+  version-repair cases now also expect the dynamic URL in Windsurf and
+  Antigravity.
 
 ## 1.2.1
 

@@ -152,9 +152,11 @@ class PackageTypeTests(unittest.TestCase):
         self.assertEqual(self.problems({**images, "voiceflow/a.md": b"# Synthetic\n"}), [])
         self.assertEqual(validator.text_files(self.root, ("voiceflow/**/*",)), [self.root / "voiceflow/a.md"])
         self.assertEqual(validator.docs_url_problems(self.root), [])
+        hosts = [(host, validator.ACCOUNT_MCP_DYNAMIC_URL) for host in validator.DYNAMIC_URL_HOST_NAMES]
+        hosts += [(host, validator.ACCOUNT_MCP_URL) for host in validator.PLAIN_URL_HOST_NAMES]
         self.assertEqual(validator.account_url_problems(self.root),
-                         [f"{validator.ACCOUNT_URL_GUIDE}: setup must give the account MCP URL {url}"
-                          for url in (validator.ACCOUNT_MCP_URL, validator.ACCOUNT_MCP_DYNAMIC_URL)])
+                         [f"{validator.ACCOUNT_URL_GUIDE}: setup must give {host} the account MCP URL {url}"
+                          for host, url in hosts])
 
 
 class InstallStepTests(unittest.TestCase):
@@ -354,18 +356,29 @@ class RepositoryTests(unittest.TestCase):
             guide.write_text(f"| Cursor | `{dynamic}` |\n| Codex | `{plain}` |\n| Other hosts | `{plain}` |\n"
                              f"Not `{bare}?version=2` or `{bare}`.\nIn Copilot, use `{plain}`.\n"
                              f"In ChatGPT, use `{dynamic}`.\nIn Codex, use `{dynamic}`.\n"
-                             f"Cursor and Claude Code: `{dynamic}`.\nCodex and Claude Code: `{plain}`.\n",
+                             f"Cursor and Claude Code: `{dynamic}`.\nCodex and Claude Code: `{plain}`.\n"
+                             f"| Windsurf | `{dynamic}` |\nIn Antigravity, use `{plain}`.\n"
+                             f"Windsurf and Codex: `{plain}`.\n",
                              encoding="utf-8")
             label = guide.relative_to(root).as_posix()
             allowed = f"account MCP URL must be {plain} or {dynamic}"
+            missing = f"{validator.ACCOUNT_URL_GUIDE}: setup must give"
             self.assertEqual(validator.account_url_problems(root), [
                 f"{label}:4: {allowed}, not {bare}", f"{label}:4: {allowed}, not {bare}?version=2",
                 f"{label}:5: Copilot uses {dynamic}", f"{label}:6: ChatGPT uses {plain}",
                 f"{label}:7: Codex uses {plain}",
-                f"{label}:8: name Cursor and Claude on separate lines, because they use different account MCP URLs"])
-            guide.write_text(f"Use `{plain}`.\n", encoding="utf-8")
+                f"{label}:8: name Cursor and Claude on separate lines, because they use different account MCP URLs",
+                f"{label}:11: Antigravity uses {dynamic}",
+                f"{label}:12: name Windsurf and Codex on separate lines, because they use different account MCP URLs",
+                f"{missing} Copilot the account MCP URL {dynamic}", f"{missing} Antigravity the account MCP URL {dynamic}",
+                f"{missing} ChatGPT the account MCP URL {plain}"])
+            # A guide that gives the dynamic URL only to Cursor and GitHub Copilot leaves out two hosts.
+            guide.write_text(f"| Cursor | `{dynamic}` |\n| GitHub Copilot | `{dynamic}` |\n| Codex | `{plain}` |\n"
+                             f"| Claude Code | `{plain}` |\n| ChatGPT and every other host | `{plain}` |\n",
+                             encoding="utf-8")
             self.assertEqual(validator.account_url_problems(root), [
-                f"{validator.ACCOUNT_URL_GUIDE}: setup must give the account MCP URL {dynamic}"])
+                f"{missing} Windsurf the account MCP URL {dynamic}",
+                f"{missing} Antigravity the account MCP URL {dynamic}"])
 
 
 class ListingTests(unittest.TestCase):

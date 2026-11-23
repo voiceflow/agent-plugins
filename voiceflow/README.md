@@ -58,7 +58,7 @@ asks what you want to build or improve.
   OAuth and asks for workspace read and write access. Setup only reads. Later changes
   follow your requests and your assistant's approval prompts.
 
-  Cursor and GitHub Copilot use `https://mcp.voiceflow.com/mcp?version=3&dynamic=true`
+  Cursor, GitHub Copilot, Windsurf, and Antigravity use `https://mcp.voiceflow.com/mcp?version=3&dynamic=true`
   instead. These hosts cap or trim long tool lists, so this URL lists about a
   dozen tools and the assistant runs the rest by name. Your host's per-tool approval settings then
   see two tools that run those other operations: one for reads and one for

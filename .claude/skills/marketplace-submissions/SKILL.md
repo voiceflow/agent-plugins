@@ -31,7 +31,7 @@ current. Never press submit or publish, and never change DNS.
 | Item | Value |
 | --- | --- |
 | Account MCP server | `https://mcp.voiceflow.com/mcp?version=3`. About 271 tools, OAuth with Dynamic Client Registration. |
-| Account MCP, dynamic mode | `...?version=3&dynamic=true`, about 12 tools plus search and call tools. Only for Cursor and GitHub Copilot. Never for Codex or OpenAI: Codex does not list the call tools, and OpenAI forbids a generic executor. |
+| Account MCP, dynamic mode | `...?version=3&dynamic=true`, about 12 tools plus search and call tools. Only for Cursor, GitHub Copilot, Windsurf, and Antigravity, which cap or trim long tool lists. Never for Codex or OpenAI: Codex does not list the call tools, and OpenAI forbids a generic executor. |
 | Docs MCP server | `https://www.voiceflow.com/docs/mcp?logging=off`. Server name "Voiceflow Knowledge", four read-only tools, no sign-in. Keep `?logging=off`; without it the server logs questions. |
 | Account MCP logging | No switch exists and none is needed. It logs the tool name, client, error flag, and duration, never arguments or results. |
 | Docs pages | Account server `https://www.voiceflow.com/docs/mcp/overview`, docs server `https://www.voiceflow.com/docs/mcp/knowledge` |
