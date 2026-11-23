@@ -138,9 +138,9 @@ out of date only when the user says so.
 
 ## Split the main agent's instructions
 
-Every tool on the main agent is global: every playbook can call it, workflow
-tools included. So a new playbook can call the main agent's tools, and this
-split moves text only. Follow [split the main agent](references/split-main-agent.md).
+Every tool on the main agent is global: every playbook can call it, and every
+workflow in the main agent's `workflows` list too. So a new playbook can call
+the main agent's tools and workflows, and this split moves text only. Follow [split the main agent](references/split-main-agent.md).
 
 ## Split a playbook
 

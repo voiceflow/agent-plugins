@@ -60,10 +60,12 @@ playbooks/workflows list replaces the list. Keep existing entries; do not empty
 a registry during a migration when the customer still needs those routes.
 
 A workflow runs when it is in the main agent's `workflows` list, reached from
-another workflow, or set as the Initialization workflow. A workflow is never a
-tool: do not create a tool of type `workflow`. The `voiceflow-workflows` skill
-explains how to add a workflow to the main agent. Add one only for routing:
-doing so for a workflow that already runs another way changes routing.
+another workflow, or set as the Initialization workflow. The main agent and
+every playbook can call a workflow in that list. A workflow is never a tool: do
+not create a tool of type `workflow`. The `voiceflow-workflows` skill explains
+how to add a workflow to the main agent. Adding one that already runs another
+way changes what the main agent can do, so add it only when the main agent or a
+playbook should call it.
 
 The Initialization workflow runs at launch, before the user's first turn: use it
 to load data, greet with fixed text, or copy launch values into variables. Read

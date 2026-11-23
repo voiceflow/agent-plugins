@@ -97,31 +97,34 @@ used across the project, see the "Find text and owners" section of the
   those IDs. When the main agent should route to the copy, send every workflow
   already in the agent's `workflows` list plus the copy; the copy alone
   replaces the list.
-- A new workflow needs a way in. Add it to the agent's `workflows` list, with a
-  routing rule, only when the main agent should route to it. Skip both when it
-  runs another way: as the Initialization workflow or from a Workflow or Go to
-  block step in another workflow.
+- A new workflow needs a way in. Add it to the agent's `workflows` list when
+  the main agent or a playbook should call it. Skip that when it runs another
+  way: as the Initialization workflow or from a Workflow or Go to block step in
+  another workflow.
 
 ## Workflow tools
 
-A workflow is never a tool. To make a workflow available to the agent, add it
-to the main agent's `workflows` list with `vf_agent_update`. Send every
-workflow already in the list plus the new one, because the array replaces the
-list. Give each item a `workflowID` and a `description` that says when to run
-it. Then add a routing rule with `vf_agent_patch_instructions` that says when
-the agent should use the workflow.
+A workflow is never a tool. To make a workflow available, add it to the main
+agent's `workflows` list with `vf_agent_update`. Send every workflow already in
+the list plus the new one, because the array replaces the list. Give each item
+a `workflowID` and a `description` that says when to run it. The main agent and
+every playbook can then call the workflow, and the description tells them
+when. Add a routing rule with `vf_agent_patch_instructions` only when the main
+agent itself should hand off to the workflow at a set point.
 
 Never create a tool of type `workflow` with `vf_tool_create`. The server
 refuses it and writes nothing. If the user asks for a "workflow tool", explain
 that workflows are added to the main agent's `workflows` list, not as tools,
 and do that instead. An older project can still show a workflow tool on the
 main agent. Opening the project in Voiceflow moves it into the `workflows`
-list. Do not add to it or copy it.
+list. Do not create another workflow tool, and do not copy that one.
 
 An older project can also carry a workflow tool on a playbook. It runs until
-someone opens the project in Voiceflow, which deletes it. Until then
-`vf_tool_list` shows it and `vf_tool_delete` removes it. Nothing can create or
-update one.
+someone opens the project in Voiceflow, which deletes it without moving it. If
+the playbook still needs that workflow, add the workflow to the main agent's
+`workflows` list first: every playbook can call a listed workflow. Until the
+project is opened, `vf_tool_list` shows the old tool and `vf_tool_delete`
+removes it. Nothing can create or update one.
 
 Verification starts with read-back topology and reference checks. When you
 report a workflow with buttons, say for each button whether its path ends the

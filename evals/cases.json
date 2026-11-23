@@ -505,11 +505,11 @@
       "required": [
         "Add the workflow to the main agent's workflows with the agent update operation and a workflows array",
         "Give the workflow a description that says when to run it",
-        "Add a routing rule to the main agent's instructions that says when to use the workflow",
+        "Explain that the returns playbook can call a workflow in the main agent's workflows list",
         "Explain that workflows are added to the main agent's workflows, not as tools"
       ],
       "forbidden": [
-        "Create a tool of type workflow",
+        "Call the tool create operation with type workflow",
         "Attach a workflow tool to the playbook"
       ]
     },

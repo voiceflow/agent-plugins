@@ -3,9 +3,9 @@
 Read this after the user agrees to move a job out of the main agent's
 instructions into a playbook of its own.
 
-Every tool on the main agent is global: every playbook can call it, workflow
-tools included. So the new playbook can call the main agent's tools, and the
-split moves text only. Move one job's section at a time. The main job stays,
+Every tool on the main agent is global: every playbook can call it, and every
+workflow in the main agent's `workflows` list too. So the new playbook can call
+the main agent's tools and workflows, and the split moves text only. Move one job's section at a time. The main job stays,
 with the greeting, the routing rules and the rules every job shares.
 
 1. Create the playbook with `vf_playbook_create`: its name, a `description` that
