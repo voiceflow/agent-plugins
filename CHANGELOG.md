@@ -3,6 +3,40 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## 1.3.0
+
+- The skills now use the Voiceflow CLI for an account tool that the host hides.
+  The ChatGPT desktop app and Codex cap the size of a plugin's tool list, so
+  they may show only the `vf_agent_*` and `vf_analytics_*` tools. Before, a
+  workflow that named a hidden tool, such as `vf_project_list`, stopped there.
+- The assistant calls every MCP tool that is listed. For a tool that is not
+  listed, it runs the matching `vf` command with
+  `--agent-mode --no-interactive --color never -o json`, after it reads that
+  command's help. It shows each CLI write and asks before it runs it. MCP
+  refusals and the CLI hand-offs still apply, and no secret value goes on a
+  command line.
+- Each skill ships a table that pairs every account MCP tool with its `vf`
+  command. A script writes it from the MCP and CLI snapshot, and validation
+  fails when the table is out of date. It also lists the 14 tools with no CLI
+  command, and the single-item command to run for each batch create.
+- Setup no longer treats a missing list tool as a failed connection. It keeps
+  a plugin's account server as it is and verifies the account with the CLI
+  read. In Codex, the user approves each `vf` command because the sandbox
+  blocks its network, and runs `vf auth login` in their own terminal.
+- The pinned CLI moves from 0.287.0 to 0.335.0. Its release notes list only
+  generated commands, and its sign-in code did not change. The six checksums
+  come from the release's `checksums.txt`.
+- CLI 0.335.0 has commands for 15 more MCP operations that the skills name.
+  They include adding several workflow blocks, the raw workflow read, log
+  queries, script runs, cancelling test runs, and pronunciation patches. Of the
+  tools the skills name, only `vf_test_create_many_runs` still has no command.
+  The skills no longer say that the CLI lacks these commands.
+- On CLI 0.335.0, as on 0.287.0, `-o json` with `--timeout` can still print
+  an empty body. The skills keep the existing workaround.
+- Five new acceptance cases: `cli-hidden-tool-read`, `cli-hidden-tool-write`,
+  `cli-hidden-tool-missing`, `cli-hidden-tool-refusal`, and
+  `setup-hidden-list-tools`. They have not been run.
+
 ## 1.2.1
 
 - Codex now connects the account MCP at

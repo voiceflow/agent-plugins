@@ -28,9 +28,8 @@ Attaching an integration tool takes two steps. First add it with
 changes nothing. It refuses an integration the workspace does not have enabled;
 say so and choose another kind of tool. Then attach it with
 `vf_tool_create`, type `integration`, and wire its inputs and outputs.
-CLI 0.287.0 has no command for the first step; the user adds the tool in the
-agent's Tools in the Voiceflow UI. The tool works only once the integration is
-connected, so connect it first.
+In the Voiceflow UI, the user adds the tool in the agent's Tools. The tool
+works only once the integration is connected, so connect it first.
 
 Use an existing integration when it supports the task; an API tool for a plain
 request; a function for logic; an MCP tool for a supported remote capability.

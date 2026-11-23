@@ -44,8 +44,7 @@ variable changes (`debugKinds: ["tool"]` or `["variables"]`), or plain text
 Every result also counts the whole log's entries and reports its token use per
 model. Every input starts a turn, the launch included, so the user's first
 message is usually turn 2: find the turn the user means with `kinds: ["user"]`
-or `search` before reading it with `turns`. CLI 0.287.0 has no command for this;
-use `vf transcript get` there.
+or `search` before reading it with `turns`.
 
 For debugging, inspect the smallest relevant tool request/result and associated
 state changes. Do not assume a current draft matches the version that generated

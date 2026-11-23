@@ -48,6 +48,8 @@ Voiceflow plugin from the ChatGPT or Codex directory. That plugin's own MCP
 configuration points at the account server. Leave that server's URL as the
 plugin set it, even when it differs from the table above. Do not add a second
 account connection beside it. Verify it with a read like any other connection.
+When the host hides its list tools, verify with the CLI as the
+[setup guide](setup.md#1-inspect-capabilities-and-reuse-connections) says.
 
 The host must support this transport and interactive OAuth, including a callback
 accepted by Voiceflow. Voiceflow's account MCP requires both workspace read and

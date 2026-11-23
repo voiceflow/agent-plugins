@@ -1,7 +1,7 @@
 <!-- Generated copy. Edit the source in the `voiceflow` skill's references folder, then run python3 scripts/sync_shared_references.py. -->
 ---
 package: voiceflow
-version: 1.2.1
+version: 1.3.0
 ---
 
 # Answer product questions with the docs MCP

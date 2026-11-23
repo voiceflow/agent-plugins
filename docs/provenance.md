@@ -18,7 +18,8 @@ new customer-facing instructions, not a vendored copy of private source files.
 
 Where an older skill conflicted with current website documentation, the website
 won. Where command examples lagged the released CLI, the actual executable's
-help and schemas determined command syntax. The release baseline is 0.287.0.
+help and schemas determined command syntax. The release baseline was 0.287.0;
+the pinned CLI is now 0.335.0.
 No old product-hub content was used.
 
 The request-shape reference added in 0.2.1 comes from authorized live tests of
@@ -78,7 +79,9 @@ permission-granting hooks are included.
 ## CLI supply chain
 
 The setup skill's install steps, and the matching installers in `scripts/cli/`,
-use assets from the public Voiceflow CLI v0.287.0 release.
+use assets from the public Voiceflow CLI v0.335.0 release. Package 1.3.0 moved
+the pin from v0.287.0. The six SHA-256 values come from that release's
+`checksums.txt` asset and match the digests GitHub reports for each asset.
 All six SHA-256 values are pinned in the skill bundle, rather than trusting an
 unversioned latest installer. The binary remains a separately distributed
 Voiceflow component under its own licensing; it is not included in this repo

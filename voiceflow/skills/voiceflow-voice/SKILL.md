@@ -37,9 +37,8 @@ Read the dictionary from the agent read, under `voice.pronunciationDictionary`.
 Change it with `vf_agent_patch_pronunciation`: `set` adds a word or
 changes how it is said, and `remove` deletes words. Send only the words that
 change. Never send the whole dictionary through an agent update to change a few
-words: that replaces every entry and loses changes made since your read. CLI
-0.287.0 has no command for the patch; the UI step is Voice output in the
-agent's Behaviour settings. A change reaches calls only after the environment
+words: that replaces every entry and loses changes made since your read. The
+UI step is Voice output in the agent's Behaviour settings. A change reaches calls only after the environment
 is compiled.
 
 ## Voices

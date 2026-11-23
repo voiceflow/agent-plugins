@@ -55,7 +55,7 @@ def check(binary, timeout=25):
         result = subprocess.run(
             [binary, "workspace", "list", "--agent-mode", "--no-interactive",
              "--color", "never", "-o", "json"],
-            # CLI 0.287.0 can cancel JSON body reading with its inner --timeout.
+            # CLI 0.287.0 and 0.335.0 can cancel JSON body reading with their inner --timeout.
             # Bound the whole process instead; truncated output never verifies access.
             capture_output=True, text=True, encoding="utf-8", timeout=timeout, check=False,
         )

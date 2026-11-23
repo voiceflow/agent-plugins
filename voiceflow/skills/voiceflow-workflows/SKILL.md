@@ -102,10 +102,6 @@ used across the project, see the "Find text and owners" section of the
   runs another way: as the Initialization workflow, from a Workflow or Go to
   block step in another workflow, or as a workflow tool.
 
-CLI 0.287.0 has no commands for the raw read, adding several blocks, several
-links, replacing an action, arranging, or duplicating; use the single-item
-commands there.
-
 ## Workflow tools
 
 When the user asks for a workflow tool rather than a routing entry, attach it

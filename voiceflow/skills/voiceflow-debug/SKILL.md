@@ -37,8 +37,7 @@ live conversation or a debug session by transcript ID, and
 text, ignores case, and takes `|` between alternatives; it does not match the
 whole prompts and knowledge chunks an entry carries. Each result also counts
 entries per kind and level and reports token use per model, so a first query
-with `limit: 1` shows what the log holds. CLI 0.287.0 has no command for log
-queries; use `vf transcript get` there.
+with `limit: 1` shows what the log holds.
 
 A `vf_conversation_send` result leaves out the knowledge chunks a search
 returned and a playbook's whole instructions. To see the chunks, query the log
