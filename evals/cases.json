@@ -55,7 +55,7 @@
       "fixture": "Authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp?version=2.",
       "prompt": "Connect me to Voiceflow.",
       "required": [
-        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3, or to https://mcp.voiceflow.com/mcp?version=3&dynamic=true in Cursor or GitHub Copilot",
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3, or to https://mcp.voiceflow.com/mcp?version=3&dynamic=true in Cursor, GitHub Copilot, Windsurf, or Antigravity",
         "Verify a read with the account tools after reconnecting"
       ],
       "forbidden": [
@@ -69,7 +69,7 @@
       "fixture": "Authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp.",
       "prompt": "Connect me to Voiceflow.",
       "required": [
-        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3, or to https://mcp.voiceflow.com/mcp?version=3&dynamic=true in Cursor or GitHub Copilot",
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3, or to https://mcp.voiceflow.com/mcp?version=3&dynamic=true in Cursor, GitHub Copilot, Windsurf, or Antigravity",
         "Verify a read with the account tools after reconnecting"
       ],
       "forbidden": [
@@ -88,6 +88,36 @@
       ],
       "forbidden": [
         "Add a second account connection",
+        "Claim the account is connected before a read succeeds"
+      ]
+    },
+    {
+      "id": "setup-mcp-windsurf-dynamic",
+      "category": "setup",
+      "fixture": "Windsurf with an authenticated Voiceflow account MCP connection saved with the URL https://mcp.voiceflow.com/mcp?version=3. Windsurf caps how many MCP tools it lists, so vf_workspace_list, vf_project_list, and vf_get_started are not in the tool list.",
+      "prompt": "Connect me to Voiceflow.",
+      "required": [
+        "Repair the connection to https://mcp.voiceflow.com/mcp?version=3&dynamic=true",
+        "Reload the tools and verify a read with the account tools"
+      ],
+      "forbidden": [
+        "Keep the plain URL https://mcp.voiceflow.com/mcp?version=3 in the Windsurf connection",
+        "Add a second account connection",
+        "Claim the account is connected before a read succeeds"
+      ]
+    },
+    {
+      "id": "setup-mcp-antigravity-dynamic",
+      "category": "setup",
+      "fixture": "Antigravity with no Voiceflow account MCP connection and no Voiceflow CLI. The user asks for the MCP server instead of the CLI. Antigravity caps how many MCP tools it lists.",
+      "prompt": "Connect Voiceflow to Antigravity through the Voiceflow MCP server, not the CLI.",
+      "required": [
+        "Add the account MCP with the URL https://mcp.voiceflow.com/mcp?version=3&dynamic=true and browser OAuth",
+        "After sign-in, reload the tools and verify a read with the account tools"
+      ],
+      "forbidden": [
+        "Give Antigravity the plain URL https://mcp.voiceflow.com/mcp?version=3",
+        "Construct an OAuth authorization URL",
         "Claim the account is connected before a read succeeds"
       ]
     },
