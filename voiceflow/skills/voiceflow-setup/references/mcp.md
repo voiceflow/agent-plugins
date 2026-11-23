@@ -16,7 +16,7 @@ without a customer terminal. It does not require local software installation.
 | Host | Server URL |
 | --- | --- |
 | Cursor, including Cursor CLI | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
-| GitHub Copilot CLI and Copilot in VS Code | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
+| GitHub Copilot CLI and GitHub Copilot in VS Code | `https://mcp.voiceflow.com/mcp?version=3&dynamic=true` |
 | Codex | `https://mcp.voiceflow.com/mcp?version=3` |
 | Claude Code, Claude Desktop, and claude.ai | `https://mcp.voiceflow.com/mcp?version=3` |
 | ChatGPT and every other host | `https://mcp.voiceflow.com/mcp?version=3` |
