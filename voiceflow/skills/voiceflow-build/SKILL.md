@@ -59,12 +59,11 @@ Read the complete existing routing registry before updating it: a supplied
 playbooks/workflows list replaces the list. Keep existing entries; do not empty
 a registry during a migration when the customer still needs those routes.
 
-A workflow runs when it is registered on the main agent, attached to the main
-agent as a workflow tool, which every playbook can call, reached from another
-workflow, or set as the Initialization workflow. The `voiceflow-workflows` skill
-describes workflow tools. Never attach a workflow tool to a playbook. Register a
-workflow on the main agent only for routing: doing so for a workflow that
-already runs another way changes routing.
+A workflow runs when it is in the main agent's `workflows` list, reached from
+another workflow, or set as the Initialization workflow. A workflow is never a
+tool: do not create a tool of type `workflow`. The `voiceflow-workflows` skill
+explains how to add a workflow to the main agent. Add one only for routing:
+doing so for a workflow that already runs another way changes routing.
 
 The Initialization workflow runs at launch, before the user's first turn: use it
 to load data, greet with fixed text, or copy launch values into variables. Read

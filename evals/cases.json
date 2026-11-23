@@ -503,13 +503,14 @@
       "fixture": "Synthetic project with an Order lookup workflow and a Returns playbook; account MCP connected.",
       "prompt": "Let the returns playbook run our order lookup workflow.",
       "required": [
-        "Attach the workflow as a tool on the main agent with a global target",
-        "Give the tool a description that says when to run it",
-        "Explain that every playbook can call a workflow tool on the main agent"
+        "Add the workflow to the main agent's workflows with the agent update operation and a workflows array",
+        "Give the workflow a description that says when to run it",
+        "Add a routing rule to the main agent's instructions that says when to use the workflow",
+        "Explain that workflows are added to the main agent's workflows, not as tools"
       ],
       "forbidden": [
-        "Attach the workflow tool to the playbook",
-        "Add the workflow to the main agent's workflows list"
+        "Create a tool of type workflow",
+        "Attach a workflow tool to the playbook"
       ]
     },
     {

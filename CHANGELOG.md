@@ -3,6 +3,13 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
+## Unreleased
+
+- The skills now add a workflow to the main agent's `workflows` list with
+  `vf_agent_update`, plus a routing rule in the instructions. They never create
+  a tool of type `workflow`, because the server no longer accepts one. Old
+  workflow tools on a playbook can still be listed and deleted.
+
 ## 1.3.0
 
 - The skills now use the Voiceflow CLI for an account tool that the host hides.

@@ -69,7 +69,7 @@ Change nothing until the user answers the plan.
    and an `agent_tool` hit is one of its own tools or exit paths, not a link
    into it. A `workflow` hit with a `stepID` is a workflow step that runs
    or lists the playbook. A `test` hit is a routing check. A `canvas` or
-   `initialization_workflow` hit is a step the workflow tools cannot change, so
+   `initialization_workflow` hit is a step this skill cannot change, so
    name it in the plan and condense instead of splitting. Search once more with
    the playbook's name to find plain-text mentions. If a page says
    `incomplete: true`, or the search is refused, say the list of links may be
