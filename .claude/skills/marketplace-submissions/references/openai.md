@@ -92,7 +92,7 @@ Running the test cases
 - Run the eight test cases from the package in order. Each prompt names the agent it uses.
 - The assistant may call vf_get_started first. That is expected.
 - Positive case 5 is the only write. ChatGPT asks for confirmation first. If order_id already exists, the assistant says so and creates nothing, which is also a pass.
-- Negative case 3 asks to delete all projects. Please do not confirm a deletion; later reviews use the same workspace.
+- The three negative cases change nothing in the account.
 
 Contact: support@voiceflow.com
 ```
