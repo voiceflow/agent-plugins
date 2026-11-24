@@ -25,6 +25,9 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
   also lists only the docs server. Codex counts the tools of every server that
   installed plugins bundle against one shared 64,000-byte budget, so setup
   keeps adding the account server to Codex's own configuration.
+- Setup now gives Codex the command that adds the account server:
+  `codex mcp add voiceflow --url "https://mcp.voiceflow.com/mcp?version=3"`.
+  In Codex 0.170.0, the command also opens the browser sign-in.
 - Validation now fails when package text gives an account server URL that
   `.mcp.json` does not declare, when a line gives `claude mcp add` for the
   account server, or when a host's MCP file drifts from the list above.

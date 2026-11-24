@@ -1,5 +1,5 @@
 {
-  "package_version": "1.2.2",
+  "package_version": "1.3.1",
   "review": {
     "test_cases": {
       "positive": [
@@ -57,6 +57,6 @@
     "commerce_description": "This plugin does not sell products or process payments."
   },
   "publication": {
-    "release_notes": "Version 1.2.2 is the first directory release of the Voiceflow plugin. It connects your Voiceflow account through the hosted Voiceflow MCP server with OAuth sign-in. The plugin adds 18 skills for building, testing, debugging, and improving Voiceflow agents. They cover prompts and playbooks, workflows, functions, integrations, knowledge bases, messages, voice, phone numbers, the web chat widget, transcripts, evaluations, and environments. Product questions are answered from the Voiceflow docs through the same server. Changes to your account follow your requests and ChatGPT's confirmation prompts."
+    "release_notes": "Version 1.3.1 is the first directory release of the Voiceflow plugin. It connects your Voiceflow account through the hosted Voiceflow MCP server with OAuth sign-in. The plugin adds 18 skills for building, testing, debugging, and improving Voiceflow agents. They cover prompts and playbooks, workflows, functions, integrations, knowledge bases, messages, voice, phone numbers, the web chat widget, transcripts, evaluations, and environments. Product questions are answered from the Voiceflow docs through the same server. Changes to your account follow your requests and ChatGPT's confirmation prompts."
   }
 }

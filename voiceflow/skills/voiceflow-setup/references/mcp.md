@@ -40,6 +40,17 @@ of those servers. A server in Codex's own configuration does not count against
 it. OpenAI's plugin rules also do not allow a generic caller for operations
 that are not listed as tools.
 
+In Codex, add the account server with this command. Keep the URL in quotes,
+because `?` is a wildcard in some shells.
+
+```sh
+codex mcp add voiceflow --url "https://mcp.voiceflow.com/mcp?version=3"
+```
+
+With Codex 0.170.0, this command also opens the browser sign-in, so a
+separate `codex mcp login voiceflow` is not needed. Run that command only when
+the sign-in did not finish. Then verify a read as the setup guide says.
+
 The URL pins MCP version 3, with or without `dynamic=true`. Version 3 serves
 the tools that these skills name, such as `vf_project_list`. Each plugin
 release pairs with one MCP server version. The server default can move to a

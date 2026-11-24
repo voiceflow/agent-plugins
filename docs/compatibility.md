@@ -7,7 +7,7 @@ file installation, observed agent behavior, and real host onboarding.
 | Surface | Current evidence | Status / limit |
 | --- | --- | --- |
 | Claude Code | Isolated native plugin installation, all sixteen skills, references, license notices, and docs MCP configuration | Packaging verified; full fresh-account OAuth and next-chat acceptance still required |
-| Codex CLI | Isolated native plugin installation, all sixteen skills, references, license notices, and docs MCP configuration | Packaging verified; full fresh-account OAuth and next-chat acceptance still required |
+| Codex CLI | Codex CLI 0.170.0 on macOS, 2026-11-24: installed 1.3.0 from GitHub, all eighteen skills listed, and the docs server answered. The account server was added with `codex mcp add` and signed in through OAuth. Codex listed 276 account tools and read workspaces, projects, and agent instructions through it, and again through CLI 0.287.0 | Install, sign-in, and account reads verified with an existing account; fresh-account onboarding not run |
 | GitHub Copilot CLI | None recorded | Untested; the install commands follow GitHub's plugin documentation |
 | Cursor | Manifest checks. The earlier skill-folder test used the installer removed in 1.1.1 | Experimental; team marketplace install, skills.sh, and interactive discovery not verified locally |
 | Chat assistants with remote MCP | Capability-based setup guide and offline routing evaluations | Experimental; no named chat application's end-to-end onboarding is certified by these simulations |
@@ -22,7 +22,7 @@ file installation, observed agent behavior, and real host onboarding.
 | Docs MCP use | Eight focused final runs on 0.4.1 with live public docs and simulated account state | Consultation/attribution evidence; not real OAuth or customer-resolution evidence |
 
 The latest recorded native host versions were Claude Code **2.1.124** and Codex
-CLI **0.162.0-alpha.2**. Minimum supported client versions are not established;
+CLI **0.170.0**. Minimum supported client versions are not established;
 older clients may need skills.sh, which needs Node.js. Python **3.10+** is
 required for the repository tools, not native plugin use or the CLI.
 

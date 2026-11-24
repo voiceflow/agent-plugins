@@ -18,7 +18,7 @@ active per plugin.
 
 ```bash
 git fetch --tags origin
-scripts/openai/build_zip.sh v1.2.1
+scripts/openai/build_zip.sh v1.3.1
 ```
 
 - The script exports the tag's `voiceflow/` folder and removes the files for
@@ -30,11 +30,10 @@ scripts/openai/build_zip.sh v1.2.1
   credentials, hooks, `.app.json`, extra MCP servers, and broken links. It also
   fails test cases that name a tool the server does not serve, and release
   notes that do not mention the version.
-- **Version:** each upload needs a higher version than the last.
-  `package_version` in `review.json` sets the version in the ZIP only. 1.2.2
-  carries the v1.2.1 plugin files, and the repository is already past it, so
-  its versions stay ahead. When an upload needs a new version, change it in the
-  release notes too.
+- **Version:** each upload needs a higher version than the last. 1.2.2 was
+  the last upload. `package_version` in `review.json` sets the version in the
+  ZIP. It is 1.3.1, the same as the repository release the ZIP is built from.
+  When an upload needs a new version, change it in the release notes too.
 - Run Gitleaks over `.submissions/openai/package` when it is installed. If it
   is not, say so in the report instead of downloading an unpinned binary.
 
