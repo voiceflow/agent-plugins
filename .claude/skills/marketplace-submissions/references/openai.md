@@ -11,7 +11,7 @@ active per plugin.
 | Business verification | https://platform.openai.com/settings/organization/general. Needs the org owner or the Apps Management Write role. |
 | Domain check | `https://mcp.voiceflow.com/.well-known/openai-apps-challenge` returns the token. |
 | One MCP server | The account server, limited to six groups with `toolsets`: `scripts/openai/mcp.json`. The docs server is left out; the skills fall back to the account server's `vf_docs_*` tools. |
-| Tool budget | The desktop app hides tools past 64,000 bytes, a budget shared by every installed plugin's MCP servers. A `toolsets` connection gets short server instructions, which keeps the six groups at 46,443 bytes. `tests/test_openai_package.py` fails when a test case names a tool outside those groups. To add a group, measure it first with the account server's budget test. |
+| Tool budget | The desktop app hides tools past 64,000 bytes, a budget shared by every installed plugin's MCP servers. A `toolsets` connection gets short server instructions, which keeps the six groups at 49,448 bytes. That includes the three workflow list tools, which creator-app#24868 lists on `toolsets` connections. `tests/test_openai_package.py` fails when a test case names a tool outside those groups. To add a group, measure it first with the account server's budget test. |
 | No generic executor | OpenAI's guidelines forbid a tool that runs operations not exposed one by one, which rules out `dynamic=true`. |
 
 ## Build the ZIP
