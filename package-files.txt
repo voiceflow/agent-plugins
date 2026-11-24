@@ -1,4 +1,5 @@
 voiceflow/.claude-plugin/plugin.json
+voiceflow/.codex-plugin/mcp.json
 voiceflow/.codex-plugin/plugin.json
 voiceflow/.cursor-plugin/plugin.json
 voiceflow/.mcp.json

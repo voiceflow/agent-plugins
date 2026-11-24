@@ -12,7 +12,7 @@ CLI_VERSION = ROOT / "voiceflow/skills/voiceflow-setup/scripts/cli-version.txt"
 REPOSITORY = "voiceflow/cli"
 SPEC_PATH = ".speakeasy/out.openapi.yaml"
 WORKFLOW_PATH = ".speakeasy/workflow.yaml"
-# Commands the CLI defines by hand rather than from the spec (internal/cli/*.go, unchanged from v0.287.0 to v0.335.0).
+# Commands the CLI defines by hand rather than from the spec (internal/cli/*.go, unchanged from v0.287.0 to v0.337.0).
 HAND_WRITTEN_COMMANDS = ("auth login", "auth logout", "auth whoami", "configure", "docs get",
                          "docs search", "explore", "version", "whoami")
 DOCS_MCP_TOOLS = ("ask_voiceflow", "get_voiceflow_changelog", "read_voiceflow_page", "search_voiceflow")

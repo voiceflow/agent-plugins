@@ -43,9 +43,15 @@ def main():
                 if source.is_file() and (source.suffix == ".md" or source.name == "LICENSE"):
                     assert (cached[0] / source.relative_to(skills)).read_bytes() == source.read_bytes()
             assert (cached[0].parent / "LICENSE").read_bytes() == (ROOT / "LICENSE").read_bytes()
-            for name in ("mcp.json", ".mcp.json"):
+            for name in ("mcp.json", ".mcp.json", ".codex-plugin/mcp.json"):
                 assert (cached[0].parent / name).read_bytes() == (ROOT / "voiceflow" / name).read_bytes()
-            print(f"{host}: installed, enabled, all {len(expected)} skills/references and docs MCP configurations match source")
+            if host == "codex":
+                # Codex counts the tools of every server that installed plugins bundle against one shared budget,
+                # so the plugin must bundle only the docs server there. Setup adds the account server to Codex's
+                # own configuration, which does not count. Listing reads configuration; it does not sign in.
+                servers = json.loads(run([host, "mcp", "list", "--json"], env, directory))
+                assert [server["name"] for server in servers] == ["voiceflow-knowledge"], servers
+            print(f"{host}: installed, enabled, all {len(expected)} skills/references and MCP configurations match source")
     print("Cursor runtime discovery must be tested in Cursor; no global configuration was changed.")
 
 

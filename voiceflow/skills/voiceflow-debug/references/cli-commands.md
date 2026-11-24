@@ -5,7 +5,7 @@
 Use this table only for an account MCP tool that your host does not list, as
 the [operation contract](operations.md#use-the-cli-for-a-hidden-tool) says.
 Each row gives the Voiceflow CLI command that runs the same operation.
-The table matches CLI 0.335.0 and the MCP tools of the same release.
+The table matches CLI 0.337.0 and the MCP tools of the same release.
 
 MCP fields and CLI flags differ, so read `vf <command> --help` before the
 first call. Add `--agent-mode --no-interactive --color never -o json` to each command.
@@ -13,6 +13,7 @@ first call. Add `--agent-mode --no-interactive --color never -o json` to each co
 | MCP tool | CLI command |
 | --- | --- |
 | `vf_agent_add_tool_message` | `vf agent add-tool-message` |
+| `vf_agent_add_workflow` | `vf agent add-workflow` |
 | `vf_agent_delete_tool_message` | `vf agent delete-tool-message` |
 | `vf_agent_get` | `vf agent get` |
 | `vf_agent_get_initialization_workflow` | `vf agent get-initialization-workflow` |
@@ -22,12 +23,14 @@ first call. Add `--agent-mode --no-interactive --color never -o json` to each co
 | `vf_agent_patch_voices` | `vf agent patch-voices` |
 | `vf_agent_read_instructions` | `vf agent read-instructions` |
 | `vf_agent_read_prompt` | `vf agent read-prompt` |
+| `vf_agent_remove_workflow` | `vf agent remove-workflow` |
 | `vf_agent_search_instructions` | `vf agent search-instructions` |
 | `vf_agent_search_prompt` | `vf agent search-prompt` |
 | `vf_agent_search_voices` | `vf agent search-voices` |
 | `vf_agent_set_initialization_workflow` | `vf agent set-initialization-workflow` |
 | `vf_agent_update` | `vf agent update` |
 | `vf_agent_update_tool_message` | `vf agent update-tool-message` |
+| `vf_agent_update_workflow` | `vf agent update-workflow` |
 | `vf_analytics_query_api_tool_usage` | `vf analytics query api-tool-usage` |
 | `vf_analytics_query_call_count` | `vf analytics query call-count` |
 | `vf_analytics_query_call_duration` | `vf analytics query call-duration` |
@@ -107,6 +110,11 @@ first call. Add `--agent-mode --no-interactive --color never -o json` to each co
 | `vf_evaluation_queue_runs` | `vf evaluation queue-runs` |
 | `vf_evaluation_run` | `vf evaluation run` |
 | `vf_evaluation_update` | `vf evaluation update` |
+| `vf_event_create` | `vf event create` |
+| `vf_event_delete` | `vf event delete` |
+| `vf_event_get` | `vf event get` |
+| `vf_event_list` | `vf event list` |
+| `vf_event_update` | `vf event update` |
 | `vf_function_check` | `vf function check` |
 | `vf_function_create` | `vf function create` |
 | `vf_function_create_path` | `vf function path create` |
@@ -278,9 +286,6 @@ fails, the items created before it stay.
 
 | MCP tool | Instead |
 | --- | --- |
-| `vf_agent_add_workflow` | No CLI command |
-| `vf_agent_remove_workflow` | No CLI command |
-| `vf_agent_update_workflow` | No CLI command |
 | `vf_api_tool_create_many` | `vf api-tool create`, once per item |
 | `vf_api_tool_create_many_variables` | `vf api-tool variable create`, once per item |
 | `vf_environment_export` | No CLI command |

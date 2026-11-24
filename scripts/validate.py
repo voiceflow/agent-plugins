@@ -26,22 +26,41 @@ LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 DOCS_MCP_URL = "https://www.voiceflow.com/docs/mcp?logging=off"
 DOCS_MCP_ENDPOINT = re.compile(r"https://www\.voiceflow\.com/docs/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/*.py", "tests/*.py")
-# The account MCP has two accepted URLs. The hosts in DYNAMIC_URL_HOST_NAMES cap or trim long tool lists, so they add
-# `dynamic=true`: the server lists about a dozen tools and runs the rest by name. This needs
-# voiceflow/creator-app#24625 deployed. Codex, Claude, ChatGPT, and other hosts use the plain URL. Codex limits
-# tool list size only for servers bundled inside a plugin, and OpenAI's plugin guidelines forbid a generic
-# executor for operations that are not listed as tools. A package line that names a host and an account MCP
-# URL must give that host's URL. The changelog and the eval fixtures keep older URLs on purpose, so only the
-# package is checked. The registry entry keeps the full-list URL. The setup guide must name each host below on
-# a line that gives its URL, so a host cannot drop out of the table unnoticed.
+# The account MCP has one URL, the one voiceflow/.mcp.json declares. The hosts in DYNAMIC_URL_HOST_NAMES cap or
+# trim long tool lists, so they add `&dynamic=true` to it: the server lists about a dozen tools and runs the rest
+# by name. This needs voiceflow/creator-app#24625 deployed. Codex, Claude, ChatGPT, and other hosts use the plain
+# URL. Codex limits tool list size only for servers bundled inside a plugin, and OpenAI's plugin guidelines forbid
+# a generic executor for operations that are not listed as tools. A package line that names a host and the account
+# MCP URL must say whether that host adds the parameter. The changelog and the eval fixtures keep older URLs on
+# purpose, so only the package is checked. The registry entry keeps the full-list URL. The setup guide must name
+# each host below on a line that gives the URL, with the parameter for the hosts that add it, so a host cannot drop
+# out of the table unnoticed.
 ACCOUNT_MCP_URL = "https://mcp.voiceflow.com/mcp?version=3"
-ACCOUNT_MCP_DYNAMIC_URL = ACCOUNT_MCP_URL + "&dynamic=true"
+DYNAMIC_PARAMETER = "&dynamic=true"
+ACCOUNT_MCP_DYNAMIC_URL = ACCOUNT_MCP_URL + DYNAMIC_PARAMETER
 ACCOUNT_MCP_ENDPOINT = re.compile(r"https://mcp\.voiceflow\.com/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DYNAMIC_URL_HOST_NAMES = ("Cursor", "Copilot", "Windsurf", "Antigravity")
 PLAIN_URL_HOST_NAMES = ("Codex", "Claude", "ChatGPT")
 DYNAMIC_URL_HOSTS = re.compile(rf"\b(?:{'|'.join(DYNAMIC_URL_HOST_NAMES)})\b")
 PLAIN_URL_HOSTS = re.compile(rf"\b(?:{'|'.join(PLAIN_URL_HOST_NAMES)})\b")
+DYNAMIC_HOSTS_TEXT = "Cursor, GitHub Copilot, Windsurf, and Antigravity"
 ACCOUNT_URL_GUIDE = "voiceflow/skills/voiceflow-setup/references/mcp.md"
+# Anthropic's plugin directory rejects a plugin whose text tells Claude or the user to add an MCP server that the
+# plugin does not declare (check DP_TAG_BOUNCE). Claude Code reads only .mcp.json, so it declares the account
+# server beside the docs server, and package text may give only the URLs it declares. Text for the hosts in
+# DYNAMIC_URL_HOST_NAMES names the same URL and the `&dynamic=true` parameter, never a second URL. Codex 0.170.0,
+# Cursor, and GitHub Copilot CLI read the Agent Plugins manifest and mcp.json, which keeps only the docs server.
+# Cursor and GitHub Copilot need the parameter. Codex counts every tool of every server that installed plugins bundle
+# against one shared 64,000-byte budget and hides the tools past it, while a server in Codex's own configuration
+# does not count. Codex versions that predate Agent Plugins read .codex-plugin/plugin.json, which names its own
+# docs-only file. The OpenAI package build replaces mcp.json and removes the other two files.
+ACCOUNT_SERVER = "voiceflow"
+CLAUDE_MCP = {"mcpServers": {ACCOUNT_SERVER: {"type": "http", "url": ACCOUNT_MCP_URL},
+                             "voiceflow-knowledge": {"type": "http", "url": DOCS_MCP_URL}}}
+PORTABLE_MCP = {"$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+                "mcpServers": {"voiceflow-knowledge": {"type": "streamable-http", "url": DOCS_MCP_URL}}}
+CODEX_MCP_PATH = "./.codex-plugin/mcp.json"
+CODEX_MCP = {"mcpServers": {"voiceflow-knowledge": {"type": "http", "url": DOCS_MCP_URL}}}
 REGISTRY_SCHEMA = "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
 SKILLS_SH_SCHEMA = "https://skills.sh/schemas/skills.sh.schema.json"
 KEYWORD = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
@@ -94,30 +113,47 @@ def text_files(root, patterns):
 
 
 def account_url_problems(root):
-    """Report each account MCP URL in the package that is not one of the two accepted URLs or not the URL of
-    the host its line names, and each host that no line of the setup guide names with its URL."""
+    """Report each account MCP URL in the package that is not the URL .mcp.json declares, a line whose host and
+    `dynamic=true` disagree, a `claude mcp add` for the account server, a setup guide that does not give the URL,
+    the parameter, and the name of the server the plugin bundles, and each host that no line of the setup guide
+    names with the URL and, for a host that adds it, the parameter."""
     problems = []
     for path in text_files(root, ("voiceflow/**/*",)):
         label = path.relative_to(root).as_posix()
         for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
             urls = {match.group() for match in ACCOUNT_MCP_ENDPOINT.finditer(line)}
-            for url in sorted(urls - {ACCOUNT_MCP_URL, ACCOUNT_MCP_DYNAMIC_URL}):
-                problems.append(f"{label}:{number}: account MCP URL must be {ACCOUNT_MCP_URL} "
-                                f"or {ACCOUNT_MCP_DYNAMIC_URL}, not {url}")
+            for url in sorted(urls - {ACCOUNT_MCP_URL}):
+                problems.append(f"{label}:{number}: give only the account MCP URL that voiceflow/.mcp.json "
+                                f"declares, {ACCOUNT_MCP_URL}, not {url}; for {DYNAMIC_HOSTS_TEXT}, say to add "
+                                f"`{DYNAMIC_PARAMETER}` to it")
+            if not urls:
+                continue
             dynamic, plain = DYNAMIC_URL_HOSTS.search(line), PLAIN_URL_HOSTS.search(line)
-            if urls and dynamic and plain:
+            if dynamic and plain:
                 problems.append(f"{label}:{number}: name {dynamic.group()} and {plain.group()} on separate lines, "
-                                "because they use different account MCP URLs")
-            elif dynamic and ACCOUNT_MCP_URL in urls:
-                problems.append(f"{label}:{number}: {dynamic.group()} uses {ACCOUNT_MCP_DYNAMIC_URL}")
-            elif plain and ACCOUNT_MCP_DYNAMIC_URL in urls:
-                problems.append(f"{label}:{number}: {plain.group()} uses {ACCOUNT_MCP_URL}")
+                                "because only one of them adds dynamic=true")
+            elif dynamic and DYNAMIC_PARAMETER not in line:
+                problems.append(f"{label}:{number}: {dynamic.group()} adds `{DYNAMIC_PARAMETER}` to {ACCOUNT_MCP_URL}")
+            elif plain and "dynamic=true" in line:
+                problems.append(f"{label}:{number}: {plain.group()} uses {ACCOUNT_MCP_URL} without dynamic=true")
+            if "claude mcp add" in line:
+                problems.append(f"{label}:{number}: Claude Code gets the account server from the plugin; "
+                                "do not give a `claude mcp add` command for it")
     guide = root / ACCOUNT_URL_GUIDE
-    lines = guide.read_text(encoding="utf-8").splitlines() if guide.is_file() else []
-    for hosts, url in ((DYNAMIC_URL_HOST_NAMES, ACCOUNT_MCP_DYNAMIC_URL), (PLAIN_URL_HOST_NAMES, ACCOUNT_MCP_URL)):
+    text = guide.read_text(encoding="utf-8") if guide.is_file() else ""
+    for needed, what in ((ACCOUNT_MCP_URL, "the account MCP URL"), (DYNAMIC_PARAMETER, "the parameter"),
+                         (ACCOUNT_SERVER, "the name of the account server the plugin bundles")):
+        if f"`{needed}`" not in text:
+            problems.append(f"{ACCOUNT_URL_GUIDE}: setup must give {what} `{needed}`")
+    lines = text.splitlines()
+    for hosts, adds_parameter in ((DYNAMIC_URL_HOST_NAMES, True), (PLAIN_URL_HOST_NAMES, False)):
         for host in hosts:
-            if not any(re.search(rf"\b{host}\b", line) and f"`{url}`" in line for line in lines):
-                problems.append(f"{ACCOUNT_URL_GUIDE}: setup must give {host} the account MCP URL {url}")
+            if not any(re.search(rf"\b{host}\b", line) and f"`{ACCOUNT_MCP_URL}`" in line
+                       and (f"`{DYNAMIC_PARAMETER}`" in line if adds_parameter else "dynamic=true" not in line)
+                       for line in lines):
+                how = f" with `{DYNAMIC_PARAMETER}` added" if adds_parameter else ""
+                problems.append(f"{ACCOUNT_URL_GUIDE}: setup must give {host} the account MCP URL "
+                                f"{ACCOUNT_MCP_URL}{how}")
     return problems
 
 
@@ -297,13 +333,14 @@ def validate(root=ROOT):
     record = dict(line.split(": ", 1) for line in knowledge.split("---", 2)[1].strip().splitlines())
     assert record == {"package": data[0]["name"], "version": data[0]["version"]}, "Skill package version differs"
     validate_listings(root)
-    portable = json.loads((plugin / "mcp.json").read_text(encoding="utf-8"))
-    legacy = json.loads((plugin / ".mcp.json").read_text(encoding="utf-8"))
-    assert portable["$schema"] == "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
-    for config, transport in ((portable, "streamable-http"), (legacy, "http")):
-        assert config["mcpServers"] == {"voiceflow-knowledge": {
-            "type": transport, "url": DOCS_MCP_URL}}, "Docs MCP config drift"
-    assert data[2]["mcpServers"] == "./.mcp.json", "Missing Codex MCP adapter"
+    for name, expected, message in (
+            (".mcp.json", CLAUDE_MCP, "Claude MCP config drift: .mcp.json declares the account and docs servers"),
+            ("mcp.json", PORTABLE_MCP, "Portable MCP config drift: mcp.json declares only the docs server"),
+            (CODEX_MCP_PATH, CODEX_MCP, "Codex MCP config drift: its file declares only the docs server")):
+        assert json.loads((plugin / name).read_text(encoding="utf-8")) == expected, message
+    assert data[2]["mcpServers"] == CODEX_MCP_PATH, f"Codex manifest must name {CODEX_MCP_PATH}"
+    for manifest, host in ((data[0], "Agent Plugins"), (data[1], "Claude"), (data[3], "Cursor")):
+        assert "mcpServers" not in manifest, f"The {host} manifest must not name MCP servers; it reads the default file"
     for folder in (".claude-plugin", ".cursor-plugin", ".agents/plugins"):
         market = json.loads((root / folder / "marketplace.json").read_text(encoding="utf-8"))
         assert market["name"] == "voiceflow-plugins"
@@ -329,7 +366,7 @@ def validate(root=ROOT):
         raise ReferenceProblems(types)
     scripts = root / CLI_DATA
     version = (scripts / "cli-version.txt").read_text(encoding="utf-8").strip()
-    assert version == "0.335.0", "Update CLI contract fixtures when changing baseline"
+    assert version == "0.337.0", "Update CLI contract fixtures when changing baseline"
     checksums = (scripts / "checksums.txt").read_text(encoding="utf-8").splitlines()
     assert len(checksums) == 6
     assert all(re.fullmatch(r"[a-f0-9]{64}  vf_(Darwin|Linux|Windows)_(arm64|x86_64)\.(tar\.gz|zip)", line) for line in checksums)

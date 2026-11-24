@@ -12,6 +12,8 @@ Codex, Cursor, and chat assistants that can connect remote MCP servers.
   environments.
 - A connection to the public Voiceflow docs server. The assistant uses it to
   look up current product guidance before it answers or changes anything.
+- In Claude Code and the Claude apps, a connection to the Voiceflow MCP server
+  for your account. You sign in through your browser before its first use.
 
 ## Install
 
@@ -32,15 +34,17 @@ npx skills add voiceflow/agent-plugins
 ## How setup works
 
 Ask your assistant to connect you to Voiceflow. The `voiceflow-setup` skill
-checks what your assistant can do, then takes one of two paths.
+checks what your assistant can do, then takes one of three paths.
 
-- **An assistant with a terminal** uses the Voiceflow CLI. If the CLI is
-  missing, setup can download version 0.335.0 from the official release at
+- **Claude Code and the Claude apps** use the Voiceflow MCP server that this
+  plugin includes. You sign in through your browser.
+- **Another assistant with a terminal** uses the Voiceflow CLI. If the CLI is
+  missing, setup can download version 0.337.0 from the official release at
   [github.com/voiceflow/cli](https://github.com/voiceflow/cli/releases). Before
   it installs anything, it checks the download against SHA-256 checksums pinned
   in this plugin. It never replaces a CLI that is already installed. You then
   sign in through your browser.
-- **An assistant with remote MCP** connects the hosted Voiceflow MCP server.
+- **Another assistant with remote MCP** connects the same Voiceflow MCP server.
   You sign in through your browser.
 
 Some hosts show only part of the MCP server's tools, such as the ChatGPT
@@ -54,15 +58,16 @@ asks what you want to build or improve.
 
 ## Data and services
 
-- **Voiceflow MCP server**, `https://mcp.voiceflow.com/mcp?version=3`. It uses
-  OAuth and asks for workspace read and write access. Setup only reads. Later changes
+- **Voiceflow MCP server**, `https://mcp.voiceflow.com/mcp?version=3`. This
+  plugin declares it for Claude Code and the Claude apps. It uses OAuth and
+  asks for workspace read and write access. Setup only reads. Later changes
   follow your requests and your assistant's approval prompts.
 
-  Cursor, GitHub Copilot, Windsurf, and Antigravity use `https://mcp.voiceflow.com/mcp?version=3&dynamic=true`
-  instead. These hosts cap or trim long tool lists, so this URL lists about a
-  dozen tools and the assistant runs the rest by name. Your host's per-tool approval settings then
-  see two tools that run those other operations: one for reads and one for
-  writes.
+  Cursor, GitHub Copilot, Windsurf, and Antigravity add `&dynamic=true` to
+  the end of this URL. These hosts cap or trim long tool lists. With that
+  parameter, the server lists about a dozen tools and the assistant runs the
+  rest by name. Your host's per-tool approval settings then see two tools that
+  run those other operations: one for reads and one for writes.
 
   The server also has docs tools. The assistant uses them only when the docs
   server below is not connected. The server forwards your question to the docs

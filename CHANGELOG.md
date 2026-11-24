@@ -3,8 +3,36 @@
 Package versions are independent of the Voiceflow CLI version. This file records
 changes; an entry is not proof that a GitHub release or marketplace listing exists.
 
-## Unreleased
+## 1.3.1
 
+- The plugin now declares the Voiceflow account MCP server for Claude Code and
+  the Claude apps. Anthropic's plugin directory rejected 1.3.0 because the
+  skills told Claude to add an MCP server that the plugin did not declare, so
+  its tools could not be reviewed. `.mcp.json` now lists the account server as
+  `voiceflow`, at `https://mcp.voiceflow.com/mcp?version=3`, beside the docs
+  server. It is the same URL as the account connector submitted to the Claude
+  directory.
+- In Claude Code, the account server arrives with the plugin and needs one
+  browser sign-in. Setup signs in through the host's authenticate tool or
+  `/mcp` instead of installing the CLI, then verifies a read. It never adds
+  the account server with `claude mcp add`.
+- The skills now give one account server URL. Cursor, GitHub Copilot,
+  Windsurf, and Antigravity add `&dynamic=true` to that URL; the skills no
+  longer write it as a second URL.
+- Codex, Cursor, and GitHub Copilot CLI still get only the docs server from the
+  plugin. They read `mcp.json`, which is unchanged. Codex versions that read
+  only `.codex-plugin/plugin.json` now read `.codex-plugin/mcp.json`, which
+  also lists only the docs server. Codex counts the tools of every server that
+  installed plugins bundle against one shared 64,000-byte budget, so setup
+  keeps adding the account server to Codex's own configuration.
+- Setup now gives Codex the command that adds the account server:
+  `codex mcp add voiceflow --url "https://mcp.voiceflow.com/mcp?version=3"`.
+  In Codex 0.170.0, the command also opens the browser sign-in.
+- Validation now fails when package text gives an account server URL that
+  `.mcp.json` does not declare, when a line gives `claude mcp add` for the
+  account server, or when a host's MCP file drifts from the list above.
+- Two new acceptance cases: `setup-claude-plugin-signin` and
+  `setup-claude-plugin-ready`. They have not been run.
 - The skills now add a workflow to the main agent's `workflows` list with
   `vf_agent_add_workflow`, where the main agent and every playbook can call it.
   They never create a tool of type `workflow`, because the server no longer
@@ -15,6 +43,11 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
   whole list with `vf_agent_update`, which could drop an entry that was left
   out. They now use `vf_agent_update` with `workflows` only to replace the
   whole list.
+- The pinned CLI moves from 0.335.0 to 0.337.0. The six checksums come from
+  the release's `checksums.txt`, and its sign-in code did not change. When a
+  host hides `vf_agent_add_workflow`, `vf_agent_update_workflow` or
+  `vf_agent_remove_workflow`, the skills can now run `vf agent add-workflow`,
+  `vf agent update-workflow` or `vf agent remove-workflow` instead.
 - The `workflow-tool-main-agent` acceptance case now expects the add tool. It
   also fails a reply that replaces the list without the workflows already in
   it. It has not been run.

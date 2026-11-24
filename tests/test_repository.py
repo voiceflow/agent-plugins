@@ -152,11 +152,15 @@ class PackageTypeTests(unittest.TestCase):
         self.assertEqual(self.problems({**images, "voiceflow/a.md": b"# Synthetic\n"}), [])
         self.assertEqual(validator.text_files(self.root, ("voiceflow/**/*",)), [self.root / "voiceflow/a.md"])
         self.assertEqual(validator.docs_url_problems(self.root), [])
-        hosts = [(host, validator.ACCOUNT_MCP_DYNAMIC_URL) for host in validator.DYNAMIC_URL_HOST_NAMES]
-        hosts += [(host, validator.ACCOUNT_MCP_URL) for host in validator.PLAIN_URL_HOST_NAMES]
-        self.assertEqual(validator.account_url_problems(self.root),
-                         [f"{validator.ACCOUNT_URL_GUIDE}: setup must give {host} the account MCP URL {url}"
-                          for host, url in hosts])
+        guide, plain, parameter = validator.ACCOUNT_URL_GUIDE, validator.ACCOUNT_MCP_URL, validator.DYNAMIC_PARAMETER
+        hosts = [(host, f" with `{parameter}` added") for host in validator.DYNAMIC_URL_HOST_NAMES]
+        hosts += [(host, "") for host in validator.PLAIN_URL_HOST_NAMES]
+        self.assertEqual(validator.account_url_problems(self.root), [
+            f"{guide}: setup must give the account MCP URL `{plain}`",
+            f"{guide}: setup must give the parameter `{parameter}`",
+            f"{guide}: setup must give the name of the account server the plugin bundles "
+            f"`{validator.ACCOUNT_SERVER}`",
+            *[f"{guide}: setup must give {host} the account MCP URL {plain}{how}" for host, how in hosts]])
 
 
 class InstallStepTests(unittest.TestCase):
@@ -345,40 +349,88 @@ class RepositoryTests(unittest.TestCase):
             problem = f"{guide.relative_to(root).as_posix()}:1: docs MCP URL must be {validator.DOCS_MCP_URL}"
             self.assertEqual(validator.docs_url_problems(root), [problem, problem])
 
-    def test_account_mcp_url_is_one_of_two_and_matches_the_host(self):
+    def test_package_names_only_the_declared_account_url(self):
         self.assertEqual(validator.account_url_problems(ROOT), [])
         plain, dynamic = validator.ACCOUNT_MCP_URL, validator.ACCOUNT_MCP_DYNAMIC_URL
-        bare = plain.split("?")[0]
+        parameter, bare = validator.DYNAMIC_PARAMETER, plain.split("?")[0]
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             guide = root / validator.ACCOUNT_URL_GUIDE
             guide.parent.mkdir(parents=True)
-            guide.write_text(f"| Cursor | `{dynamic}` |\n| Codex | `{plain}` |\n| Other hosts | `{plain}` |\n"
+            guide.write_text(f"| Cursor | `{plain}` with `{parameter}` added |\n| Codex | `{plain}` |\n"
                              f"Not `{bare}?version=2` or `{bare}`.\nIn Copilot, use `{plain}`.\n"
-                             f"In ChatGPT, use `{dynamic}`.\nIn Codex, use `{dynamic}`.\n"
-                             f"Cursor and Claude Code: `{dynamic}`.\nCodex and Claude Code: `{plain}`.\n"
-                             f"| Windsurf | `{dynamic}` |\nIn Antigravity, use `{plain}`.\n"
-                             f"Windsurf and Codex: `{plain}`.\n",
-                             encoding="utf-8")
+                             f"In ChatGPT, use `{plain}` with `{parameter}`.\nCursor: `{dynamic}`.\n"
+                             f"Cursor and Claude Code: `{plain}`.\n"
+                             f"Run `claude mcp add --transport http voiceflow \"{plain}\"`.\n"
+                             f"The plugin bundles `{validator.ACCOUNT_SERVER}`.\n"
+                             f"| Windsurf | `{plain}` with `{parameter}` added |\nIn Antigravity, use `{plain}`.\n"
+                             f"Windsurf and Codex: `{plain}`.\n", encoding="utf-8")
             label = guide.relative_to(root).as_posix()
-            allowed = f"account MCP URL must be {plain} or {dynamic}"
+            declared = f"give only the account MCP URL that voiceflow/.mcp.json declares, {plain}"
+            advice = f"for Cursor, GitHub Copilot, Windsurf, and Antigravity, say to add `{parameter}` to it"
             missing = f"{validator.ACCOUNT_URL_GUIDE}: setup must give"
+            with_parameter = f"the account MCP URL {plain} with `{parameter}` added"
             self.assertEqual(validator.account_url_problems(root), [
-                f"{label}:4: {allowed}, not {bare}", f"{label}:4: {allowed}, not {bare}?version=2",
-                f"{label}:5: Copilot uses {dynamic}", f"{label}:6: ChatGPT uses {plain}",
-                f"{label}:7: Codex uses {plain}",
-                f"{label}:8: name Cursor and Claude on separate lines, because they use different account MCP URLs",
-                f"{label}:11: Antigravity uses {dynamic}",
-                f"{label}:12: name Windsurf and Codex on separate lines, because they use different account MCP URLs",
-                f"{missing} Copilot the account MCP URL {dynamic}", f"{missing} Antigravity the account MCP URL {dynamic}",
+                f"{label}:3: {declared}, not {bare}; {advice}",
+                f"{label}:3: {declared}, not {bare}?version=2; {advice}",
+                f"{label}:4: Copilot adds `{parameter}` to {plain}",
+                f"{label}:5: ChatGPT uses {plain} without dynamic=true",
+                f"{label}:6: {declared}, not {dynamic}; {advice}",
+                f"{label}:7: name Cursor and Claude on separate lines, because only one of them adds dynamic=true",
+                f"{label}:8: Claude Code gets the account server from the plugin; "
+                "do not give a `claude mcp add` command for it",
+                f"{label}:11: Antigravity adds `{parameter}` to {plain}",
+                f"{label}:12: name Windsurf and Codex on separate lines, because only one of them adds dynamic=true",
+                f"{missing} Copilot {with_parameter}", f"{missing} Antigravity {with_parameter}",
                 f"{missing} ChatGPT the account MCP URL {plain}"])
-            # A guide that gives the dynamic URL only to Cursor and GitHub Copilot leaves out two hosts.
-            guide.write_text(f"| Cursor | `{dynamic}` |\n| GitHub Copilot | `{dynamic}` |\n| Codex | `{plain}` |\n"
-                             f"| Claude Code | `{plain}` |\n| ChatGPT and every other host | `{plain}` |\n",
-                             encoding="utf-8")
+            guide.write_text(f"Use `{plain}`.\n", encoding="utf-8")
             self.assertEqual(validator.account_url_problems(root), [
-                f"{missing} Windsurf the account MCP URL {dynamic}",
-                f"{missing} Antigravity the account MCP URL {dynamic}"])
+                f"{missing} the parameter `{parameter}`",
+                f"{missing} the name of the account server the plugin bundles `{validator.ACCOUNT_SERVER}`",
+                *[f"{missing} {host} {with_parameter}" for host in validator.DYNAMIC_URL_HOST_NAMES],
+                *[f"{missing} {host} the account MCP URL {plain}" for host in validator.PLAIN_URL_HOST_NAMES]])
+            # A guide that adds the parameter only for Cursor and GitHub Copilot leaves out two hosts.
+            guide.write_text(f"| Cursor | `{plain}` with `{parameter}` added |\n"
+                             f"| GitHub Copilot | `{plain}` with `{parameter}` added |\n| Codex | `{plain}` |\n"
+                             f"| Claude Code | `{plain}` |\n| ChatGPT and every other host | `{plain}` |\n"
+                             f"The plugin bundles `{validator.ACCOUNT_SERVER}`.\n", encoding="utf-8")
+            self.assertEqual(validator.account_url_problems(root), [
+                f"{missing} Windsurf {with_parameter}", f"{missing} Antigravity {with_parameter}"])
+
+    def test_claude_declares_the_account_server_and_other_hosts_do_not(self):
+        def drop_account(data):
+            del data["mcpServers"][validator.ACCOUNT_SERVER]
+
+        def add_account(data):
+            data["mcpServers"]["voiceflow"] = {"type": "http", "url": validator.ACCOUNT_MCP_URL}
+
+        cases = [
+            (".mcp.json", drop_account, "Claude MCP config drift"),
+            ("mcp.json", add_account, "Portable MCP config drift"),
+            (".codex-plugin/mcp.json", add_account, "Codex MCP config drift"),
+            (".codex-plugin/plugin.json", lambda data: data.update(mcpServers="./.mcp.json"),
+             "Codex manifest must name"),
+            (".claude-plugin/plugin.json", lambda data: data.update(mcpServers="./mcp.json"),
+             "Claude manifest must not name MCP servers"),
+            (".cursor-plugin/plugin.json", lambda data: data.update(mcpServers="./.mcp.json"),
+             "Cursor manifest must not name MCP servers"),
+        ]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name in ("voiceflow", ".agents", "mcp-registry"):
+                shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__"))
+            for name in ("LICENSE", "skills.sh.json"):
+                shutil.copyfile(ROOT / name, root / name)
+            for name, change, message in cases:
+                with self.subTest(name=name):
+                    path = root / "voiceflow" / name
+                    original = path.read_bytes()
+                    data = json.loads(original)
+                    change(data)
+                    path.write_text(json.dumps(data), encoding="utf-8")
+                    with self.assertRaisesRegex(AssertionError, message):
+                        validator.validate(root)
+                    path.write_bytes(original)
 
 
 class ListingTests(unittest.TestCase):

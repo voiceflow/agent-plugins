@@ -31,7 +31,7 @@ current. Never press submit or publish, and never change DNS.
 | Item | Value |
 | --- | --- |
 | Account MCP server | `https://mcp.voiceflow.com/mcp?version=3`. About 271 tools, OAuth with Dynamic Client Registration. |
-| Account MCP, OpenAI package | `...?version=3&toolsets=project,agent,knowledge_base,transcript,variable,workspace`, in `scripts/openai/mcp.json`. 46 real tools. With the short instructions a `toolsets` connection gets, they measure 46,443 bytes against a 48,000-byte margin under Codex's 64,000-byte budget. That budget is shared by every installed plugin's MCP servers, so the margin is headroom, not a guarantee. Adding any other group goes over the margin. |
+| Account MCP, OpenAI package | `...?version=3&toolsets=project,agent,knowledge_base,transcript,variable,workspace`, in `scripts/openai/mcp.json`. 49 real tools once creator-app#24868 deploys, including the three workflow list tools. With the short instructions a `toolsets` connection gets, they measure 49,448 bytes against a 50,000-byte margin under Codex's 64,000-byte budget. That budget is shared by every installed plugin's MCP servers, so the margin is headroom, not a guarantee. Adding any other group goes over the margin. |
 | Account MCP, dynamic mode | `...?version=3&dynamic=true`, about 12 tools plus search and call tools. Only for Cursor, GitHub Copilot, Windsurf, and Antigravity, which cap or trim long tool lists. Never for Codex or OpenAI: Codex does not list the call tools, and OpenAI forbids a generic executor. |
 | Docs MCP server | `https://www.voiceflow.com/docs/mcp?logging=off`. Server name "Voiceflow Knowledge", four read-only tools, no sign-in. Keep `?logging=off`; without it the server logs questions. |
 | Account MCP logging | No switch exists and none is needed. It logs the tool name, client, error flag, and duration, never arguments or results. |
@@ -44,13 +44,14 @@ current. Never press submit or publish, and never change DNS.
 
 ## Where each listing stands
 
-Status on 2026-11-23. Check the live state before acting on it.
+Status on 2026-11-24. Check the live state before acting on it.
 
 | Listing | Status | Reference |
 | --- | --- | --- |
 | Claude: docs connector | Published at https://claude.ai/directory/voiceflow-docs | [claude-directory.md](references/claude-directory.md) |
-| Claude: account connector and plugin bundle | In Anthropic review | [claude-directory.md](references/claude-directory.md) |
-| OpenAI: plugin for ChatGPT and Codex | 1.2.1 rejected for its testing instructions. 1.2.2 was uploaded as a draft with the plain URL and showed only 32 tools in the desktop app. The package now uses the `toolsets` URL and waits on the account server's short-instructions change and a reviewer account. | [openai.md](references/openai.md) |
+| Claude: account connector | In Anthropic review | [claude-directory.md](references/claude-directory.md) |
+| Claude: plugin bundle | 1.3.0 rejected because the plugin did not declare the account server. 1.3.1 declares it; resubmit from its tag. | [claude-directory.md](references/claude-directory.md) |
+| OpenAI: plugin for ChatGPT and Codex | 1.2.1 rejected for its testing instructions. 1.2.2 was uploaded as a draft with the plain URL and showed only 32 tools in the desktop app. 1.3.1 uses the `toolsets` URL. Build it from the `v1.3.1` tag once the account server's short-instructions change is deployed, then upload it with the reviewer account's details. | [openai.md](references/openai.md) |
 | Cursor Marketplace | Local test, then submit | [cursor.md](references/cursor.md) |
 | MCP Registry | Waits on a DNS record and the owner's approval of the server names | [mcp-registry.md](references/mcp-registry.md) |
 | awesome-copilot | Issue github/awesome-copilot#6477 passed intake and waits for a maintainer | [other-listings.md](references/other-listings.md) |
@@ -71,5 +72,7 @@ Status on 2026-11-23. Check the live state before acting on it.
   Markdown, text, JSON, YAML, and images, no file that starts with `#!`, and no
   hooks, commands, agents, or other mods. `scripts/validate.py` enforces this.
   The icon locks at the first save.
+- **Claude, undeclared servers.** Plugin text may tell Claude or the user to
+  add only MCP servers that `.mcp.json` declares. 1.3.0 failed this check.
 - **OpenAI packages** connect one MCP server, and each upload needs a higher
   version than the last.

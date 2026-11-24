@@ -47,6 +47,10 @@ If a saved account MCP URL differs from this host's URL in the
 [account connection](mcp.md#account-connection) table, repair it first.
 The exception is an account server bundled with an installed plugin. Keep its
 URL as the plugin set it, and do not add a second account connection.
+When the Voiceflow plugin is installed in Claude Code or a Claude app, it
+bundles the account server, named `voiceflow`. If its account tools are
+missing, sign in as
+[account server from the plugin](mcp.md#account-server-from-the-plugin) says.
 
 Some hosts list only part of a plugin's account tools. The ChatGPT desktop app
 and Codex may show only `vf_agent_*` and `vf_analytics_*` tools, with no list
@@ -71,6 +75,7 @@ account that the MCP connection uses.
 | --- | --- |
 | A working account connection | Reuse it; go to step 3 |
 | An account connection that hides the list tools; a persistent customer terminal is available | Keep the connection and add the [CLI path](cli.md) for the hidden tools |
+| An installed plugin bundles the account server, and it needs sign-in | Sign in to that server as the [MCP path](mcp.md#account-server-from-the-plugin) says; do not add another account connection |
 | No account connection; a persistent customer terminal is available | Follow the [CLI path](cli.md), unless the user requested MCP or this host already has a configured Voiceflow MCP connection to repair |
 | No usable terminal; remote MCP can be connected by a tool or host settings | Follow the [MCP path](mcp.md) |
 | Only web/docs access; host connection support is unknown | Check the host's current official connection instructions if accessible; ask which app the user is using only if that is the missing fact |

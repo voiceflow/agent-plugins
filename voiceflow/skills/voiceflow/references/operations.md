@@ -52,7 +52,8 @@ A write through `vf_call_write_operation` is still a write. It follows the
 same draft and approval rules as a direct call; see
 [mutations and verification](#mutations-and-verification). If the callers are
 not listed either, [use the CLI for that tool](#use-the-cli-for-a-hidden-tool).
-The `voiceflow-setup` skill gives the URL for hosts that trim tool lists.
+The `voiceflow-setup` skill names the hosts that trim tool lists and add
+`dynamic=true` to the account server URL.
 
 The CLI covers agent, project, workspace, playbook, workflow, function, tool,
 api-tool, variable, secret, document, knowledge-base, message, prompt, integration,
@@ -66,7 +67,7 @@ inputs rather than every management operation. Use the verified shape and live
 read-back instead of repeated trial writes to discover fields.
 
 Use structured output for reads and supported file/stdin input for complex writes.
-On CLI 0.335.0, as on 0.287.0, `-o json` with `--timeout` can return an empty
+On CLI 0.287.0 through 0.337.0, `-o json` with `--timeout` can return an empty
 body, because the timeout cancels the read of the response. Use `-o json`
 without `--timeout`, or `-o toon` with it. Blank output is never a successful
 result. Use current CLI help when this is corrected.

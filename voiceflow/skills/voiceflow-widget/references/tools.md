@@ -1,8 +1,9 @@
 # Widget tools and targeting
 
-CLI contract checked against 0.287.0 on 2026-10-16, and against 0.335.0 with a
-localhost fixture on 2026-11-23. Inspect installed help or connected MCP schemas
-if they differ. Examples use placeholders, not real IDs.
+CLI contract checked against 0.287.0 on 2026-10-16. It was checked with a
+localhost fixture against 0.335.0 on 2026-11-23 and against 0.337.0 on
+2026-11-24. Inspect installed help or connected MCP schemas if they differ.
+Examples use placeholders, not real IDs.
 
 | Task | CLI | Account MCP tool |
 | --- | --- | --- |

@@ -9,12 +9,12 @@ tools. Then the CLI runs only the operations the host hides, and every listed
 MCP tool stays in use. Keep the MCP connection; do not add a second one.
 
 Locate `vf`, then run `vf version` and `vf auth login --help`.
-The tested baseline is **0.335.0**, with `--agent-mode`, `--no-browser`,
+The tested baseline is **0.337.0**, with `--agent-mode`, `--no-browser`,
 `--login-timeout`, and `workspace list`. Retain a newer compatible installation.
 If an existing version lacks these capabilities, explain the needed upgrade;
 preserve its location and do not overwrite an unrelated executable. A version
 older than the baseline may also lack commands the skills use, such as
-`vf workflow add-blocks`.
+`vf workflow add-blocks` or `vf agent add-workflow`.
 
 If absent, follow [the verified CLI install steps](installation.md). Use the
 absolute path they print for the rest of this session if it is not on PATH.
@@ -29,7 +29,7 @@ Do not use `whoami` or stored credentials as proof of connection. Do not print
 workspace details unless asked. An empty list is a connected account, not a
 reason to create a workspace. Classify failures before acting:
 
-Use TOON for this read on CLI 0.335.0, as on 0.287.0. Its JSON passthrough can
+Use TOON for this read on CLI 0.287.0 through 0.337.0. Their JSON passthrough can
 produce empty output when a timeout cancels the response before the body is
 consumed; TOON uses the fully decoded response. Empty output is not an empty
 workspace list.

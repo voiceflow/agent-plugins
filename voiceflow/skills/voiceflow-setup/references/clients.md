@@ -1,8 +1,9 @@
 # Persist skills in the current client
 
 Use one method, for the current host only. A host with a plugin system installs
-the Voiceflow plugin, which brings every skill and the docs MCP. A host without
-one installs the skills alone with skills.sh. These are standalone skills.
+the Voiceflow plugin, which brings every skill and the docs MCP. In Claude Code,
+it also brings the account MCP server. A host without one installs the skills
+alone with skills.sh. These are standalone skills.
 Do not install both in the same host, because the host then sees each skill twice.
 
 The plugin source is this repository: `voiceflow/agent-plugins` on GitHub, or a
@@ -28,6 +29,10 @@ Check `claude plugin marketplace list` first and reuse a matching source. Do not
 replace an unrelated marketplace with the same name. In a session, Claude Code
 2.1.275 or later can also run
 `/plugin install voiceflow --marketplace voiceflow/agent-plugins`.
+
+The plugin brings the account server and the docs server, so do not add either
+with `claude mcp add`. The user signs in to the account server once, as the
+[MCP guide](mcp.md#account-server-from-the-plugin) says.
 
 ## Codex
 
@@ -93,6 +98,7 @@ for future native discovery. Do not install into every agent on the machine.
 Native plugin packages include the public Voiceflow Knowledge MCP configuration.
 After installation, discover and verify its tools; host approval or reload may
 still be needed. skills.sh installs only the skills, not server configuration.
+The docs server below is the same one that the plugin declares.
 
 For standalone installs, inspect existing connections first. Reuse a connection
 to the Voiceflow docs server that the user already added. If there is none, add
