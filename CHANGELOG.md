@@ -43,6 +43,11 @@ changes; an entry is not proof that a GitHub release or marketplace listing exis
   whole list with `vf_agent_update`, which could drop an entry that was left
   out. They now use `vf_agent_update` with `workflows` only to replace the
   whole list.
+- The pinned CLI moves from 0.335.0 to 0.337.0. The six checksums come from
+  the release's `checksums.txt`, and its sign-in code did not change. When a
+  host hides `vf_agent_add_workflow`, `vf_agent_update_workflow` or
+  `vf_agent_remove_workflow`, the skills can now run `vf agent add-workflow`,
+  `vf agent update-workflow` or `vf agent remove-workflow` instead.
 - The `workflow-tool-main-agent` acceptance case now expects the add tool. It
   also fails a reply that replaces the list without the workflows already in
   it. It has not been run.

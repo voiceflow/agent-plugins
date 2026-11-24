@@ -80,7 +80,7 @@ compiled draft is an invalid check of the newly saved configuration; preserve
 that failed attempt as a harness finding, then test the correct draft state.
 
 Bound every request and actor run. A timed-out mutation is ambiguous: inspect
-before retrying. In CLI 0.287.0 and 0.335.0, JSON output with `--timeout` can be
+before retrying. In CLI 0.287.0 through 0.337.0, JSON output with `--timeout` can be
 empty despite exit zero. An independent verifier can retain JSON by bounding
 the subprocess instead. Preserve the raw output-format distinction in evidence;
 do not treat a blank body as an empty account or successful validation.

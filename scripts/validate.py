@@ -366,7 +366,7 @@ def validate(root=ROOT):
         raise ReferenceProblems(types)
     scripts = root / CLI_DATA
     version = (scripts / "cli-version.txt").read_text(encoding="utf-8").strip()
-    assert version == "0.335.0", "Update CLI contract fixtures when changing baseline"
+    assert version == "0.337.0", "Update CLI contract fixtures when changing baseline"
     checksums = (scripts / "checksums.txt").read_text(encoding="utf-8").splitlines()
     assert len(checksums) == 6
     assert all(re.fullmatch(r"[a-f0-9]{64}  vf_(Darwin|Linux|Windows)_(arm64|x86_64)\.(tar\.gz|zip)", line) for line in checksums)

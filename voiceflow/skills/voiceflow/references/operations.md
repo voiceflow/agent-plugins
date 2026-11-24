@@ -67,7 +67,7 @@ inputs rather than every management operation. Use the verified shape and live
 read-back instead of repeated trial writes to discover fields.
 
 Use structured output for reads and supported file/stdin input for complex writes.
-On CLI 0.335.0, as on 0.287.0, `-o json` with `--timeout` can return an empty
+On CLI 0.287.0 through 0.337.0, `-o json` with `--timeout` can return an empty
 body, because the timeout cancels the read of the response. Use `-o json`
 without `--timeout`, or `-o toon` with it. Blank output is never a successful
 result. Use current CLI help when this is corrected.

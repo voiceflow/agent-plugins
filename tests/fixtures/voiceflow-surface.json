@@ -2,6 +2,7 @@
   "cli": {
     "commands": {
       "agent add-tool-message": "voiceflow_agent.add_tool_message",
+      "agent add-workflow": "voiceflow_agent.add_workflow",
       "agent delete-tool-message": "voiceflow_agent.delete_tool_message",
       "agent get": "voiceflow_agent.get",
       "agent get-initialization-workflow": "voiceflow_agent.get_initialization_workflow",
@@ -11,12 +12,14 @@
       "agent patch-voices": "voiceflow_agent.patch_voices",
       "agent read-instructions": "voiceflow_agent.read_instructions",
       "agent read-prompt": "voiceflow_agent.read_prompt",
+      "agent remove-workflow": "voiceflow_agent.remove_workflow",
       "agent search-instructions": "voiceflow_agent.search_instructions",
       "agent search-prompt": "voiceflow_agent.search_prompt",
       "agent search-voices": "voiceflow_agent.search_voices",
       "agent set-initialization-workflow": "voiceflow_agent.set_initialization_workflow",
       "agent update": "voiceflow_agent.update",
       "agent update-tool-message": "voiceflow_agent.update_tool_message",
+      "agent update-workflow": "voiceflow_agent.update_workflow",
       "analytics query api-tool-usage": "voiceflow_analytics.query_api_tool_usage",
       "analytics query call-count": "voiceflow_analytics.query_call_count",
       "analytics query call-duration": "voiceflow_analytics.query_call_duration",
@@ -102,6 +105,11 @@
       "evaluation queue-runs": "voiceflow_evaluation.queue_runs",
       "evaluation run": "voiceflow_evaluation.run",
       "evaluation update": "voiceflow_evaluation.update",
+      "event create": "voiceflow_event.create",
+      "event delete": "voiceflow_event.delete",
+      "event get": "voiceflow_event.get",
+      "event list": "voiceflow_event.list",
+      "event update": "voiceflow_event.update",
       "explore": null,
       "function check": "voiceflow_function.check",
       "function create": "voiceflow_function.create",
@@ -270,8 +278,8 @@
       "workspace list": "voiceflow_workspace.list",
       "workspace update": "voiceflow_workspace.update"
     },
-    "source": "voiceflow/cli v0.335.0 .speakeasy/out.openapi.yaml",
-    "version": "0.335.0"
+    "source": "voiceflow/cli v0.337.0 .speakeasy/out.openapi.yaml",
+    "version": "0.337.0"
   },
   "docs_mcp": {
     "tools": [
@@ -317,7 +325,7 @@
         "when": "always"
       }
     },
-    "source": "voiceflow/cli v0.335.0 .speakeasy/out.openapi.yaml",
+    "source": "voiceflow/cli v0.337.0 .speakeasy/out.openapi.yaml",
     "tools": {
       "voiceflow_agent": [
         "add_tool_message",
@@ -432,6 +440,13 @@
         "list",
         "queue_runs",
         "run",
+        "update"
+      ],
+      "voiceflow_event": [
+        "create",
+        "delete",
+        "get",
+        "list",
         "update"
       ],
       "voiceflow_function": [

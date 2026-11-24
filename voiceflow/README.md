@@ -39,7 +39,7 @@ checks what your assistant can do, then takes one of three paths.
 - **Claude Code and the Claude apps** use the Voiceflow MCP server that this
   plugin includes. You sign in through your browser.
 - **Another assistant with a terminal** uses the Voiceflow CLI. If the CLI is
-  missing, setup can download version 0.335.0 from the official release at
+  missing, setup can download version 0.337.0 from the official release at
   [github.com/voiceflow/cli](https://github.com/voiceflow/cli/releases). Before
   it installs anything, it checks the download against SHA-256 checksums pinned
   in this plugin. It never replaces a CLI that is already installed. You then
