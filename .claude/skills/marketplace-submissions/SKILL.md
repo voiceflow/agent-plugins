@@ -53,7 +53,7 @@ Status on 2026-11-24. Check the live state before acting on it.
 | Claude: plugin bundle | 1.3.0 rejected because the plugin did not declare the account server. 1.3.1 declares it; resubmit from its tag. | [claude-directory.md](references/claude-directory.md) |
 | OpenAI: plugin for ChatGPT and Codex | 1.2.1 rejected for its testing instructions. 1.2.2 was uploaded as a draft with the plain URL and showed only 32 tools in the desktop app. 1.3.1 uses the `toolsets` URL. Build it from the `v1.3.1` tag once the account server's short-instructions change is deployed, then upload it with the reviewer account's details. | [openai.md](references/openai.md) |
 | Cursor Marketplace | Local test, then submit | [cursor.md](references/cursor.md) |
-| MCP Registry | Waits on a DNS record and the owner's approval of the server names | [mcp-registry.md](references/mcp-registry.md) |
+| MCP Registry | Names are `com.voiceflow/voiceflow` and `com.voiceflow/docs`. Only the gated workflow publishes them. Waits on the DNS record and the `mcp-registry-production` environment. | [mcp-registry.md](references/mcp-registry.md) |
 | awesome-copilot | Issue github/awesome-copilot#6477 passed intake and waits for a maintainer | [other-listings.md](references/other-listings.md) |
 | skills.sh | No submission step | [other-listings.md](references/other-listings.md) |
 

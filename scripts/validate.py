@@ -6,6 +6,7 @@ import sys
 
 from skill_references import check_references
 from cli_commands import drift_problems as cli_table_problems
+from mcp_registry import ALLOWED_NAMES as REGISTRY_NAMES
 from sync_shared_references import drift_problems
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,12 +33,14 @@ DOCS_URL_SCOPE = ("voiceflow/**/*", "*.md", "docs/*.md", "evals/*.md", "scripts/
 # URL. Codex limits tool list size only for servers bundled inside a plugin, and OpenAI's plugin guidelines forbid
 # a generic executor for operations that are not listed as tools. A package line that names a host and the account
 # MCP URL must say whether that host adds the parameter. The changelog and the eval fixtures keep older URLs on
-# purpose, so only the package is checked. The registry entry keeps the full-list URL. The setup guide must name
-# each host below on a line that gives the URL, with the parameter for the hosts that add it, so a host cannot drop
-# out of the table unnoticed.
+# purpose, so only the package is checked. The setup guide must name each host below on a line that gives the URL,
+# with the parameter for the hosts that add it, so a host cannot drop out of the table unnoticed.
 ACCOUNT_MCP_URL = "https://mcp.voiceflow.com/mcp?version=3"
 DYNAMIC_PARAMETER = "&dynamic=true"
 ACCOUNT_MCP_DYNAMIC_URL = ACCOUNT_MCP_URL + DYNAMIC_PARAMETER
+# The MCP Registry entry gives the dynamic URL. The registry's main consumers are IDE hosts such as VS Code with
+# GitHub Copilot, which cap or trim long tool lists, and the setup guide gives those hosts the same URL.
+REGISTRY_ACCOUNT_MCP_URL = ACCOUNT_MCP_DYNAMIC_URL
 ACCOUNT_MCP_ENDPOINT = re.compile(r"https://mcp\.voiceflow\.com/mcp(?![\w/-])(?:\?[\w=&%-]+)?")
 DYNAMIC_URL_HOST_NAMES = ("Cursor", "Copilot", "Windsurf", "Antigravity")
 PLAIN_URL_HOST_NAMES = ("Codex", "Claude", "ChatGPT")
@@ -303,11 +306,14 @@ def validate_listings(root=ROOT):
     skills_sh = json.loads((root / "skills.sh.json").read_text(encoding="utf-8"))
     assert skills_sh == {"$schema": SKILLS_SH_SCHEMA, "paths": ["./voiceflow/skills"]}, "skills.sh.json drift"
     # Registry users add the docs server themselves, so its entry omits the package's logging option.
-    expected = {ACCOUNT_MCP_URL, DOCS_MCP_URL.split("?")[0]}
+    expected = {REGISTRY_ACCOUNT_MCP_URL, DOCS_MCP_URL.split("?")[0]}
     entries = [json.loads(path.read_text(encoding="utf-8"))
                for path in sorted((root / "mcp-registry").glob("*/server.json"))]
     assert {remote["url"] for entry in entries for remote in entry["remotes"]} == expected, "Registry URLs differ"
     assert len({entry["name"] for entry in entries}) == len(entries) == len(expected), "One registry entry per server"
+    # The publish workflow refuses any other name, so validation catches a new name before it reaches main.
+    assert sorted(entry["name"] for entry in entries) == sorted(REGISTRY_NAMES), \
+        f"Registry names must be exactly {', '.join(REGISTRY_NAMES)}"
     for entry in entries:
         assert entry["$schema"] == REGISTRY_SCHEMA and SEMVER.fullmatch(entry["version"])
         assert re.fullmatch(r"com\.voiceflow/[a-z0-9-]+", entry["name"]), "Registry names use com.voiceflow/"

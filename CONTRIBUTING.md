@@ -41,7 +41,7 @@ python3 scripts/sync_shared_references.py
 | `evals/` | Behavioral cases, protocols, and sanitized evidence |
 | `docs/` | Compatibility, release, provenance, and measurement guidance |
 | `skills.sh.json` | Tells the skills CLI where the skills live; not packaged |
-| `mcp-registry/` | MCP Registry entries for the two remote servers; not packaged or published |
+| `mcp-registry/` | MCP Registry entries for the two remote servers; not packaged. Only `.github/workflows/publish-mcp.yml` publishes them |
 | `scripts/openai/` | OpenAI directory package: test cases, MCP config, build, and checks; not packaged |
 | `.claude/skills/marketplace-submissions/` | Maintainer steps and field values for each directory listing |
 | `.submissions/` | Git-ignored submission output and private notes; never commit it |
