@@ -5,7 +5,10 @@
 The repository is owned by the [Voiceflow organization](https://github.com/voiceflow/agent-plugins).
 The package is MIT-licensed, copyright Voiceflow, Inc. Braden Ream
 ([@Bradenream](https://github.com/Bradenream)) remains a maintainer with write
-access; `.github/CODEOWNERS` routes reviews to that account. Changes to team
+access. `.github/CODEOWNERS` names owners only for the MCP Registry publishing
+path: the workflows, the MCP Registry entries, the publisher installer, the
+registry script, and CODEOWNERS itself. The workflow runs that script with
+`python -I`, so it imports no other file from the checkout. Changes to team
 access, administrator permissions, and repository security settings belong to
 the organization's administrators.
 
@@ -51,11 +54,15 @@ transfer or settings change:
   protection alone is not sufficient for the automated release check below.
 - Require a pull request for the default/release branch, dismiss stale reviews,
   and require resolved review threads. The owner chose sole-maintainer operation:
-  zero approving reviews and no mandatory code-owner or last-pusher approval.
+  zero approving reviews and no mandatory last-pusher approval.
   The owner can merge their own passing PR; direct pushes remain blocked.
   Agent-driven merges still require the owner's explicit approval. When adding
-  another maintainer or transferring ownership, revisit this policy and require
-  approving code-owner review if independent review becomes available.
+  another maintainer or transferring ownership, revisit this policy.
+- Turn on "Require review from Code Owners" in the same ruleset. CODEOWNERS
+  covers only the MCP Registry publishing path, so only a change to those files
+  needs a code owner's approval, and an author cannot approve their own change.
+  After you turn it on, check that a pull request that edits `.github/workflows/`
+  shows a required code-owner review.
 - Require these exact checks from the **GitHub Actions** app (integration ID
   `15368`), with strict/up-to-date checks enabled: `checks (ubuntu-latest)`,
   `checks (macos-latest)`, `checks (windows-latest)`, and
@@ -174,6 +181,11 @@ The `marketplace-submissions` skill in `.claude/skills/` holds the steps and
 field values for each directory. `scripts/openai/build_zip.sh <tag>` builds the
 OpenAI package into `.submissions/`, which git ignores. Reviewer credentials go
 only into each portal's private fields.
+
+A package release does not publish the MCP Registry entries. The **Publish MCP
+Registry entries** workflow publishes them from `main`, after a reviewer
+approves the `mcp-registry-production` environment. See
+[mcp-registry/README.md](../mcp-registry/README.md).
 
 Package docs connections send `logging=off`, so the Knowledge MCP keeps only
 anonymous counts for them. See [measurement](measurement.md). Releases do not

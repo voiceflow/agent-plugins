@@ -460,8 +460,12 @@ class ListingTests(unittest.TestCase):
              lambda data: interface(data).update(shortDescription="x" * 31), "shortDescription"),
             ("voiceflow/.cursor-plugin/plugin.json", lambda data: data.pop("keywords"), "keywords"),
             ("voiceflow/.claude-plugin/plugin.json", lambda data: data.update(icon="./icon.png"), "Icon file missing"),
-            ("mcp-registry/knowledge/server.json",
+            ("mcp-registry/docs/server.json",
              lambda data: data["remotes"][0].update(url=validator.DOCS_MCP_URL), "Registry URLs differ"),
+            ("mcp-registry/voiceflow/server.json",
+             lambda data: data["remotes"][0].update(url=validator.ACCOUNT_MCP_URL), "Registry URLs differ"),
+            ("mcp-registry/docs/server.json",
+             lambda data: data.update(name="com.voiceflow/knowledge"), "Registry names must be exactly"),
             ("skills.sh.json", lambda data: data.update(paths=["./skills"]), "skills.sh.json"),
         ]
         for name, change, message in cases:

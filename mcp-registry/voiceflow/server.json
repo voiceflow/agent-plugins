@@ -8,7 +8,7 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://mcp.voiceflow.com/mcp?version=3"
+      "url": "https://mcp.voiceflow.com/mcp?version=3&dynamic=true"
     }
   ]
 }

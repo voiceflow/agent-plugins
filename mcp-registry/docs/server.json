@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "com.voiceflow/knowledge",
-  "title": "Voiceflow Knowledge",
-  "description": "Answers Voiceflow product, API, and CLI questions from the public docs. No sign-in.",
-  "version": "2.1.2",
+  "name": "com.voiceflow/docs",
+  "title": "Voiceflow Docs MCP",
+  "description": "Get cited answers from Voiceflow product, API, CLI, and MCP docs. No sign-in required.",
+  "version": "1.0.0",
   "websiteUrl": "https://www.voiceflow.com/docs/mcp/knowledge",
   "remotes": [
     {

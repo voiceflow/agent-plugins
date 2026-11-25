@@ -1,2 +1,6 @@
-# Braden remains a maintainer with write access in the Voiceflow organization.
-* @Bradenream
+# These paths run with the com.voiceflow MCP Registry signing key (the job runs its script with python -I); a repo admin must turn on "require review from code owners" in the main ruleset.
+/.github/workflows/ @z4o4z @xavidop
+/.github/CODEOWNERS @z4o4z @xavidop
+/mcp-registry/ @z4o4z @xavidop
+/scripts/mcp_registry.py @z4o4z @xavidop
+/scripts/install_mcp_publisher.sh @z4o4z @xavidop
